@@ -1,4 +1,18 @@
-nitialized="true";
+"div","or-ai-links");
+for(const [i,path]of (cfg.externalCatalog.sourceIndexUrls||[]).entries()){const a=safeLink("來源索引 "+(i+1),new URL(path,origin).href);a.className="or-button secondary";indexLinks.append(a);}
+pane.append(indexLinks);
+paragraph(pane,"文章沒有固定篇數上限；有可查證出處的內容可持續加入。","or-prose");
+paragraph(pane,"手札、提問與心得留在本機，不列入公開資料。","or-prose");
+if(offline)paragraph(pane,"目前開啟的是離線網站副本；內附 "+data.units.length+" 篇文章及 "+data.sources.length+" 筆來源，外部文獻目錄需連線。");
+}
+for(const binding of bindings){binding.node.classList.add("or-original");
+binding.node.hidden=binding.initialHidden;
+$("or-pane-"+binding.view).append(binding.node);
+}
+for(const node of [...root.children])if(node!==shell&&!node.matches("dialog,script,style"))node.hidden=true;
+root.classList.add("or-v2-active");
+shell.hidden=false;
+shell.dataset.initialized="true";
 for(const b of shell.querySelectorAll("[data-or-view]"))b.addEventListener("click",()=>{const next=b.dataset.orView;
 show(next);
 if(next==="sources"){status(offline?"目前顯示內附來源，完整目錄需連線。":"正在載入完整來源目錄…");

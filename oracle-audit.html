@@ -5,7 +5,7 @@
  const common={hostSchemaVersion:"oracle-audit-host-v1",expectedManifestSHA:config.expectedManifestSHA,expectedHTMLSHA:config.expectedHTMLSHA,actualHTTPExecuted:false,actualBrowserUIExecuted:false,realUserStorageRead:false,realUserStorageWritten:false,startedAt:new Date().toISOString()};
  let finished=false,candidateVerified=false,candidateHTTP=false,timer,poller;
  const aborter=new AbortController(),terminal=new Set(["completed","failed","unknown_timeout","not_run"]);
- const finish=value=>{if(finished)return;finished=true;clearTimeout(timer);clearInterval(poller);aborter.abort();status.textContent="驗證已結束";out.dataset.phase=String(value.phase);out.textContent=JSON.stringify(value,null,2);};
+ const finish=value=>{if(finished)return;finished=true;clearTimeout(timer);clearInterval(poller);aborter.abort();frame.hidden=true;status.textContent="驗證已結束";out.dataset.phase=String(value.phase);out.textContent=JSON.stringify(value,null,2);};
  const incomplete=(phase,reason,details={})=>({...common,phase,passed:false,reason,...details,hostVerification:{mode,candidateVerified,candidateHTTPExecuted:candidateHTTP,source:"first_party_release_sealed_txt_to_srcdoc",terminalReportExtracted:false}});
  window.addEventListener("pagehide",()=>{finished=true;clearTimeout(timer);clearInterval(poller);aborter.abort();},{once:true});
  if(trigger.origin!==config.origin||trigger.pathname!=="/oracle-audit.html"||!["api","ui"].includes(mode)||!chosen||trigger.searchParams.get("run")!=="1"||trigger.searchParams.get("seal")!==config.expectedManifestSHA){finish(incomplete("not_run","使用明示 mode、run=1 與本次發布 seal 的驗證網址。"));return;}
@@ -34,7 +34,7 @@
   const doc=new DOMParser().parseFromString(text,"text/html");
   if(doc.querySelectorAll("base").length||doc.querySelectorAll('[id="'+chosen.preId+'"]').length!==1)throw Error("驗證載體 base 或唯一回報節點不符。");
   const base=doc.createElement("base");base.href=trigger.href;doc.head.prepend(base);
-  if(finished)return;candidateVerified=true;frame.srcdoc="<!doctype html>\n"+doc.documentElement.outerHTML;
+  if(finished)return;if(mode==="ui"){frame.style.cssText="position:fixed;left:0;top:0;width:100vw;height:100vh;border:0;z-index:10;pointer-events:auto;background:#f3f0ea";frame.removeAttribute("aria-hidden");frame.removeAttribute("tabindex");}candidateVerified=true;frame.srcdoc="<!doctype html>\n"+doc.documentElement.outerHTML;
   status.textContent="正在等待實際執行的終結報告";poller=setInterval(inspect,100);
  }catch(error){if(!finished)finish(incomplete("failed","驗證載體未能完整載入並核對。",{error:String(error)}));}
 })({"origin":"https://brendonlee1006.github.io","expectedManifestSHA":"d1926f5d2ae94bf82e53a4c3b852cac2c30c0543ca793366f457ce064d5ab3cd","expectedHTMLSHA":"bc2321b691f888c1c01abdfff522cb251d15025a99fae1ca093a70d0563482d4","modes":{"api":{"path":"/oracle-public-audit.txt","sha256":"a27be6314a21db680d08c8373959a5e558ebf7f232a91dbaa7bb387493113970","preId":"oracle-public-audit-result","schemaVersion":"oracle-public-api-report-v1","actualFlag":"actualHTTPExecuted"},"ui":{"path":"/oracle-ui-audit.txt","sha256":"236c828a5b3672b7f1cc6197a3c96397020d5480eedc1ff3505e4c6633549470","preId":"oracle-ui-audit-result","schemaVersion":"1.0","actualFlag":"actualBrowserUIExecuted"}}});</script></body></html>

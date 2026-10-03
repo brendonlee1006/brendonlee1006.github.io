@@ -1,4 +1,21 @@
-"div","or-ai-links");
+主張仍需另行驗證。");
+publicRoute("reader",{source:s.id});
+$("or-pane-reader").focus({preventScroll:true});
+}catch(e){if(token!==readerToken)return;
+box.replaceChildren(element("h2","","暫時無法載入來源"),element("p","or-prose",e.message),button("返回",back,true));
+}}
+function renderAI(){const pane=$("or-pane-ai");
+pane.replaceChildren(element("h2","","給閱讀工具與 AI 使用的公開資料"));
+paragraph(pane,"知識文章、可追溯來源與搜尋輪次有固定 ID 和 JSON 格式。依取用範圍區分書目、已核對頁面與待核候選。");
+const links=element("div","or-ai-links");
+for(const [label,path]of [["資料清單","/oracle-data-manifest.json"],["完整知識","/oracle-knowledge-topics.json"],["機器閱讀說明","/llms.txt"],["原創解讀資料","/oracle-reading-manifest.json"],["三牌關係查閱","/oracle-relations.html"]]){const a=safeLink(label,new URL(path,origin).href);
+a.className="or-button secondary";
+links.append(a);
+}siteExportButton.classList.add("or-button","secondary");
+links.append(siteExportButton);
+pane.append(links);
+paragraph(pane,"完整來源索引採分檔；請由資料清單讀取所有 source_index 檔，並依 detailShardUrl 開啟來源的完整核對範圍。","or-prose");
+const indexLinks=element("div","or-ai-links");
 for(const [i,path]of (cfg.externalCatalog.sourceIndexUrls||[]).entries()){const a=safeLink("來源索引 "+(i+1),new URL(path,origin).href);a.className="or-button secondary";indexLinks.append(a);}
 pane.append(indexLinks);
 paragraph(pane,"文章沒有固定篇數上限；有可查證出處的內容可持續加入。","or-prose");

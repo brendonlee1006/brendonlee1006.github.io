@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; frame-src 'self'; base-uri 'self'; form-action 'none'"><title>神諭之間｜獨立 UI 驗收</title><style>body{margin:16px;background:#f3f0ea;color:#1c2b2a;font:14px/1.5 system-ui,sans-serif}pre{white-space:pre-wrap;overflow-wrap:anywhere}#oracle-ui-audit-stage{margin-top:16px}</style></head><body><h1>神諭之間｜獨立 UI 驗收</h1><p>只有明確指定 run=1 並提供本次正式 HTML seal，才會建立可清除的獨立驗收手札。正式手札 key 不會被讀取或修改。</p><pre id="oracle-ui-audit-result" aria-live="polite">{"phase":"pending","reason":"SCRIPT_NOT_STARTED"}</pre><section id="oracle-ui-audit-stage" aria-label="隔離驗收畫面"></section><script>(function oracleIsolatedUIAuditRuntime(config){
+"use strict";
+const result=document.getElementById("oracle-ui-audit-result");
+const stage=document.getElementById("oracle-ui-audit-stage");
+const triggerURL=new URL(document.baseURI),initialURL=triggerURL.href;
+let qaHost=window;
+try{if(window.parent!==window&&window.parent.location.origin===triggerURL.origin)qaHost=window.parent;}catch(_){}
+const initialState=qaHost.history.state,params=triggerURL.searchParams;
+const mode=params.get("ui_test")||"all";
+const started=Date.now(),deadline=started+config.budgetMs;
+const report={
+ schemaVersion:"1.0",kind:"actual_isolated_oracle_UI_audit",phase:"pending",
+ mode,seal:config.expectedManifestSHA,expectedManifestSHA:config.expectedManifestSHA,expectedHTMLSHA:config.finalHTMLSHA256,
+ actualBrowserUIExecuted:false,passed:false,productionOrigin:config.productionOrigin,
+ productionHTMLPath:config.productionHTMLPath,productionHTMLPartURLs:config.productionHTMLParts.map(p=>p.url),startedAt:new Date(started).toISOString(),
+ checks:[],execution:{
+  explicitOptIn:false,actualHTTPSQAHostUsed:false,actualProductionHTMLFetched:false,actualProductionHTMLSHA256Matched:false,
+  actualProductionHTMLPartsVerified:false,actualRenderedDOMRead:false,actualNativeEventHandlersExecuted:false,actualQANamespacePersistenceVerified:false,
+  actualQANamespaceReloadVerified:false,actualNativeFileReaderImportVerified:false,
+  actualExportPayloadVerified:false,actualPristineHTMLExportVerified:false,
+  actualResponsiveFrameLayoutsVerified:false,actualFixedViewportNoScrollPageLayoutsVerified:false,
+  actualViewportContentReachabilityVerified:false,actualViewportNativeControlsReachabilityVerified:false,
+  actualTextEditingInternalScrollVerified:false,actualOSKeyboardVerified:false,actualOSZoom200Verified:false,
+  actualDownloadTransportVerified:false,actualClipboardTransportVerified:false,actualScreenshotCaptured:false,
+  actualProductionUserStorageRead:false,actualProductionUserStorageWritten:false
+ },
+ isolation:{
+  exactStorageConstantForkOnly:false,productionNamespaceUnchangedByConstruction:false,
+  qaHostPopstateListenerRecording:false,qaHostNativeListenerDelegation:true,qaHostPopstateListenerCleanupVerified:false,
+  qaNamespaceCleanupVerified:false,parentRouteRestored:false,
+  realDOM:true,realNavigatorLocks:true,realLocalStorage:true,realFileReader:true,noDOMOrStorageMocks:true,
+  downloadsTransportSandboxBlocked:true,noExternalCitationOrShareClicks:true
+ },
+ limitations:[
+  "Frames 375x812 and 1280x800 are actual fixed iframe layouts, not proof of 200% operating-system or browser zoom.",
+  "No-scroll geometry checks cover document, main, active panes, visible content and native control bounds; long textarea editing interiors are outside this page-layout acceptance.",
+  "Viewport page tours cover each view and reader tab in its current original native page; the complete corpus is verified by the separate public API audit.",
+  "Programmatic DOM clicks, focus and KeyboardEvent handler probes are not proof of physical keyboard navigation.",
+  "The original export textareas and real FileReader import are checked; operating-system downloads, file picker and clipboard transport are not checked.",
+  "Only QA namespace journal data is created, read and removed. The production user journal key is never read or written.",
+  "Transparent popstate recording is limited to this standalone QA host and delegates the exact listener and options to native addEventListener.",
+  "This endpoint tests sealed production HTML in srcdoc. The static loader mounting, screenshots and real user sessions require separate acceptance.",
+  "This is UI acceptance, not the complete public-source API, evidence-scope or corpus audit."
+ ]
+};
+let iframe=null,win=null,doc=null,qaKey=null,forkedHTML=null,runtimeErrors=0;
+let records=[],tracking=false,productionStage=null;
+const originalAdd=qaHost.addEventListener,originalRemove=qaHost.removeEventListener;
+function publish(){result.textContent=JSON.stringify(report,null,2);}
+function failure(code){const e=new Error(code);e.auditCode=code;return e;}
+function budget(){if(Date.now()>deadline)throw failure("TIME_BUDGET_EXCEEDED");}
+function check(id,pass,details={}){
+ budget();report.checks.push({id,status:pass?"passed":"failed",...details});publish();
+ if(!pass)throw failure(id.toUpperCase()+"_FAILED");
+}
+function pause(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+async function until(test,id,maxMs=6000){
+ const end=Math.min(deadline,Date.now()+maxMs);
+ while(Date.now()<end){budget();if(test())return;await pause(40);}
+ throw failure(id.toUpperCase()+"_TIMEOUT");
+}
+function count(text,needle){return text.split(needle).length-1;}
+function randomToken(){
+ if(typeof crypto.randomUUID==="function")return crypto.randomUUID();
+ const b=new Uint8Array(16);crypto.getRandomValues(b);
+ return [...b].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+async function sha(bytes){
+ const h=await crypto.subtle.digest("SHA-256",bytes);
+ return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+async function sameOriginText(path,maxBytes=2000000){
+ budget();
+ const target=new URL(path,config.productionOrigin);
+ if(target.origin!==triggerURL.origin||target.username||target.password||target.search||target.hash)
+  throw failure("FIRST_PARTY_URL_REQUIRED");
+ const abort=new AbortController();
+ const timer=setTimeout(()=>abort.abort(),Math.max(1,Math.min(10000,deadline-Date.now())));
+ try{
+  const response=await fetch(target.href,{credentials:"omit",redirect:"error",cache:"no-store",signal:abort.signal});
+  if(!response.ok||response.url!==target.href)throw failure("SEALED_HTML_HTTP_FAILED");
+  const bytes=new Uint8Array(await response.arrayBuffer());
+  if(bytes.length>maxBytes)throw failure("PUBLIC_ASSET_SIZE_BOUND_EXCEEDED");
+  return {text:new TextDecoder("utf-8",{fatal:true,ignoreBOM:true}).decode(bytes),bytes,status:response.status};
+ }finally{clearTimeout(timer);}
+}
+async function fetchPinnedProductionHTML(){
+ const texts=[],statuses=[];
+ for(let i=0;i<config.productionHTMLParts.length;i++){
+  budget();
+  const pinned=config.productionHTMLParts[i],part=await sameOriginText(pinned.url);
+  const actualSHA256=await sha(part.bytes);
+  const encoded=new TextEncoder().encode(part.text);
+  check("actual_production_HTML_part_"+(i+1)+"_pins",
+   part.bytes.length===pinned.utf8Bytes&&part.text.length===pinned.chars&&
+   encoded.length===part.bytes.length&&actualSHA256===pinned.sha256,
+   {partOrdinal:i+1,url:pinned.url,httpStatus:part.status,actualBytes:part.bytes.length,
+    expectedBytes:pinned.utf8Bytes,actualChars:part.text.length,expectedChars:pinned.chars,
+    actualSHA256,expectedSHA256:pinned.sha256});
+  texts.push(part.text);statuses.push(part.status);
+ }
+ const text=texts.join(""),bytes=new TextEncoder().encode(text);
+ report.execution.actualProductionHTMLPartsVerified=true;
+ return {text,bytes,status:statuses[0],httpStatuses:statuses,partCount:texts.length};
+}
+function $(id){return doc&&doc.getElementById(id);}
+function visible(node){
+ if(!node||node.hidden)return false;
+ for(let n=node;n&&n.nodeType===1;n=n.parentElement){
+  if(n.hidden||n.inert||n.classList.contains("visually-hidden")||n.classList.contains("sr-only")||win.getComputedStyle(n).display==="none"||win.getComputedStyle(n).visibility==="hidden")return false;
+ }
+ return node.getClientRects().length>0;
+}
+function required(id){const n=$(id);if(!n)throw failure("REQUIRED_NATIVE_NODE_MISSING");return n;}
+async function viewportSettled(){
+ await until(()=>win&&win.oracleViewportPages&&typeof win.oracleViewportPages.whenSettled==="function","actual_viewport_pager_API");
+ let timer;
+ try{await Promise.race([win.oracleViewportPages.whenSettled(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(failure("VIEWPORT_FITTER_SETTLE_TIMEOUT")),Math.max(1,Math.min(6000,deadline-Date.now())));})]);}finally{clearTimeout(timer);}
+ budget();const a=win.oracleViewportPages.getAudit();
+ if(!a||!Number.isSafeInteger(a.total)||a.total<1||!Number.isSafeInteger(a.page)||a.page<1||a.page>a.total||!a.units||!Array.isArray(a.units.ids)||!Array.isArray(a.units.onPage))throw failure("ACTUAL_VIEWPORT_AUDIT_SHAPE_FAILED");
+ return a;
+}
+async function viewportStep(direction){
+ const before=await viewportSettled();
+ const pager=doc.querySelector("dialog[open] #or-md-pager")||required("or-vp-pager");const button=pager.querySelector("[data-or-vp='"+direction+"']");
+ if(!button||button.disabled||!visible(button))throw failure("ACTUAL_VIEWPORT_NEXT_PREVIOUS_UNAVAILABLE");
+ button.click();const after=await viewportSettled();
+ if(after.view!==before.view||after.total!==before.total||after.page!==before.page+(direction==="next"?1:-1)||JSON.stringify(after.units.ids)!==JSON.stringify(before.units.ids))throw failure("ACTUAL_VIEWPORT_PAGE_TRANSITION_FAILED");
+ return after;
+}
+async function reach(node){
+ if(!node||!node.isConnected)throw failure("NATIVE_CONTROL_TARGET_MISSING");
+ let a=await viewportSettled();if(visible(node))return;
+ while(a.page>1)a=await viewportStep("prev");
+ for(let page=1;page<=a.total;page++){if(visible(node))return;if(page<a.total)a=await viewportStep("next");}
+ throw failure("NATIVE_CONTROL_UNREACHABLE_BY_ACTUAL_PAGES");
+}
+async function click(node){await reach(node);if(node.disabled)throw failure("NATIVE_CLICK_TARGET_UNAVAILABLE");node.click();await viewportSettled();}
+async function clickText(parent,text){if(!parent)throw failure("NATIVE_BUTTON_CONTAINER_MISSING");const node=[...parent.querySelectorAll("button")].find(n=>n.textContent.trim()===text);await click(node);return node;}
+async function input(node,value){await reach(node);node.value=value;node.dispatchEvent(new win.Event("input",{bubbles:true}));await viewportSettled();}
+function nativeEligible(node){
+ for(let n=node;n&&n.nodeType===1;n=n.parentElement){if(n.hidden)return false;const style=win.getComputedStyle(n);if(!n.classList.contains("or-vp-away")&&!n.classList.contains("or-vp-empty")&&!n.classList.contains("or-md-away")&&(style.display==="none"||style.visibility==="hidden"))return false;if(n.parentElement&&n.parentElement.tagName==="DETAILS"&&!n.parentElement.open&&n.tagName!=="SUMMARY")return false;}return true;
+}
+function viewportGeometry(){
+ const issues=[],vw=win.innerWidth,vh=win.innerHeight,epsilon=2;
+ const add=(kind,node)=>{if(issues.length<16)issues.push({kind,node:node.id||node.tagName||"TEXT"});};
+ const within=(rect,node)=>{
+  if(rect.width<=0||rect.height<=0)return;
+  if(rect.left< -epsilon||rect.top< -epsilon||rect.right>vw+epsilon||rect.bottom>vh+epsilon)add("outside_viewport",node);
+  for(let a=node.parentElement;a&&a!==doc.documentElement;a=a.parentElement){
+   const style=win.getComputedStyle(a),box=a.getBoundingClientRect(),x=box.left+a.clientLeft,y=box.top+a.clientTop;
+   if(/^(hidden|clip|auto|scroll)$/.test(style.overflowX)&&(rect.left<x-epsilon||rect.right>x+a.clientWidth+epsilon))add("ancestor_horizontal_clipping",node);
+   if(/^(hidden|clip|auto|scroll)$/.test(style.overflowY)&&(rect.top<y-epsilon||rect.bottom>y+a.clientHeight+epsilon))add("ancestor_vertical_clipping",node);
+  }
+ };
+ for(const node of[doc.documentElement,doc.body,required("or-shell"),required("or-main"),required("or-sidebar"),...doc.querySelectorAll(".or-pane,dialog[open]")]){
+  if(!visible(node)||node.clientWidth===0||node.clientHeight===0)continue;
+  if(node.scrollWidth>node.clientWidth+epsilon||node.scrollHeight>node.clientHeight+epsilon)add("page_content_scroll_overflow",node);
+  if(node.scrollLeft!==0||node.scrollTop!==0)add("page_content_scroll_position",node);
+ }
+ if(win.scrollX!==0||win.scrollY!==0)add("window_scroll_position",doc.documentElement);
+ const activeScope=doc.querySelector("dialog[open]")||doc.body;
+ const controls=[...activeScope.querySelectorAll("button,input,textarea,select,summary,a[href]")].filter(visible);for(const control of controls)within(control.getBoundingClientRect(),control);
+ const walker=doc.createTreeWalker(activeScope,win.NodeFilter.SHOW_TEXT);let node,visibleTextFragments=0;
+ while(node=walker.nextNode()){
+  const parent=node.parentElement;if(!node.textContent.trim()||!parent||parent.closest("script,style,textarea,input,select,svg")||!visible(parent))continue;
+  const range=doc.createRange();range.selectNodeContents(node);for(const rect of range.getClientRects()){visibleTextFragments++;within(rect,parent);}range.detach();
+ }
+ return{passed:issues.length===0,viewport:{width:vw,height:vh},visibleControlCount:controls.length,visibleTextFragments,issues,textEditingInteriorsIncluded:false};
+}
+async function viewportTour(label){
+ let a=await viewportSettled();while(a.page>1)a=await viewportStep("prev");
+ const pane=doc.querySelector("dialog[open]")||required("or-pane-"+a.view),ids=a.units.ids.slice(),total=a.total,seen=new Set(),seenControls=new Set();
+ const wantedControls=[...pane.querySelectorAll("button,input,textarea,select,summary,a[href]")].filter(nativeEligible);
+ for(let page=1;page<=total;page++){
+  a=await viewportSettled();const geometry=viewportGeometry();
+  check("fixed_viewport_page_"+label+"_"+page,a.nooverflow===true&&a.fallback===false&&a.page===page&&a.total===total&&JSON.stringify(a.units.ids)===JSON.stringify(ids)&&geometry.passed,{page,total,fitter:a,geometry});
+  for(const node of pane.querySelectorAll("[data-or-vp-unit]"))if(visible(node))seen.add(node.getAttribute("data-or-vp-unit"));
+  for(const control of wantedControls)if(visible(control))seenControls.add(control);
+  if(page<total)a=await viewportStep("next");
+ }
+ check("all_content_and_controls_reachable_"+label,ids.every(id=>seen.has(id))&&wantedControls.every(node=>seenControls.has(node)),{eligibleUnitCount:ids.length,reachedUnitCount:ids.filter(id=>seen.has(id)).length,eligibleNativeControlCount:wantedControls.length,reachedNativeControlCount:seenControls.size,totalActualPages:total});
+ while(a.page>1)a=await viewportStep("prev");
+ return{label,view:a.view,viewport:{width:win.innerWidth,height:win.innerHeight},totalPages:total,eligibleUnits:ids.length,nativeControls:wantedControls.length};
+}
+async function fixedViewportChecks(){
+ const coverage=[];
+ for(const [width,height]of[[375,812],[1280,800]]){
+  iframe.style.width=width+"px";iframe.style.height=height+"px";
+  await until(()=>win.innerWidth===width&&win.innerHeight===height,"fixed_actual_frame_dimensions",2000);await viewportSettled();
+  for(const view of["daily","draw","reading","cards","knowledge","sources","journal","about","ai"]){
+   const nav=required("or-shell").querySelector("[data-or-view='"+view+"']");
+   if(nav){if(required("or-sidebar").inert)await click(required("or-menu-toggle"));await click(nav);}else await show(view);
+   if(view==="sources")await until(()=>!required("or-status").textContent.includes("正在載入完整來源"),"native_sources_navigation_settled",10000);
+   await viewportSettled();check("actual_view_reachable_"+width+"_"+view,visible(required("or-pane-"+view))&&(await viewportSettled()).view===view,{nativeNavigationControlClicked:!!nav});
+   coverage.push(await viewportTour(width+"x"+height+"_"+view));
+  }
+  win.oracleUI.openTopic(config.relatedTopicId,null);await viewportSettled();
+  for(const tab of["摘要","正文","來源"]){await clickText(required("or-pane-reader").querySelector(".or-tabs"),tab);coverage.push(await viewportTour(width+"x"+height+"_reader_"+tab));}
+  await show("cards");const card=visibleGallery()[0];await click(card);await until(()=>required("card-dialog").open,"native_card_detail_dialog");await viewportSettled();
+  check("native_card_detail_real_content_"+width,required("modal-title").textContent.length>0&&required("modal-meaning").textContent.length>0&&required("modal-action").textContent.length>0&&required("modal-prompt").textContent.length>0);
+  coverage.push(await viewportTour(width+"x"+height+"_card_dialog"));await click(required("modal-close"));check("native_card_detail_close_"+width,!required("card-dialog").open);
+  await click(card);await click(required("modal-to-draw"));check("native_card_detail_to_draw_"+width,!required("card-dialog").open&&visible(required("or-pane-draw"))&&viewportGeometry().passed);
+ }
+ report.viewportCoverage=coverage;report.execution.actualFixedViewportNoScrollPageLayoutsVerified=true;report.execution.actualViewportContentReachabilityVerified=true;report.execution.actualViewportNativeControlsReachabilityVerified=true;
+}
+function qaState(){
+ if(!qaKey)throw failure("QA_NAMESPACE_NOT_READY");
+ const raw=qaHost.localStorage.getItem(qaKey);
+ if(raw===null)return {version:1,entries:[],activeId:null};
+ const value=JSON.parse(raw);
+ if(value.version!==1||!Array.isArray(value.entries))throw failure("QA_STORAGE_SHAPE_FAILED");
+ return value;
+}
+function activeQA(){const s=qaState();return s.entries.find(e=>e.id===s.activeId)||null;}
+function visibleGallery(){return [...doc.querySelectorAll("[data-card]")].filter(n=>!n.hidden);}
+function menuListenersCleanup(){
+ for(const r of records)originalRemove.call(qaHost,r.type,r.listener,r.capture);
+ records=[];
+}
+function trackedAdd(type,listener,options){
+ if(type==="popstate"&&iframe){records.push({type,listener,capture:typeof options==="boolean"?options:!!(options&&options.capture)});}
+ return originalAdd.call(this,type,listener,options);
+}
+async function mount(reload=false){
+ budget();
+ if(reload){menuListenersCleanup();qaHost.history.replaceState(initialState,"",initialURL);}
+ else{
+  productionStage=qaHost.document.createElement("section");
+  productionStage.id="oracle-ui-audit-isolated-production-stage";
+  productionStage.setAttribute("aria-label","獨立 QA namespace 正式神諭卡畫面");
+  productionStage.style.cssText="position:relative;z-index:1;margin-top:16px;overflow:auto";
+  qaHost.document.body.append(productionStage);
+  iframe=qaHost.document.createElement("iframe");
+  iframe.id="oracle-ui-audit-frame";
+  iframe.title="神諭之間：獨立 QA namespace 驗收";
+  iframe.setAttribute("sandbox","allow-scripts allow-same-origin");
+  iframe.style.cssText="display:block;box-sizing:content-box;width:1280px;height:800px;border:1px solid #b8c5bd;background:#f3f0ea";
+  productionStage.append(iframe);
+ }
+ iframe.srcdoc=forkedHTML;
+ await until(()=>{
+  win=iframe.contentWindow;doc=iframe.contentDocument;
+  return !!(doc&&doc.getElementById("or-shell")&&doc.getElementById("or-shell").dataset.initialized==="true"&&win.oracleUI&&!required("draw-button").disabled);
+ },"production_mount");
+ await viewportSettled();
+ const errorRecord=()=>{runtimeErrors++;};
+ win.addEventListener("error",errorRecord);
+ win.addEventListener("unhandledrejection",errorRecord);
+ check(reload?"same_namespace_real_iframe_reload":"sealed_production_actual_DOM_mounted",
+  !!(win.oracleUI&&visible(required("or-shell"))),{appCodeScriptPresent:!!$("app-code"),shellInitialized:true});
+ report.execution.actualRenderedDOMRead=true;
+ check("native_storage_writer_ready",required("storage-note").textContent.includes("手札保留於目前的瀏覽器"),{realWriterLockRequired:true});
+}
+async function show(view){win.oracleUI.show(view,{route:false,focus:false});await viewportSettled();}
+async function responsiveAndKnowledge(){
+ iframe.style.width="375px";iframe.style.height="812px";
+ await until(()=>win.innerWidth===375,"mobile_frame_width",2000);
+ await pause(100);await show("knowledge");
+ const mobileCount=required("or-pane-knowledge").querySelectorAll(".or-grid .or-card").length;
+ check("mobile_real_frame_375_layout",mobileCount>=1&&mobileCount<=2&&doc.documentElement.scrollWidth<=win.innerWidth+2,
+  {frameWidth:win.innerWidth,knowledgeCardsOnPage:mobileCount,horizontalOverflowPixels:Math.max(0,doc.documentElement.scrollWidth-win.innerWidth)});
+ check("mobile_sidebar_closed_inert",required("or-sidebar").inert&&required("or-menu-toggle").getAttribute("aria-expanded")==="false");
+ await click(required("or-menu-toggle"));
+ check("mobile_drawer_native_open_handler",required("or-shell").dataset.menu==="open"&&required("or-shell").querySelector(".or-workspace").inert&&doc.activeElement===required("or-sidebar-close"));
+ const focusables=[...required("or-sidebar").querySelectorAll("a[href],button:not([disabled])")];
+ focusables[focusables.length-1].focus();
+ doc.dispatchEvent(new win.KeyboardEvent("keydown",{key:"Tab",bubbles:true,cancelable:true}));
+ check("mobile_Tab_handler_wrap_probe",doc.activeElement===focusables[0],{eventType:"programmatic DOM KeyboardEvent",physicalKeyboardVerified:false});
+ doc.dispatchEvent(new win.KeyboardEvent("keydown",{key:"Escape",bubbles:true,cancelable:true}));await viewportSettled();
+ check("mobile_Escape_handler_close_probe",required("or-shell").dataset.menu==="closed"&&!required("or-shell").querySelector(".or-workspace").inert&&doc.activeElement===required("or-menu-toggle"),
+  {eventType:"programmatic DOM KeyboardEvent",physicalKeyboardVerified:false});
+ iframe.style.width="1280px";iframe.style.height="800px";
+ await until(()=>win.innerWidth===1280,"desktop_frame_width",2000);await pause(100);await show("knowledge");
+ const pane=required("or-pane-knowledge"),cards=[...pane.querySelectorAll(".or-grid .or-card")];
+ const countLabel=pane.querySelector(".or-caption");
+ const topicCount=Number((countLabel&&countLabel.textContent.match(/^(\d+)\s*篇/)||[])[1]);
+ check("desktop_real_frame_1280_layout",cards.length>=1&&cards.length<=6&&!required("or-sidebar").inert&&doc.documentElement.scrollWidth<=win.innerWidth+2,
+  {frameWidth:win.innerWidth,knowledgeCardsOnPage:cards.length,horizontalOverflowPixels:Math.max(0,doc.documentElement.scrollWidth-win.innerWidth)});
+ if(config.expectedTopicCount!==null)check("actual_rendered_topic_count",topicCount===config.expectedTopicCount,{expected:config.expectedTopicCount,actual:topicCount});
+ const before=cards.map(n=>n.querySelector("h3").textContent).join("|");
+ await clickText(pane.querySelector(".or-pager"),"下一頁");
+ check("knowledge_real_next_page",required("or-pane-knowledge").querySelectorAll(".or-grid .or-card").length<=6&&
+  [...required("or-pane-knowledge").querySelectorAll(".or-grid .or-card h3")].map(n=>n.textContent).join("|")!==before);
+ await clickText(required("or-pane-knowledge").querySelector(".or-pager"),"上一頁");
+ check("knowledge_real_previous_page",[...required("or-pane-knowledge").querySelectorAll(".or-grid .or-card h3")].map(n=>n.textContent).join("|")===before);
+ win.oracleUI.openTopic(config.relatedTopicId,null);await viewportSettled();
+ await until(()=>visible(required("or-pane-reader"))&&required("or-pane-reader").querySelector(".or-reader-title"),"knowledge_reader");
+ await clickText(required("or-pane-reader").querySelector(".or-tabs"),"正文");
+ let box=required("or-pane-reader").querySelector(".or-reader");
+ let body=box.querySelector(".or-prose").textContent;
+ check("knowledge_reader_one_actual_segment",box.querySelectorAll("h3").length===1&&box.querySelectorAll(".or-prose").length===1&&body.length>0);
+ await clickText(box.querySelector(".or-pager"),"下一段");
+ box=required("or-pane-reader").querySelector(".or-reader");
+ check("knowledge_reader_next_actual_segment",box.querySelectorAll(".or-prose").length===1&&box.querySelector(".or-prose").textContent!==body);
+ const related=box.querySelector(".or-related");
+ check("related_links_actual_DOM_present",!!(related&&related.querySelector("summary")&&related.querySelectorAll("nav[aria-label='延伸閱讀'] a.or-button").length));
+ await click(related.querySelector("summary"));
+ const links=[...related.querySelectorAll("nav[aria-label='延伸閱讀'] a.or-button")];
+ const first=links[0],target=new URL(first.href);
+ check("related_links_public_route_markup",related.open&&links.every(n=>{const u=new URL(n.href);return u.origin===config.productionOrigin&&u.searchParams.get("view")==="reader"&&!!u.searchParams.get("topic");}),
+  {relatedLinkCount:links.length,relatedTopicIds:links.map(n=>new URL(n.href).searchParams.get("topic"))});
+ const oldTitle=required("or-pane-reader").querySelector(".or-reader-title").textContent;
+ await click(first);
+ check("related_link_native_open_handler",required("or-pane-reader").querySelector(".or-reader-title").textContent!==oldTitle&&new URL(qaHost.location.href).searchParams.get("topic")===target.searchParams.get("topic"));
+ win.oracleUI.openTopic(config.relatedTopicId,null);await viewportSettled();
+ await clickText(required("or-pane-reader").querySelector(".or-tabs"),"來源");
+ const list=required("or-pane-reader").querySelector(".or-source-list");
+ check("knowledge_reader_actual_citations_present",!!list&&list.querySelectorAll("button").length>0,{outboundLinksClicked:false});
+ await show("cards");
+ check("original_gallery_full_24_and_page_8",doc.querySelectorAll("[data-card]").length===24&&visibleGallery().length===8,
+  {originalCardNodes:doc.querySelectorAll("[data-card]").length,visibleCards:visibleGallery().length});
+ const firstGallery=visibleGallery().map(n=>n.dataset.card).join(",");
+ await clickText(required("gallery-pages"),"下一頁");
+ check("original_gallery_native_next_page",visibleGallery().length===8&&visibleGallery().map(n=>n.dataset.card).join(",")!==firstGallery);
+ await clickText(required("gallery-pages"),"上一頁");
+ check("original_gallery_native_previous_page",visibleGallery().map(n=>n.dataset.card).join(",")===firstGallery);
+ report.execution.actualResponsiveFrameLayoutsVerified=true;
+}
+async function drawOneOrThree(number,question,withGuard=false){
+ await show("draw");await click(doc.querySelector('[data-mode="'+number+'"]'));
+ await input(required("question"),question);
+ const before=qaState().entries.length;
+ await click(required("draw-button"));
+ await until(()=>visible(required("choice-panel"))&&required("choice-cards").querySelectorAll("[data-slot]").length===12&&!required("draw-button").disabled,"real_native_shuffle");
+ const slots=[...required("choice-cards").querySelectorAll("[data-slot]")];
+ check("native_manual_selection_deck_"+number,slots.length===12&&required("reveal-button").disabled&&slots.every(n=>n.getAttribute("aria-pressed")==="false"));
+ if(withGuard){
+  win.reveal();
+  check("native_empty_selection_reveal_guard_"+number,qaState().entries.length===before&&visible(required("choice-panel"))&&required("reveal-button").disabled);
+ }
+ for(let i=0;i<number;i++){
+  await click(slots[i]);
+  check("native_slot_order_"+number+"_"+(i+1),slots[i].getAttribute("aria-pressed")==="true"&&slots[i].querySelector(".order").textContent===String(i+1));
+  if(i<number-1&&withGuard){
+   win.reveal();
+   check("native_partial_selection_reveal_guard_"+number+"_"+(i+1),required("reveal-button").disabled&&qaState().entries.length===before);
+  }
+ }
+ check("native_reveal_enabled_after_exact_selection_"+number,!required("reveal-button").disabled);
+ await click(required("reveal-button"));
+ await until(()=>visible(required("result"))&&visible(required("or-pane-reading"))&&required("result-grid").querySelectorAll(".reading-card").length===number,"broad_native_reading_success_hook");
+ const active=activeQA();
+ check("native_actual_"+number+"_card_reading_success",!!active&&active.mode===String(number)&&active.cardIds.length===number&&new Set(active.cardIds).size===number&&active.question===question&&qaState().entries.length===before+1,
+  {mode:String(number),readingCardNodes:required("result-grid").querySelectorAll(".reading-card").length,broadHookReadingPaneVisible:true});
+ return active.id;
+}
+async function drawChecks(question){
+ const initialCount=qaState().entries.length;
+ check("fresh_QA_namespace_initially_empty",initialCount===0);
+ win.reveal();
+ check("native_idle_reveal_guard",qaState().entries.length===0);
+ await drawOneOrThree(1,question,true);
+ await drawOneOrThree(3,question,true);
+ await show("daily");await click(required("daily-button"));
+ await until(()=>visible(required("or-pane-reading"))&&activeQA()&&activeQA().mode==="daily","daily_broad_success_hook");
+ const daily=activeQA(),before=qaState().entries.length;
+ check("daily_actual_native_reading",daily.cardIds.length===1&&required("result-grid").querySelectorAll(".reading-card").length===1&&daily.id.startsWith("daily-"),
+  {broadHookReadingPaneVisible:true});
+ await show("daily");await click(required("daily-button"));
+ check("daily_same_day_same_card_no_duplicate",activeQA().id===daily.id&&activeQA().cardIds[0]===daily.cardIds[0]&&qaState().entries.length===before);
+ report.execution.actualNativeEventHandlersExecuted=true;
+ return daily.id;
+}
+async function journalChecks(question,note,dailyId){
+ while(qaState().entries.length<7)await drawOneOrThree(1,question,false);
+ await show("reading");
+ await input(required("journal"),note);await click(required("save-note"));
+ const saved=activeQA(),savedCount=qaState().entries.length;
+ check("journal_native_save_and_real_QA_storage_readback",!!saved&&saved.note===note&&saved.question===question&&savedCount===7,{entryCount:savedCount,canaryComparisonRedacted:true});
+ report.execution.actualQANamespacePersistenceVerified=true;
+ await show("journal");
+ const pageOne=required("history-list").querySelectorAll(".history-item").length;
+ await clickText(required("history-pages"),"下一頁");
+ check("original_journal_native_next_page",pageOne===6&&required("history-list").querySelectorAll(".history-item").length===1,{pageOneEntries:pageOne,pageTwoEntries:1});
+ await clickText(required("history-pages"),"上一頁");
+ check("original_journal_native_previous_page",required("history-list").querySelectorAll(".history-item").length===6);
+ const dailyItem=[...required("history-list").querySelectorAll(".history-item")].find(n=>n.querySelector(".history-meta span").textContent==="每日一牌");
+ check("daily_journal_entry_in_real_history",!!dailyItem);
+ await click(dailyItem.querySelector(".history-buttons button"));
+ check("history_daily_broad_reading_success_hook",visible(required("or-pane-reading"))&&activeQA().id===dailyId&&required("result-grid").querySelectorAll(".reading-card").length===1,{selectionPhaseRequired:false});
+ await show("journal");await click(required("export-journal"));
+ const exported=required("backup-text").value;
+ const parsed=JSON.parse(exported);
+ check("journal_actual_export_payload",parsed.version===1&&parsed.entries.length===savedCount&&parsed.entries.some(e=>e.id===saved.id&&e.note===note)&&parsed.entries.some(e=>e.question===question),{entryCount:parsed.entries.length,transport:"real native export textarea",canaryComparisonRedacted:true});
+ report.execution.actualExportPayloadVerified=true;
+ await show("ai");await reach(required("export-site"));
+ check("original_pristine_export_control_visible_in_AI_pane",visible(required("export-site"))&&required("or-pane-ai").contains(required("export-site")));
+ await click(required("export-site"));
+ await until(()=>required("source-dialog").open,"pristine_export_dialog",1500);await viewportSettled();
+ const sourceDialogGeometry=viewportGeometry();check("native_pristine_export_dialog_fixed_viewport",sourceDialogGeometry.passed,{geometry:sourceDialogGeometry});
+ const pristine=required("source-text").value;
+ check("actual_public_pristine_HTML_export_excludes_QA_canaries",pristine.startsWith("<!DOCTYPE html>")&&!pristine.includes(note)&&!pristine.includes(question)&&pristine.includes('id="app-code"')&&pristine.includes('id="or-shell"'),
+  {privateQuestionFound:false,privateNoteFound:false,canaryComparisonRedacted:true,transport:"real native source-dialog textarea"});
+ report.execution.actualPristineHTMLExportVerified=true;
+ await click(required("source-dialog").querySelector('button[value="close"]'));
+ await mount(true);
+ await until(()=>activeQA()&&activeQA().id===dailyId&&visible(required("or-pane-reading")),"real_storage_restored_reading");
+ check("journal_same_namespace_actual_reload_persistence",qaState().entries.length===savedCount&&qaState().entries.some(e=>e.id===saved.id&&e.note===note)&&visible(required("result")),
+  {entryCount:qaState().entries.length,broadRestoreHookReadingPaneVisible:true,canaryComparisonRedacted:true});
+ report.execution.actualQANamespaceReloadVerified=true;
+ await show("journal");
+ const del=required("history-list").querySelector(".history-item .delete-entry");
+ await click(del);
+ await until(()=>required("delete-dialog").open,"QA_entry_delete_dialog",1500);await viewportSettled();
+ const deleteDialogGeometry=viewportGeometry();check("native_QA_delete_dialog_fixed_viewport",deleteDialogGeometry.passed,{geometry:deleteDialogGeometry});
+ await click(required("delete-dialog").querySelector('button[value="delete"]'));
+ await until(()=>qaState().entries.length===savedCount-1,"QA_entry_native_deleted",1500);
+ check("QA_only_actual_native_delete_before_import",qaState().entries.length===savedCount-1,{entryCount:qaState().entries.length,productionJournalTouched:false});
+ const file=new win.File([exported],"oracle-qa-backup.json",{type:"application/json"});
+ if(typeof win.DataTransfer!=="function")throw failure("REAL_FILE_INPUT_DATA_TRANSFER_UNAVAILABLE");
+ const transfer=new win.DataTransfer();transfer.items.add(file);
+ required("import-file").files=transfer.files;
+ required("import-file").dispatchEvent(new win.Event("change",{bubbles:true}));
+ await until(()=>qaState().entries.length===savedCount&&required("history-status").textContent.includes("已合併"),"actual_FileReader_import");
+ check("journal_native_file_input_FileReader_import_restores_deleted_QA_entry",qaState().entries.length===savedCount&&qaState().entries.some(e=>e.id===saved.id&&e.note===note)&&required("history-status").textContent.includes("已合併"),
+  {entryCount:qaState().entries.length,realFileReader:true,fileInputMethod:"programmatic actual File and DataTransfer, OS picker not verified",canaryComparisonRedacted:true});
+ report.execution.actualNativeFileReaderImportVerified=true;
+ const publicTopics=await sameOriginText("/oracle-knowledge-topics.json");
+ JSON.parse(publicTopics.text);
+ check("actual_public_topic_JSON_excludes_QA_canaries",!publicTopics.text.includes(question)&&!publicTopics.text.includes(note),
+  {privateQuestionFound:false,privateNoteFound:false,canaryComparisonRedacted:true});
+}
+publish();
+(async()=>{
+ try{
+  if(params.get("run")!=="1"||params.get("seal")!==config.expectedManifestSHA){
+   report.phase="pending";report.reason="EXPLICIT_RUN_AND_MATCHING_SEAL_REQUIRED";return;
+  }
+  if(!["all","smoke","draw","journal"].includes(mode))throw failure("UNKNOWN_QA_MODE");
+  if(triggerURL.origin!==config.productionOrigin||qaHost.location.origin!==config.productionOrigin||
+   new URL(qaHost.location.href).pathname!=="/oracle-audit.html")throw failure("EXPLICIT_HTTPS_QA_CARRIER_REQUIRED");
+  report.execution.actualHTTPSQAHostUsed=true;
+  report.execution.explicitOptIn=true;
+  const source=await fetchPinnedProductionHTML();
+  report.execution.actualProductionHTMLFetched=true;
+  check("actual_production_HTML_SHA256_seal",(await sha(source.bytes))===config.finalHTMLSHA256,{httpStatus:source.status,httpStatuses:source.httpStatuses,partCount:source.partCount,actualBytes:source.bytes.length});
+  report.execution.actualProductionHTMLSHA256Matched=true;
+  const parser=new DOMParser(),parsed=parser.parseFromString(source.text,"text/html");
+  const script=parsed.getElementById("app-code");
+  const anchor='const STORAGE_KEY="the-oracle-room:v1";';
+  check("exact_single_storage_anchor_in_actual_app",!!script&&parsed.querySelectorAll("#app-code").length===1&&count(script.textContent,anchor)===1&&count(source.text,anchor)===1&&count(source.text,"the-oracle-room:v1")===1);
+  const deckStart=script.textContent.indexOf("const cards="),deckEnd=script.textContent.indexOf("\nconst cardMap=",deckStart);
+  if(deckStart<0||deckEnd<=deckStart)throw failure("ACTUAL_ORIGINAL_DECK_ANCHORS_MISSING");
+  const declaration=script.textContent.slice(deckStart,deckEnd);
+  const cards=JSON.parse(declaration.slice("const cards=".length).trim().replace(/;$/,""));
+  check("actual_original_24_card_literal_unchanged",cards.length===24&&new Set(cards.map(c=>c.id)).size===24&&(await sha(new TextEncoder().encode(declaration)))===config.expectedCardDeclarationSHA256,
+   {originalCardCount:cards.length,cardDeclarationSHA256:config.expectedCardDeclarationSHA256});
+  for(let i=0;i<3;i++){const candidate="oracle-qa:"+randomToken();if(qaHost.localStorage.getItem(candidate)===null){qaKey=candidate;break;}}
+  if(!qaKey)throw failure("UNIQUE_QA_NAMESPACE_UNAVAILABLE");
+  const replacement="const STORAGE_KEY="+JSON.stringify(qaKey)+";";
+  forkedHTML=source.text.replace(anchor,replacement);
+  check("exact_namespace_only_production_HTML_fork",count(forkedHTML,anchor)===0&&count(forkedHTML,replacement)===1&&forkedHTML.replace(replacement,anchor)===source.text);
+  report.isolation.exactStorageConstantForkOnly=true;
+  report.isolation.productionNamespaceUnchangedByConstruction=true;
+  qaHost.addEventListener=trackedAdd;tracking=true;report.isolation.qaHostPopstateListenerRecording=true;
+  const question="網站驗收：今天可以先完成哪個小步驟？ "+randomToken();
+  const note="oracle-private-canary-"+randomToken();
+  await mount(false);
+  if(mode==="all"||mode==="smoke")await responsiveAndKnowledge();
+  let dailyId=null;
+  if(mode==="all"||mode==="draw"||mode==="journal")dailyId=await drawChecks(question);
+  if(mode==="all"||mode==="journal")await journalChecks(question,note,dailyId);
+  if(mode==="all"||mode==="smoke")await fixedViewportChecks();
+  check("native_runtime_unhandled_error_count_zero",runtimeErrors===0,{capturedRuntimeErrorCount:runtimeErrors});
+  report.phase="completed";
+ }catch(e){
+  report.phase="failed";report.failureCode=e&&e.auditCode||"UI_AUDIT_EXECUTION_FAILED";
+ }finally{
+  try{
+   menuListenersCleanup();
+   if(tracking&&qaHost.addEventListener===trackedAdd)qaHost.addEventListener=originalAdd;
+   report.isolation.qaHostPopstateListenerCleanupVerified=records.length===0&&qaHost.addEventListener===originalAdd;
+   if(iframe){iframe.remove();iframe=null;win=null;doc=null;await pause(50);}
+   if(productionStage){productionStage.remove();productionStage=null;}
+   qaHost.history.replaceState(initialState,"",initialURL);report.isolation.parentRouteRestored=qaHost.location.href===initialURL;
+   if(qaKey){qaHost.localStorage.removeItem(qaKey);qaHost.localStorage.removeItem(qaKey+":probe");
+    report.isolation.qaNamespaceCleanupVerified=qaHost.localStorage.getItem(qaKey)===null&&qaHost.localStorage.getItem(qaKey+":probe")===null;}
+  }catch(e){report.phase="failed";report.failureCode="QA_CLEANUP_FAILED";}
+  report.finishedAt=new Date().toISOString();report.elapsedMs=Date.now()-started;
+  if(report.phase==="completed"&&(!report.isolation.qaNamespaceCleanupVerified||!report.isolation.parentRouteRestored||!report.isolation.qaHostPopstateListenerCleanupVerified)){report.phase="failed";report.failureCode="QA_CLEANUP_NOT_VERIFIED";}
+  report.passed=report.phase==="completed"&&report.checks.length>0&&report.checks.every(x=>x.status==="passed");
+  report.actualBrowserUIExecuted=report.passed&&report.execution.actualRenderedDOMRead===true;
+  publish();
+ }
+})();
+})({"schemaVersion":"1.0","expectedManifestSHA":"d1926f5d2ae94bf82e53a4c3b852cac2c30c0543ca793366f457ce064d5ab3cd","finalHTMLSHA256":"1fb4a99325a7c7d39dfe62bf9014b73e14257711a409228062bda42ee1eba13e","productionOrigin":"https://brendonlee1006.github.io","productionHTMLPath":"/oracle-room.txt","productionHTMLParts":[{"url":"/oracle-room.txt","sha256":"f4fb83f4b84a696606ee6571c260d35515f25452b0bc0757fe40f7de616f868a","utf8Bytes":389999,"chars":300371},{"url":"/oracle-room-part-02.txt","sha256":"00c6c031b0e04aed8c92eaf235742b813a16dd3d965024ff21a0593d106bdb31","utf8Bytes":390000,"chars":279308},{"url":"/oracle-room-part-03.txt","sha256":"a798fe15d692862e04c6ac7cbfdca1e5167b934570b5160e20b857eece2ee309","utf8Bytes":35082,"chars":33894}],"expectedTopicCount":134,"expectedCardDeclarationSHA256":"b683ce3238ff59437ec07932cf6dcf508bc0747c87caa2333e76bc561d68a9ab","budgetMs":52000,"relatedTopicId":"oracle-02"});</script></body></html>

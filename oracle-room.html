@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="依可追溯文獻、出版社與館藏紀錄整理神諭卡知識。探索24張原創神諭卡與留在瀏覽器的月光手札。"><meta name="theme-color" content="#21192c"><link rel="alternate" type="application/json" title="神諭卡公開知識資料" href="/oracle-data-manifest.json"><title>神諭之間｜神諭卡知識與月光手札</title><style>html,body{margin:0}.host{position:fixed;inset:0;display:grid;grid-template-rows:minmax(0,1fr);height:100dvh;min-height:0;overflow:hidden;background:#21192c;color:#d9ceba}.frame{display:block;width:100%;height:100%;min-width:0;min-height:0;border:0;background:#21192c}.status{align-self:center;justify-self:center;margin:24px;font:14px/1.8 system-ui,sans-serif;color:#c9ae79}</style></head><body><main id="oracle-room-host" class="host"><p id="oracle-room-status" class="status" role="status">正在翻開神諭之間……</p></main><script>(async function oracleStaticRoomHost(config){
+ "use strict";
+ const status=document.getElementById("oracle-room-status"),host=document.getElementById("oracle-room-host"),aborter=new AbortController();
+ window.addEventListener("pagehide",()=>aborter.abort(),{once:true});
+ const digest=async b=>Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",b)),x=>x.toString(16).padStart(2,"0")).join("");
+ try{
+  if(location.origin!==config.origin||location.pathname!=="/oracle-room.html"||config.expectedHTMLParts.length!==3)throw Error("Exact static origin/route/parts required");
+  const texts=await Promise.all(config.expectedHTMLParts.map(async part=>{
+   const target=new URL(part.url,config.origin);
+   if(target.origin!==config.origin||target.pathname!==part.url||target.search||target.hash)throw Error("Unexpected HTML part URL");
+   const r=await fetch(target.href,{method:"GET",mode:"same-origin",credentials:"omit",redirect:"error",cache:"no-store",signal:aborter.signal});
+   if(r.status!==200||r.redirected||r.url!==target.href)throw Error("HTML part HTTP origin/path/status mismatch");
+   const b=await r.arrayBuffer();if(b.byteLength!==part.utf8Bytes||await digest(b)!==part.sha256)throw Error("HTML part byte seal mismatch");
+   const text=new TextDecoder("utf-8",{fatal:true,ignoreBOM:true}).decode(b);if(text.length!==part.chars)throw Error("HTML part character seal mismatch");return text;
+  }));
+  const html=texts.join(""),bytes=new TextEncoder().encode(html);
+  if(html.length!==config.expectedHTMLParts.reduce((n,p)=>n+p.chars,0)||bytes.byteLength!==config.expectedHTMLParts.reduce((n,p)=>n+p.utf8Bytes,0)||await digest(bytes)!==config.expectedHTMLSHA)throw Error("Full HTML seal mismatch");
+  if(!/^<!doctype html>/i.test(html))throw Error("Missing HTML declaration");
+  const parsed=new DOMParser().parseFromString(html,"text/html");
+  if(parsed.querySelectorAll("base").length||parsed.querySelectorAll('[id="app-code"]').length!==1||parsed.querySelectorAll('script[id="app-code"]').length!==1)throw Error("Invalid source shape");
+  if(aborter.signal.aborted)return;
+  const frame=document.createElement("iframe");frame.id="oracle-room-frame";frame.className="frame";frame.title="神諭之間：神諭卡知識、原創神諭卡與月光手札";frame.setAttribute("allow","clipboard-write");
+  frame.addEventListener("load",()=>{const doc=frame.contentDocument;if(doc&&!doc.querySelector("base")){const base=doc.createElement("base");base.href="about:srcdoc";doc.head.prepend(base);}});
+  frame.srcdoc=html;host.replaceChildren(frame);
+ }catch(error){aborter.abort();if(error&&error.name==="AbortError")return;status.setAttribute("role","alert");status.textContent="網站暫時無法載入，請重新整理頁面。";}
+})({"origin":"https://brendonlee1006.github.io","expectedHTMLSHA":"1fb4a99325a7c7d39dfe62bf9014b73e14257711a409228062bda42ee1eba13e","expectedHTMLParts":[{"url":"/oracle-room.txt","sha256":"f4fb83f4b84a696606ee6571c260d35515f25452b0bc0757fe40f7de616f868a","utf8Bytes":389999,"chars":300371},{"url":"/oracle-room-part-02.txt","sha256":"00c6c031b0e04aed8c92eaf235742b813a16dd3d965024ff21a0593d106bdb31","utf8Bytes":390000,"chars":279308},{"url":"/oracle-room-part-03.txt","sha256":"a798fe15d692862e04c6ac7cbfdca1e5167b934570b5160e20b857eece2ee309","utf8Bytes":35082,"chars":33894}]});</script></body></html>

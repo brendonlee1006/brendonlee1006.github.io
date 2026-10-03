@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#21192c">
+<title>神諭之間</title>
+<style>html{color-scheme:dark}body{margin:0;min-height:100dvh;display:grid;place-items:center;background:#21192c;color:#d9ceba;font:16px/1.7 system-ui,sans-serif}main{max-width:32rem;padding:24px;text-align:center}a{color:#c9ae79}</style>
+</head>
+<body>
+<main><h1>神諭之間</h1><p>正在翻開月光手札……</p><p><a id="oracle-entry" href="./oracle-room.html">開啟神諭之間</a></p><noscript><p>網站需要啟用 JavaScript。</p></noscript></main>
+<script>
+(function(){
+ "use strict";
+ const target=new URL("./oracle-room.html",window.location.href);
+ target.search=window.location.search;
+ target.hash=window.location.hash;
+ document.getElementById("oracle-entry").href=target.href;
+ window.location.replace(target.href);
+})();
+</script>
+</body>
+</html>

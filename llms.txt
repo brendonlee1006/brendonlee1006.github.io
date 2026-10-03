@@ -1,0 +1,20 @@
+# 神諭之間
+
+https://brendonlee1006.github.io
+
+純神諭卡知識庫，文章沒有固定篇數上限；依可查證出處、作者、出版社與館藏紀錄整理。
+
+- 資料清單: /oracle-data-manifest.json
+- 知識全文: /oracle-knowledge-topics.json
+- 內附來源: /oracle-knowledge-sources.json
+- 完整來源索引: /oracle-source-index.json, /oracle-source-index-02.json, /oracle-source-index-03.json, /oracle-source-index-04.json, /oracle-source-index-05.json, /oracle-source-index-06.json, /oracle-source-index-07.json, /oracle-source-index-08.json, /oracle-source-index-09.json, /oracle-source-index-10.json, /oracle-source-index-11.json, /oracle-source-index-12.json, /oracle-source-index-13.json, /oracle-source-index-14.json, /oracle-source-index-15.json, /oracle-source-index-16.json, /oracle-source-index-17.json, /oracle-source-index-18.json, /oracle-source-index-19.json, /oracle-source-index-20.json, /oracle-source-index-21.json, /oracle-source-index-22.json, /oracle-source-index-23.json, /oracle-source-index-24.json, /oracle-source-index-25.json
+- 來源別名: /oracle-source-aliases.json
+- 搜尋輪次與來源分檔: 請讀資料清單的 files
+
+schemaVersion 1.0；文章、來源及搜尋轮次 ID 穩定。文章可用 /oracle-room.html?view=reader&topic=oracle-101，來源可用 /oracle-room.html?view=reader&source=R000830。
+
+catalogued 是已整理書目；checked 是已核對指定頁面；candidate 是待核搜尋候選。請讀 accessScope、traceability 與 inspection 限制，圖書館書目不一定證明持有，全書存在不代表主張或占卜效果獲得驗證。
+
+公開資料不含私人提問、心得及手札；離線匿名 HTML 只含內附知識與來源，完整外部目錄需連線。
+
+欄位 independentCheckedSourceFamilies 沿用舊 schema；數值按 sourceFamily 或 canonicalURL 標籤分組，並不代表獨立提供者數或占卜效果研究。請另外核對 sourceProvider、實際館藏與 accessScope。

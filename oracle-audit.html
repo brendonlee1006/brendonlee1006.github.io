@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>神諭之間｜公開驗證</title><style>body{min-height:100vh;margin:0;padding:24px;box-sizing:border-box;background:#f3f0ea;color:#223630;font:14px/1.7 system-ui,sans-serif}pre{white-space:pre-wrap;overflow-wrap:anywhere}iframe{position:fixed;left:-10000px;top:0;width:1280px;height:960px;border:0;pointer-events:none}</style></head><body><main><h1>公開驗證</h1><p id="oracle-audit-status" role="status">尚未執行驗證</p><pre id="oracle-audit-result" data-phase="not_run">{"phase":"not_run","actualHTTPExecuted":false,"actualBrowserUIExecuted":false,"passed":false}</pre><iframe id="oracle-audit-frame" title="發布封印驗證" aria-hidden="true" tabindex="-1"></iframe></main><script>(async function oracleStaticAuditHost(config){
+ "use strict";
+ const out=document.getElementById("oracle-audit-result"),status=document.getElementById("oracle-audit-status"),frame=document.getElementById("oracle-audit-frame"),trigger=new URL(location.href),mode=trigger.searchParams.get("mode"),chosen=config.modes[mode];
+ const common={hostSchemaVersion:"oracle-audit-host-v1",expectedManifestSHA:config.expectedManifestSHA,expectedHTMLSHA:config.expectedHTMLSHA,actualHTTPExecuted:false,actualBrowserUIExecuted:false,realUserStorageRead:false,realUserStorageWritten:false,startedAt:new Date().toISOString()};
+ let finished=false,candidateVerified=false,candidateHTTP=false,timer,poller;
+ const aborter=new AbortController(),terminal=new Set(["completed","failed","unknown_timeout","not_run"]);
+ const finish=value=>{if(finished)return;finished=true;clearTimeout(timer);clearInterval(poller);aborter.abort();status.textContent="驗證已結束";out.dataset.phase=String(value.phase);out.textContent=JSON.stringify(value,null,2);};
+ const incomplete=(phase,reason,details={})=>({...common,phase,passed:false,reason,...details,hostVerification:{mode,candidateVerified,candidateHTTPExecuted:candidateHTTP,source:"first_party_release_sealed_txt_to_srcdoc",terminalReportExtracted:false}});
+ window.addEventListener("pagehide",()=>{finished=true;clearTimeout(timer);clearInterval(poller);aborter.abort();},{once:true});
+ if(trigger.origin!==config.origin||trigger.pathname!=="/oracle-audit.html"||!["api","ui"].includes(mode)||!chosen||trigger.searchParams.get("run")!=="1"||trigger.searchParams.get("seal")!==config.expectedManifestSHA){finish(incomplete("not_run","使用明示 mode、run=1 與本次發布 seal 的驗證網址。"));return;}
+ timer=setTimeout(()=>finish(incomplete("unknown_timeout","58 秒內未取得完整終結報告；不視為通過。")),58000);
+ const inspect=()=>{
+  if(finished||!candidateVerified)return;
+  try{
+   const doc=frame.contentDocument;if(!doc)return;
+   const nodes=doc.querySelectorAll('[id="'+chosen.preId+'"]');if(nodes.length!==1||nodes[0].tagName!=="PRE")return;
+   let child;try{child=JSON.parse(nodes[0].textContent||"");}catch(_){return;}
+   if(!child||typeof child!=="object"||Array.isArray(child)||!terminal.has(child.phase))return;
+   if(child.schemaVersion!==chosen.schemaVersion||(mode==="ui"&&child.kind!=="actual_isolated_oracle_UI_audit")||child.expectedManifestSHA!==config.expectedManifestSHA||child.expectedHTMLSHA!==config.expectedHTMLSHA){finish(incomplete("failed","子報告的 schema 或本次發布封印不一致。",{hostRejectedChildReport:true}));return;}
+   const e=child.execution,r=child.report,nested=mode==="ui"?(child.mode==="all"&&e&&typeof e==="object"&&!Array.isArray(e)&&e.actualFixedViewportNoScrollPageLayoutsVerified===true&&e.actualViewportContentReachabilityVerified===true&&e.actualViewportNativeControlsReachabilityVerified===true):(r&&typeof r==="object"&&!Array.isArray(r)&&r.passed===true);
+   const accepted=child.phase==="completed"&&child.passed===true&&child[chosen.actualFlag]===true&&!!nested;
+   finish({...child,passed:accepted,hostSchemaVersion:"oracle-audit-host-v1",hostVerification:{mode,candidateVerified:true,candidateHTTPExecuted:candidateHTTP,expectedQAPayloadSHA256:chosen.sha256,source:"first_party_release_sealed_txt_to_srcdoc",terminalReportExtracted:true,exactReleaseSealsMatched:true,actualExecutionFlag:chosen.actualFlag,accepted,limits:"不代表作業系統鍵盤、200% 瀏覽器縮放或截圖驗收。"}});
+  }catch(error){finish(incomplete("failed","無法存取同源子驗證文件。",{error:String(error)}));}
+ };
+ try{
+  status.textContent="正在核對第一方驗證載體與本次發布封印";
+  const target=new URL(chosen.path,config.origin),response=await fetch(target.href,{method:"GET",mode:"same-origin",credentials:"omit",redirect:"error",cache:"no-store",signal:aborter.signal});
+  candidateHTTP=true;if(response.status!==200||response.redirected||response.url!==target.href)throw Error("驗證載體 HTTP 狀態或來源不符。");
+  const bytes=await response.arrayBuffer(),digest=await crypto.subtle.digest("SHA-256",bytes),sha=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,"0")).join("");
+  if(sha!==chosen.sha256)throw Error("驗證載體 SHA-256 不符。");
+  const text=new TextDecoder("utf-8",{fatal:true,ignoreBOM:true}).decode(bytes);
+  if(!/^<!doctype html>/i.test(text))throw Error("驗證載體缺少 HTML 宣告。");
+  const doc=new DOMParser().parseFromString(text,"text/html");
+  if(doc.querySelectorAll("base").length||doc.querySelectorAll('[id="'+chosen.preId+'"]').length!==1)throw Error("驗證載體 base 或唯一回報節點不符。");
+  const base=doc.createElement("base");base.href=trigger.href;doc.head.prepend(base);
+  if(finished)return;candidateVerified=true;frame.srcdoc="<!doctype html>\n"+doc.documentElement.outerHTML;
+  status.textContent="正在等待實際執行的終結報告";poller=setInterval(inspect,100);
+ }catch(error){if(!finished)finish(incomplete("failed","驗證載體未能完整載入並核對。",{error:String(error)}));}
+})({"origin":"https://brendonlee1006.github.io","expectedManifestSHA":"d1926f5d2ae94bf82e53a4c3b852cac2c30c0543ca793366f457ce064d5ab3cd","expectedHTMLSHA":"1fb4a99325a7c7d39dfe62bf9014b73e14257711a409228062bda42ee1eba13e","modes":{"api":{"path":"/oracle-public-audit.txt","sha256":"1f578d13eb6f736ddae415d782e14c38b63da28959fe4c4380d20088cc6d49b9","preId":"oracle-public-audit-result","schemaVersion":"oracle-public-api-report-v1","actualFlag":"actualHTTPExecuted"},"ui":{"path":"/oracle-ui-audit.txt","sha256":"b5fd8fc12c9c24c6284338a20deb1423e08b9c0bdfba7f7ebb0fbd8fe869d4cb","preId":"oracle-ui-audit-result","schemaVersion":"1.0","actualFlag":"actualBrowserUIExecuted"}}});</script></body></html>

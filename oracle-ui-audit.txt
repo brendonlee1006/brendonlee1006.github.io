@@ -21,7 +21,7 @@ const report={
   actualExportPayloadVerified:false,actualPristineHTMLExportVerified:false,
   actualResponsiveFrameLayoutsVerified:false,actualFixedViewportNoScrollPageLayoutsVerified:false,
   actualViewportContentReachabilityVerified:false,actualViewportNativeControlsReachabilityVerified:false,
-  actualSinglePageReadingsVerified:false,actualMobileReadingSelectorsVerified:false,actualTextEditingInternalScrollVerified:false,actualOSKeyboardVerified:false,actualOSZoom200Verified:false,
+  actualShuffleAutoAdvanceVerified:false,actualReshuffleAutoAdvanceVerified:false,actualDrawAgainAutoAdvanceVerified:false,actualSinglePageReadingsVerified:false,actualMobileReadingSelectorsVerified:false,actualTextEditingInternalScrollVerified:false,actualOSKeyboardVerified:false,actualOSZoom200Verified:false,
   actualDownloadTransportVerified:false,actualClipboardTransportVerified:false,actualScreenshotCaptured:false,
   actualProductionUserStorageRead:false,actualProductionUserStorageWritten:false
  },
@@ -321,6 +321,40 @@ async function responsiveAndKnowledge(){
  report.execution.actualResponsiveFrameLayoutsVerified=true;
 }
 
+
+async function checkAutomaticSelection(label,question,entryCount){
+ const a=await viewportSettled(),slots=[...required("choice-cards").querySelectorAll("[data-slot]")],first=slots[0],geometry=viewportGeometry();
+ check("automatic_selection_page_"+label,a.view==="draw"&&a.nooverflow===true&&!a.fallback&&geometry.passed&&slots.length===12&&visible(first)&&doc.activeElement===first&&required("question").value===question&&qaState().entries.length===entryCount&&required("reveal-button").disabled&&slots.every(n=>n.getAttribute("aria-pressed")==="false"),
+  {width:win.innerWidth,height:win.innerHeight,totalPages:a.total,automaticPage:a.page,firstCardVisible:visible(first),firstCardFocused:doc.activeElement===first,noManualPagerBeforeAssertion:true,questionPreserved:true,noReadingCreated:true,geometry});
+ report.shuffleAutoAdvanceCoverage=(report.shuffleAutoAdvanceCoverage||[]).concat({label,width:win.innerWidth,height:win.innerHeight,totalPages:a.total,automaticPage:a.page,firstCardVisible:visible(first),firstCardFocused:doc.activeElement===first,noScrollGeometryPassed:geometry.passed});
+ return a;
+}
+async function shuffleAutoAdvanceChecks(question){
+ const entries=qaState().entries.length;
+ for(const [width,height]of[[1280,800],[1920,950],[375,812]]){
+  iframe.style.width=width+"px";iframe.style.height=height+"px";await until(()=>win.innerWidth===width&&win.innerHeight===height,"shuffle_actual_frame_dimensions",2000);await viewportSettled();
+  for(const number of[1,3]){
+   await show("draw");await click(doc.querySelector('[data-mode="'+number+'"]'));await input(required("question"),question);
+   await click(required("draw-button"));
+   await until(()=>!required("draw-button").disabled&&!required("choice-panel").hidden&&required("choice-cards").querySelectorAll("[data-slot]").length===12,"shuffle_completed_before_auto_assertion");
+   await checkAutomaticSelection("initial_"+width+"_"+number,question,entries);
+   const oldFirst=required("choice-cards").querySelector("[data-slot]");
+   await click(required("reshuffle-button"));
+   await until(()=>!required("draw-button").disabled&&required("choice-cards").querySelector("[data-slot]")!==oldFirst,"reshuffle_new_deck_completed");
+   const a=await checkAutomaticSelection("reshuffle_"+width+"_"+number,question,entries);
+   if(a.page>1){
+    const previous=required("or-vp-pager").querySelector('[data-or-vp="prev"]');previous.focus({preventScroll:true});previous.click();
+    const manual=await viewportSettled();win.dispatchEvent(new win.Event("resize"));const refit=await viewportSettled();
+    check("auto_transition_is_one_shot_"+width+"_"+number,manual.page===a.page-1&&refit.page===manual.page&&refit.view==="draw",
+     {manualPage:manual.page,refitPage:refit.page,nativePreviousButtonClicked:true,nativeResizeHandlerExecuted:true});
+   }
+  }
+ }
+ iframe.style.width="1280px";iframe.style.height="800px";await until(()=>win.innerWidth===1280&&win.innerHeight===800,"shuffle_restore_frame",2000);await viewportSettled();
+ await show("draw");await click(doc.querySelector('[data-mode="1"]'));
+ report.execution.actualShuffleAutoAdvanceVerified=true;report.execution.actualReshuffleAutoAdvanceVerified=true;
+}
+
 async function readingOnePageChecks(number){
  const entry=activeQA(),journal=required("journal"),originalNote=journal.value,coverage=[];
  const dimensions=number===3?[[1280,800],[1920,950],[375,812]]:[[1280,800]];
@@ -367,6 +401,7 @@ async function drawOneOrThree(number,question,withGuard=false){
  const before=qaState().entries.length;
  await click(required("draw-button"));
  await until(()=>visible(required("choice-panel"))&&required("choice-cards").querySelectorAll("[data-slot]").length===12&&!required("draw-button").disabled,"real_native_shuffle");
+ await checkAutomaticSelection("native_draw_"+number,question,before);
  const slots=[...required("choice-cards").querySelectorAll("[data-slot]")];
  check("native_manual_selection_deck_"+number,slots.length===12&&required("reveal-button").disabled&&slots.every(n=>n.getAttribute("aria-pressed")==="false"));
  if(withGuard){
@@ -387,7 +422,14 @@ async function drawOneOrThree(number,question,withGuard=false){
  const active=activeQA();
  check("native_actual_"+number+"_card_reading_success",!!active&&active.mode===String(number)&&active.cardIds.length===number&&new Set(active.cardIds).size===number&&active.question===question&&qaState().entries.length===before+1,
   {mode:String(number),readingCardNodes:required("result-grid").querySelectorAll(".reading-card").length,broadHookReadingPaneVisible:true});
- if(withGuard)await readingOnePageChecks(number);
+ if(withGuard){
+  await readingOnePageChecks(number);
+  const count=qaState().entries.length,oldFirst=required("choice-cards").querySelector("[data-slot]");
+  await click(required("draw-again"));
+  await until(()=>!required("draw-button").disabled&&visible(required("or-pane-draw"))&&!required("choice-panel").hidden&&required("choice-cards").querySelector("[data-slot]")!==oldFirst,"reading_draw_again_native_shuffle");
+  await checkAutomaticSelection("draw_again_"+number,question,count);
+  report.execution.actualDrawAgainAutoAdvanceVerified=true;
+ }
  return active.id;
 }
 async function drawChecks(question){
@@ -504,6 +546,7 @@ publish();
   await mount(false);
   if(mode==="all"||mode==="smoke")await responsiveAndKnowledge();
   let dailyId=null;
+  if(mode==="all"||mode==="draw"||mode==="journal")await shuffleAutoAdvanceChecks(question);
   if(mode==="all"||mode==="draw"||mode==="journal")dailyId=await drawChecks(question);
   if(mode==="all"||mode==="journal")await journalChecks(question,note,dailyId);
   if(mode==="all"||mode==="smoke")await fixedViewportChecks();
@@ -534,4 +577,4 @@ publish();
   publish();
  }
 })();
-})({"schemaVersion":"1.0","expectedManifestSHA":"d1926f5d2ae94bf82e53a4c3b852cac2c30c0543ca793366f457ce064d5ab3cd","finalHTMLSHA256":"381267354d74ef3fba72ceeab56bbfdc47c2d344145157c863aba8a0ec307747","productionOrigin":"https://brendonlee1006.github.io","productionHTMLPath":"/oracle-room.txt","productionHTMLParts":[{"url":"/oracle-room.txt","sha256":"c42e472034e2d4df1087ad08f6b85332f1045c2072ea7a4492ab1c786fa07553","utf8Bytes":390000,"chars":304662},{"url":"/oracle-room-part-02.txt","sha256":"08704d0fc30bb095d2fb7a60814498dd1d1214ffb8c553a3df93963f78640778","utf8Bytes":390000,"chars":275516},{"url":"/oracle-room-part-03.txt","sha256":"1c38971dda7bd63721b4b35e22862a5d7178203d9480819d260ddb6d2b3d5198","utf8Bytes":45095,"chars":43373}],"expectedTopicCount":134,"expectedCardDeclarationSHA256":"b683ce3238ff59437ec07932cf6dcf508bc0747c87caa2333e76bc561d68a9ab","budgetMs":120000,"relatedTopicId":"oracle-02"});</script></body></html>
+})({"schemaVersion":"1.0","expectedManifestSHA":"d1926f5d2ae94bf82e53a4c3b852cac2c30c0543ca793366f457ce064d5ab3cd","finalHTMLSHA256":"5e071624109c1272d979eba465f3100d4fbe119f0f29fdfee07934835a76dbe0","productionOrigin":"https://brendonlee1006.github.io","productionHTMLPath":"/oracle-room.txt","productionHTMLParts":[{"url":"/oracle-room.txt","sha256":"3e5c6bcae2384bc278b330536e1b6c6384c562ac096ff71140c95129f2b7fad5","utf8Bytes":390000,"chars":304662},{"url":"/oracle-room-part-02.txt","sha256":"08704d0fc30bb095d2fb7a60814498dd1d1214ffb8c553a3df93963f78640778","utf8Bytes":390000,"chars":275516},{"url":"/oracle-room-part-03.txt","sha256":"dfbfa8dc6990ed7e8ed859d94060d42701a5c2373379c97d5bf0ca441a5bdc09","utf8Bytes":46107,"chars":44385}],"expectedTopicCount":134,"expectedCardDeclarationSHA256":"b683ce3238ff59437ec07932cf6dcf508bc0747c87caa2333e76bc561d68a9ab","budgetMs":120000,"relatedTopicId":"oracle-02"});</script></body></html>

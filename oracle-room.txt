@@ -633,13 +633,14 @@ function beginSelection(){
   setBusy(false);
   announce("draw-status","洗牌完成。請從牌背選取 "+mode+" 張牌。");
   byId("choice-title").setAttribute("tabindex","-1");
+/* ORACLE_SOURCE_SUCCESS_HOOK_draw_BEGIN */
+if(selectionPhase==="selecting"&&!byId("choice-panel").hidden){
+ if(window.oracleUI)window.oracleUI.show("draw",{route:false,focus:false});
+ const firstChoice=byId("choice-cards").querySelector(".pick-card");
+ if(!window.oracleViewportPages?.showNode?.(firstChoice,{focus:true})){
   byId("choice-title").focus({preventScroll:true});
   byId("choice-panel").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"});
-/* ORACLE_SOURCE_SUCCESS_HOOK_draw_BEGIN */
-if(window.oracleUI&&selectionPhase==="selecting"&&!byId("choice-panel").hidden){
- window.oracleUI.show("draw",{route:false,focus:false});
- byId("choice-title").focus({preventScroll:true});
- byId("choice-panel").scrollIntoView({behavior:reduceMotion()?"auto":"smooth",block:"start"});
+ }
 }
 /* ORACLE_SOURCE_SUCCESS_HOOK_draw_END */
  },reduceMotion()?50:650);

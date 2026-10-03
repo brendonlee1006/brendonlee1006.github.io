@@ -217,13 +217,14 @@ rerender(renderSources);
  const prev=pageButton("上一頁","prev"),next=pageButton("下一頁","next");controls.append(prev,next);nav.append(position,controls);main.append(nav);root.classList.add("or-vp-ready");
  const nodeIDs=new WeakMap(),splitTexts=new Map(),marked=new Set(),expandedAtoms=new WeakSet();
  let serial=0,frame=0,working=false,resetView=null,clickedPager=null;
+ const vpTrace={fitCount:0,scheduleCalls:0,settleChecks:0,lastQuiet:0,causes:[],sizeChanges:[],mutations:[]};
  let state={pane:null,view:"",units:[],branches:[],pages:[[]],page:0,fallback:false,reason:""},measuredSize="",footerReflowPass=0;
  const activePane=()=>panes.find(pane=>!pane.hidden);
  const idFor=node=>{if(!nodeIDs.has(node))nodeIDs.set(node,"u"+(++serial));return nodeIDs.get(node);};
  function watch(){observer.observe(main,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["hidden","open","class"]});}
  function ownMutation(fn){const nested=working;if(!nested)observer.disconnect();try{return fn();}finally{if(!nested){observer.takeRecords();watch();}}}
- function schedule(){if(!frame)frame=requestAnimationFrame(()=>{frame=0;fit();});}
- const observer=new MutationObserver(records=>{const pane=activePane();if(records.some(record=>!nav.contains(record.target)&&(record.target===main||pane?.contains(record.target)||(record.type==="attributes"&&record.attributeName==="hidden"&&panes.includes(record.target)))))schedule();});
+ function schedule(cause){vpTrace.scheduleCalls++;vpTrace.causes.push(typeof cause==="string"?cause:(cause?.currentTarget===window.visualViewport?"visual-viewport-resize":cause?.type||"unspecified"));if(vpTrace.causes.length>12)vpTrace.causes.shift();if(!frame)frame=requestAnimationFrame(()=>{frame=0;fit();});}
+ const observer=new MutationObserver(records=>{const pane=activePane();if(records.some(record=>!nav.contains(record.target)&&(record.target===main||pane?.contains(record.target)||(record.type==="attributes"&&record.attributeName==="hidden"&&panes.includes(record.target))))){vpTrace.mutations=records.slice(-8).map(r=>({type:r.type,attribute:r.attributeName,target:r.target.id||r.target.nodeName}));schedule("main-mutation");}});
  function clearMarks(){for(const node of marked){node.classList.remove("or-vp-away","or-vp-empty");node.removeAttribute("data-or-vp-unit");}marked.clear();}
  function restoreProse(pane){for(const [node,original]of splitTexts){if(!node.isConnected){splitTexts.delete(node);continue;}if(!pane.contains(node))continue;if([...node.childNodes].every(child=>child.nodeType===1&&child.classList.contains("or-vp-text-part"))&&node.textContent===original)node.replaceChildren(document.createTextNode(original));splitTexts.delete(node);}}
  function isNativeVisible(node){if(node.hidden||node.matches('input[type="hidden"],script,style,template'))return false;const style=getComputedStyle(node);return style.display!=="none"&&style.visibility!=="hidden";}
@@ -269,7 +270,7 @@ rerender(renderSources);
  function fallback(reason){state.fallback=true;state.reason=reason;state.pages=[state.units.map((_,index)=>index)];state.page=0;apply(state.pages[0]);root.classList.add("or-vp-fallback");main.prepend(nav);updatePager();}
  function pagerReplacement(){if(!clickedPager)return null;const {container,text}=clickedPager;clickedPager=null;const host=container.id?document.getElementById(container.id):container;if(!host?.isConnected)return null;return [...host.querySelectorAll("button")].find(button=>button.textContent.trim()===text)||null;}
  function fit(){
-  const pane=activePane();if(!pane)return;working=true;observer.disconnect();const saved=rememberFocus(),previous=state,oldAnchor=previous.units[previous.pages[previous.page]?.[0]]?.nodes[0];
+  const pane=activePane();if(!pane)return;vpTrace.fitCount++;working=true;observer.disconnect();const saved=rememberFocus(),previous=state,oldAnchor=previous.units[previous.pages[previous.page]?.[0]]?.nodes[0];
   try{
    clearMarks();root.classList.remove("or-vp-fallback");if(nav.parentElement===main)main.append(nav);restoreProse(pane);
    state={pane,view:pane.id.replace("or-pane-",""),units:[],branches:[],pages:[],page:0,fallback:false,reason:""};let collected=collect(pane);state.units=collected.units;state.branches=collected.branches;const paneRect=pane.getBoundingClientRect();
@@ -286,7 +287,7 @@ rerender(renderSources);
     if(!complete)fallback("bounded-layout-pass-limit");
     if(!state.fallback){let selected=0;if(previous.view===state.view&&resetView!==state.view){const anchored=pageForNode(oldAnchor);selected=anchored>=0?anchored:Math.min(previous.page,state.pages.length-1);}const fromNativePager=!!clickedPager;const replacement=pagerReplacement();if(replacement&&(!saved.node?.isConnected||saved.node===document.body||saved.node===document.documentElement))saved.node=replacement;if(fromNativePager&&saved.node===pane)selected=0;const focused=pageForNode(saved.node);if(focused>=0)selected=focused;state.page=selected;apply(state.pages[state.page]);updatePager();main.scrollTop=0;main.scrollLeft=0;}
    }
-   if(!state.fallback&&!fits(state.pages[state.page])){if(footerReflowPass++<2)schedule();else fallback("unstable-footer-layout");}else footerReflowPass=0;pane.dataset.orVpEligible=JSON.stringify(state.units.map(unit=>unit.id));resetView=null;restoreFocus(saved);measuredSize=[main.clientWidth,main.clientHeight,shell.clientWidth,shell.clientHeight,nav.clientWidth,nav.clientHeight].join(":");
+   if(!state.fallback&&!fits(state.pages[state.page])){if(footerReflowPass++<2)schedule("footer-refit");else fallback("unstable-footer-layout");}else footerReflowPass=0;pane.dataset.orVpEligible=JSON.stringify(state.units.map(unit=>unit.id));resetView=null;restoreFocus(saved);measuredSize=[main.clientWidth,main.clientHeight,shell.clientWidth,shell.clientHeight,nav.clientWidth,nav.clientHeight].join(":");
   }finally{observer.takeRecords();working=false;watch();}
  }
  function changePage(delta){if(working||state.fallback)return;ownMutation(()=>{state.page=Math.max(0,Math.min(state.pages.length-1,state.page+delta));apply(state.pages[state.page]);updatePager();main.scrollTop=0;main.scrollLeft=0;const focused=document.activeElement;if(focused===prev&&prev.disabled)next.focus({preventScroll:true});else if(focused===next&&next.disabled)prev.focus({preventScroll:true});});}
@@ -294,7 +295,7 @@ rerender(renderSources);
  nav.addEventListener("keydown",event=>{if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;if(event.key==="ArrowLeft"||event.key==="ArrowRight"){event.preventDefault();changePage(event.key==="ArrowLeft"?-1:1);}});
  shell.addEventListener("click",event=>{const target=event.target instanceof Element?event.target:null,route=target?.closest("[data-or-view]");if(route){resetView=route.dataset.orView;schedule();}const clicked=target?.closest("button"),container=clicked?.closest(".or-pager,.history-pages");if(container&&!nav.contains(clicked))clickedPager={container,text:clicked.textContent.trim()};},true);
  main.addEventListener("focusin",event=>{if(working||nav.contains(event.target))return;if(state.pane&&state.pane.contains(event.target)){const targetPage=pageForNode(event.target);if(targetPage>=0&&targetPage!==state.page)ownMutation(()=>{state.page=targetPage;apply(state.pages[state.page]);updatePager();});}});
- const sizeObserver=typeof ResizeObserver==="function"?new ResizeObserver(()=>{const size=[main.clientWidth,main.clientHeight,shell.clientWidth,shell.clientHeight,nav.clientWidth,nav.clientHeight].join(":");if(size!==measuredSize)schedule();}):null;
+ const sizeObserver=typeof ResizeObserver==="function"?new ResizeObserver(()=>{const size=[main.clientWidth,main.clientHeight,shell.clientWidth,shell.clientHeight,nav.clientWidth,nav.clientHeight].join(":");if(size!==measuredSize){vpTrace.sizeChanges.push({size,measuredSize});if(vpTrace.sizeChanges.length>8)vpTrace.sizeChanges.shift();schedule("resize-observer");}}):null;
  sizeObserver?.observe(main);sizeObserver?.observe(shell);sizeObserver?.observe(nav);window.addEventListener("resize",schedule,{passive:true});window.visualViewport?.addEventListener("resize",schedule,{passive:true});document.fonts?.ready.then(schedule);
  function getAudit(){
   if(window.oracleModalPages?.active)return window.oracleModalPages.getAudit();
@@ -303,8 +304,8 @@ rerender(renderSources);
   const onPage=(state.pages[state.page]||[]).map(index=>state.units[index].id),units={eligible:state.units.length,visible:onPage.length,ids:Object.freeze(state.units.map(unit=>unit.id)),onPage:Object.freeze(onPage)};
   return Object.freeze({view:state.view,total:state.pages.length,page:state.page+1,viewport:Object.freeze(viewport),nooverflow:!state.fallback&&!overflow.x&&!overflow.y,overflow:Object.freeze(overflow),fallback:state.fallback,reason:state.reason,units:Object.freeze(units)});
  }
- function whenSettled(){return new Promise(resolve=>{let quiet=0;function check(){if(!frame&&!working&&(!window.oracleModalPages?.active||window.oracleModalPages.isSettled))quiet++;else quiet=0;if(quiet>=2)resolve(getAudit());else requestAnimationFrame(check);}requestAnimationFrame(check);});}
- Object.defineProperty(window,"oracleViewportPages",{value:Object.freeze({get audit(){return getAudit();},getAudit,whenSettled}),writable:false,configurable:false});watch();schedule();
+ function whenSettled(){return new Promise(resolve=>{let quiet=0;function check(){if(!frame&&!working&&(!window.oracleModalPages?.active||window.oracleModalPages.isSettled))quiet++;else quiet=0;vpTrace.settleChecks++;vpTrace.lastQuiet=quiet;if(quiet>=2)resolve(getAudit());else requestAnimationFrame(check);}requestAnimationFrame(check);});}
+ Object.defineProperty(window,"oracleViewportPages",{value:Object.freeze({get audit(){return getAudit();},get debug(){const r=state.pane?.getBoundingClientRect(),tol=1.5,outside=[];for(const index of state.pages[state.page]||[])for(const n of state.units[index].nodes){const b=n.getBoundingClientRect();if(r&&(b.width||b.height)&&(b.left<r.left-tol||b.right>r.right+tol||b.top<r.top-tol||b.bottom>r.bottom+tol))outside.push({id:state.units[index].id,tag:n.tagName,nodeId:n.id,classes:n.className,rect:{x:b.x,y:b.y,width:b.width,height:b.height}});}return Object.freeze({...vpTrace,frame,working,measuredSize,currentSize:[main.clientWidth,main.clientHeight,shell.clientWidth,shell.clientHeight,nav.clientWidth,nav.clientHeight].join(":"),footerReflowPass,currentFits:!!state.pane&&fits(state.pages[state.page]||[]),modalActive:!!window.oracleModalPages?.active,modalSettled:window.oracleModalPages?.isSettled,outside});},getAudit,whenSettled}),writable:false,configurable:false});watch();schedule();
 })();
 (function installOracleCardDialogPages(){
  "use strict";

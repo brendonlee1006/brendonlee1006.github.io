@@ -5,7 +5,7 @@
  window.addEventListener("pagehide",()=>aborter.abort(),{once:true});
  const digest=async b=>Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",b)),x=>x.toString(16).padStart(2,"0")).join("");
  try{
-  if(location.origin!==config.origin||location.pathname!=="/oracle-room.html"||config.expectedHTMLParts.length!==3)throw Error("Exact static origin/route/parts required");
+  if(location.origin!==config.origin||location.pathname!=="/oracle-room.html"||(config.expectedHTMLParts.length<3||config.expectedHTMLParts.length>6))throw Error("Exact static origin/route/parts required");
   const texts=await Promise.all(config.expectedHTMLParts.map(async part=>{
    const target=new URL(part.url,config.origin);
    if(target.origin!==config.origin||target.pathname!==part.url||target.search||target.hash)throw Error("Unexpected HTML part URL");
@@ -24,4 +24,4 @@
   frame.addEventListener("load",()=>{const doc=frame.contentDocument;if(doc&&!doc.querySelector("base")){const base=doc.createElement("base");base.href="about:srcdoc";doc.head.prepend(base);}});
   frame.srcdoc=html;host.replaceChildren(frame);
  }catch(error){aborter.abort();if(error&&error.name==="AbortError")return;status.setAttribute("role","alert");status.textContent="網站暫時無法載入，請重新整理頁面。";}
-})({"origin":"https://brendonlee1006.github.io","expectedHTMLSHA":"5e071624109c1272d979eba465f3100d4fbe119f0f29fdfee07934835a76dbe0","expectedHTMLParts":[{"url":"/oracle-room.txt","sha256":"3e5c6bcae2384bc278b330536e1b6c6384c562ac096ff71140c95129f2b7fad5","utf8Bytes":390000,"chars":304662},{"url":"/oracle-room-part-02.txt","sha256":"08704d0fc30bb095d2fb7a60814498dd1d1214ffb8c553a3df93963f78640778","utf8Bytes":390000,"chars":275516},{"url":"/oracle-room-part-03.txt","sha256":"dfbfa8dc6990ed7e8ed859d94060d42701a5c2373379c97d5bf0ca441a5bdc09","utf8Bytes":46107,"chars":44385}]});</script></body></html>
+})({"origin":"https://brendonlee1006.github.io","expectedHTMLSHA":"f0a0e4f7d261b72ab4bc4ee6852cc1c1d063c3c51a1e9f5192d4fc181a327747","expectedHTMLParts":[{"url":"/oracle-room.txt","sha256":"e23f6613ce28ad0cfd84f4457fd4abb2d5f2acb0b8780cbab30bceea0f83020b","utf8Bytes":389999,"chars":285797},{"url":"/oracle-room-part-02.txt","sha256":"d29400a98081a55c14df64e67a30cd68a9ef3ff5c6d1f5a3d501f53bf5a1f0c9","utf8Bytes":390000,"chars":204729},{"url":"/oracle-room-part-03.txt","sha256":"b83841499489ef6f1fec76897e2c355913e14cd40022410581623c796d54bc5f","utf8Bytes":390000,"chars":284540},{"url":"/oracle-room-part-04.txt","sha256":"fef790618de7a66170b2b9766055501e434100dde72f3bde281b790c13c913d4","utf8Bytes":26404,"chars":26262}]});</script></body></html>

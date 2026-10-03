@@ -18,3 +18,14 @@ catalogued 是已整理書目；checked 是已核對指定頁面；candidate 是
 公開資料不含私人提問、心得及手札；離線匿名 HTML 只含內附知識與來源，完整外部目錄需連線。
 
 欄位 independentCheckedSourceFamilies 沿用舊 schema；數值按 sourceFamily 或 canonicalURL 標籤分組，並不代表獨立提供者數或占卜效果研究。請另外核對 sourceProvider、實際館藏與 accessScope。
+
+
+## 月光手札原創解讀資料庫
+
+- 全部三牌排列查閱頁: /oracle-relations.html
+- 解讀資料清單與 SHA-256: /oracle-reading-manifest.json
+- 24 張原創深度牌義及 120 組主題應用: /oracle-reading-profiles.json
+- 552 組逐條撰寫的有向兩牌關係: /oracle-reading-pairs.json
+- 12,144 組現況／阻礙／建議排列: 依 oracle-reading-manifest.json 的 triples 分檔讀取。
+
+三牌紀錄由原創牌義、有向牌間關係和牌位規則整合，並非 12,144 篇獨立手寫解讀、占驗或學術文獻。文獻知識庫與原創牌組解讀有各自的來源及編寫方式。公開紀錄只使用固定日常角度，不含私人提問、心得或手札。

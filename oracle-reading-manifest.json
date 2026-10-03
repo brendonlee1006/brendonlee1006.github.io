@@ -1,0 +1,1178 @@
+{
+  "schemaVersion": "oracle-reading-library-v1",
+  "title": "月光手札｜原創深度解讀與全部三牌關係",
+  "language": "zh-Hant",
+  "version": "oracle-reading-2.3",
+  "corpusVersion": "moonlit-authored-depth-v1",
+  "pairVersion": "moonlit-directed-pairs-v1",
+  "updatedAt": "2026-10-04",
+  "counts": {
+    "profiles": 24,
+    "domains": 5,
+    "directedPairs": 552,
+    "positionedTriples": 12144
+  },
+  "method": {
+    "authoring": "24 張原創深度牌義、120 組主題應用，以及 552 組逐條撰寫的有向兩牌關係。12,144 組三牌紀錄按現況／阻礙／建議的規則整合並完整寫入資料檔，不宣稱每組皆獨立手寫、占驗或學術文獻。",
+    "positions": [
+      "現況",
+      "阻礙",
+      "建議"
+    ],
+    "relationships": [
+      "現況 → 阻礙",
+      "阻礙 → 建議",
+      "現況 → 建議"
+    ],
+    "components": [
+      "呼應",
+      "張力",
+      "轉向"
+    ],
+    "materializedDomain": "general",
+    "materializedQuestion": "固定空白公開範例；不含私人提問。",
+    "timeAndNumberScope": "分鐘、天數、數量是方便實作的原創建議；依個人情境調整。"
+  },
+  "privacyScope": "公開原創解讀，不包含私人提問、心得、手札或登入資料。",
+  "basis": {
+    "profileDocument": "https://docs.google.com/document/d/198FrtOSWbS8Z2-Xq8aKgPN07lMyVN7GVsBJ9D4HKIVw/edit",
+    "immutableOriginalCardDeclarationSHA256": "b683ce3238ff59437ec07932cf6dcf508bc0747c87caa2333e76bc561d68a9ab",
+    "pairDocuments": [
+      {
+        "url": "https://docs.google.com/document/d/1jmIcB08xdO85FKObJ0lEbKoI1zzTbjcHyMIqJhxkq4c/edit",
+        "sha256": "448ae02758b4b4a46641227103cdd7944b83ef1e40a2bc796071c409c53cf4f6",
+        "origins": "01–08"
+      },
+      {
+        "url": "https://docs.google.com/document/d/1tFmKUk_eRAzqE37yoX2wXrXRip6bRd9XeOyRNF2C0yc/edit",
+        "sha256": "6c0908b5382229a60b0b6227992a05aa3332842bf2537020337ae6279eea290f",
+        "origins": "09–16"
+      },
+      {
+        "url": "https://docs.google.com/document/d/1nJdB1ELGCI_FXa8F3dKSfRsXF7S5vteHggZRgIU6ZW4/edit",
+        "sha256": "e4ee47fc75abab312629b7b93380af1be6e83ca27f40a027dfc449d335536c37",
+        "origins": "17–24"
+      }
+    ],
+    "corpusType": "本牌組原創解讀；文獻知識庫另見 /oracle-data-manifest.json。"
+  },
+  "engine": {
+    "url": "/oracle-reading-engine.js",
+    "sha256": "bc28f07a2c3e3ff3a76b2fe0adb8ef66ae88b2faec92be57e9b77d0fdc6e0c23",
+    "bytes": 17348
+  },
+  "profiles": {
+    "url": "/oracle-reading-profiles.json",
+    "sha256": "d56ba23292aae622e201b4f1bb03f55641fb021e2e54b63df34b2b87190fb193",
+    "bytes": 77908
+  },
+  "pairs": [
+    {
+      "url": "/oracle-reading-pairs.json",
+      "sha256": "6a9ce3e8c266713d566ac2173e9e414fc566176d248d242dbe73fd945aba3e7b",
+      "bytes": 262347,
+      "count": 552
+    }
+  ],
+  "triples": [
+    {
+      "url": "/oracle-reading-triples-001.json",
+      "sha256": "d7fcef353b5426ef392c94bcfc916af057e6608d6aba5c977c176a9f33dbfe7b",
+      "bytes": 383600,
+      "count": 100,
+      "fromIds": [
+        "moonlit-01"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-002.json",
+      "sha256": "e8686554c9b9d8001e270591c8ec0675a761952c441cd9dd3d834d58baf2ccf9",
+      "bytes": 384017,
+      "count": 100,
+      "fromIds": [
+        "moonlit-01"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-003.json",
+      "sha256": "cb16ee86519b7373574188f76c86c3693c7fb7b915ccfeedf03b3ed06265312f",
+      "bytes": 383707,
+      "count": 101,
+      "fromIds": [
+        "moonlit-01"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-004.json",
+      "sha256": "8f81a397b36e54c769f112f543c0c4f3536f9761f93b7aac63b7940f8ad945e6",
+      "bytes": 381718,
+      "count": 101,
+      "fromIds": [
+        "moonlit-01"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-005.json",
+      "sha256": "5b5d5353120f602ff3e47e385c1d7e70c169f0be8c429b84e7a7c1e8a3829d75",
+      "bytes": 381181,
+      "count": 101,
+      "fromIds": [
+        "moonlit-01"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-006.json",
+      "sha256": "1921615c8e50d11ef6ef1508ea6084236eea5580e966ee2b11722651e076ede7",
+      "bytes": 381288,
+      "count": 99,
+      "fromIds": [
+        "moonlit-01",
+        "moonlit-02"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-007.json",
+      "sha256": "d06dcec10b2708f689a810804bc8e71b12afc3d5baea732dba57bc9122b79712",
+      "bytes": 381138,
+      "count": 99,
+      "fromIds": [
+        "moonlit-02"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-008.json",
+      "sha256": "1013392cafeed17eee368616980d8c3428ce966ed782d7679149a979347ff2a2",
+      "bytes": 384274,
+      "count": 101,
+      "fromIds": [
+        "moonlit-02"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-009.json",
+      "sha256": "f3a506c00bbf58b8317caf1f6363ee182b904cce86fcad75ec35368dbd5ac13e",
+      "bytes": 382921,
+      "count": 101,
+      "fromIds": [
+        "moonlit-02"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-010.json",
+      "sha256": "ec4979b97f8fff8ed9a69d2ad63642b9db93178d4af6a544e16bcf73185e9184",
+      "bytes": 381292,
+      "count": 101,
+      "fromIds": [
+        "moonlit-02"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-011.json",
+      "sha256": "544b84aba6fe81680a62ccf56afc0b082381f447ae712674e59b5e3ea5f6124c",
+      "bytes": 382409,
+      "count": 100,
+      "fromIds": [
+        "moonlit-02",
+        "moonlit-03"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-012.json",
+      "sha256": "c1ad6141fe06efbc81d3ff4d94425a27ff9462c2faa292cd25b30d218eb6207b",
+      "bytes": 382193,
+      "count": 100,
+      "fromIds": [
+        "moonlit-03"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-013.json",
+      "sha256": "9dde58c01b844c3abe6a44cc94d1ebd58deeabc6ccf8dd1c79f37d381912d9ca",
+      "bytes": 382192,
+      "count": 101,
+      "fromIds": [
+        "moonlit-03"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-014.json",
+      "sha256": "e49cbc43adc34556bb78001aee367b0722ac7501e12f7a81e2d8251c48b72c38",
+      "bytes": 380827,
+      "count": 101,
+      "fromIds": [
+        "moonlit-03"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-015.json",
+      "sha256": "9a19cd6614bd60c9761e0ff3f9461f5914959b18949e4c7bf1be04ce65e010ac",
+      "bytes": 383745,
+      "count": 102,
+      "fromIds": [
+        "moonlit-03"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-016.json",
+      "sha256": "54497e06f4a0b03ca16fbe9ec815b339d24045b62856a52e4cdea5c9c550e05d",
+      "bytes": 383147,
+      "count": 100,
+      "fromIds": [
+        "moonlit-03",
+        "moonlit-04"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-017.json",
+      "sha256": "90c9bac52f2347a456ec0c2bb38a9606e6606bb80999c7c027be6364bc4368df",
+      "bytes": 383360,
+      "count": 100,
+      "fromIds": [
+        "moonlit-04"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-018.json",
+      "sha256": "04c04913ec7d1196a265158a96bad0041e60559591a8643c679f11d2d15302f4",
+      "bytes": 383983,
+      "count": 101,
+      "fromIds": [
+        "moonlit-04"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-019.json",
+      "sha256": "c7e6176be377ab0884dbbd46504114e8a5e56db2d64fdff73c2258d9d89be347",
+      "bytes": 384192,
+      "count": 102,
+      "fromIds": [
+        "moonlit-04"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-020.json",
+      "sha256": "615c87d9ccfe2473d4d24d33327d651443756684d738dc102f95cb78abc8d3dc",
+      "bytes": 381520,
+      "count": 101,
+      "fromIds": [
+        "moonlit-04"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-021.json",
+      "sha256": "4fb1619cbebd48995d7c1260af5a527cf1efcf8b3c2cd7a0aec0a3e84c378c78",
+      "bytes": 380634,
+      "count": 99,
+      "fromIds": [
+        "moonlit-04",
+        "moonlit-05"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-022.json",
+      "sha256": "4bd7a03dd7c95f852a4b64297ff23fb20d535d27582940c7a55be59244e83674",
+      "bytes": 381312,
+      "count": 99,
+      "fromIds": [
+        "moonlit-05"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-023.json",
+      "sha256": "be1499703c6040c6e3915217a94480e035165ef8c8e05d7628555f662ff6d2fb",
+      "bytes": 380969,
+      "count": 100,
+      "fromIds": [
+        "moonlit-05"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-024.json",
+      "sha256": "2e98ecc35d030c14c68d2d575688581cdbba914e2e55468da6c771d542e4b83a",
+      "bytes": 382507,
+      "count": 101,
+      "fromIds": [
+        "moonlit-05"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-025.json",
+      "sha256": "fdd8e75d5664761b09ee52ccbb952a0cff09ab0650546712c6c283f9858561ba",
+      "bytes": 382102,
+      "count": 101,
+      "fromIds": [
+        "moonlit-05"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-026.json",
+      "sha256": "9e24ff0e6a8898adb87adc4bea92175e25233adc6fcc993b43e799cf0426d4fe",
+      "bytes": 380632,
+      "count": 98,
+      "fromIds": [
+        "moonlit-05",
+        "moonlit-06"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-027.json",
+      "sha256": "ea152f5ec73c54b63b2b88e16edf9379c5f516a36a658ed8684ea3a32d4c28cd",
+      "bytes": 382870,
+      "count": 98,
+      "fromIds": [
+        "moonlit-06"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-028.json",
+      "sha256": "c3324d66798f58885352f484fef41f636ffba6a9574f1a2200f20f75c363b53c",
+      "bytes": 382833,
+      "count": 99,
+      "fromIds": [
+        "moonlit-06"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-029.json",
+      "sha256": "86eb3e467f2da9d718685145a5f9404a1213efe474997d86a4d8ccd6fe653b5b",
+      "bytes": 381663,
+      "count": 99,
+      "fromIds": [
+        "moonlit-06"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-030.json",
+      "sha256": "1f68c3b57ffc549db28ad75f462529bd80360c9d24ff9911c7c1934ea70d72d9",
+      "bytes": 380706,
+      "count": 99,
+      "fromIds": [
+        "moonlit-06"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-031.json",
+      "sha256": "9609a5ad6c94e5791cd82484cfb742c5d5196118c3999913ff73b57592c3366a",
+      "bytes": 381909,
+      "count": 99,
+      "fromIds": [
+        "moonlit-06",
+        "moonlit-07"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-032.json",
+      "sha256": "4d2d0913758849db3270a143fba4fbb1219573ae408960697bf51ccd472257a4",
+      "bytes": 382302,
+      "count": 99,
+      "fromIds": [
+        "moonlit-07"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-033.json",
+      "sha256": "e7bacfd7461f61128bcf7a4bde296fdab76939445d73e3a531b0840c98e7e0aa",
+      "bytes": 384454,
+      "count": 101,
+      "fromIds": [
+        "moonlit-07"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-034.json",
+      "sha256": "fd08f9f05577eb8b01ce81e212639f279a5d714176eb1c4b9a8ff1417638a755",
+      "bytes": 382627,
+      "count": 101,
+      "fromIds": [
+        "moonlit-07"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-035.json",
+      "sha256": "71ad36b6ecc4586dad8bf9f7f80f36a541e223db4f1be9b2e9fd88f54f2cd0a2",
+      "bytes": 382102,
+      "count": 101,
+      "fromIds": [
+        "moonlit-07"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-036.json",
+      "sha256": "8998a0aefe2ce97cd599310430bfd5f9d7d617b69f14c7e4282328abb06a9d40",
+      "bytes": 381297,
+      "count": 99,
+      "fromIds": [
+        "moonlit-07",
+        "moonlit-08"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-037.json",
+      "sha256": "357059c9f22407730685465d83e2de41c8050c167afbeeaa509a710b427c902c",
+      "bytes": 381604,
+      "count": 98,
+      "fromIds": [
+        "moonlit-08"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-038.json",
+      "sha256": "6075d2f5233741acdc0c5a857970c4a40b884694de4db21bf36c8137131b6c86",
+      "bytes": 380637,
+      "count": 99,
+      "fromIds": [
+        "moonlit-08"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-039.json",
+      "sha256": "87df97f6da7b57405bb73666415365d1b7f52671810ce239bed8e4f971aee7b2",
+      "bytes": 382814,
+      "count": 100,
+      "fromIds": [
+        "moonlit-08"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-040.json",
+      "sha256": "6efc3e956de9a8e1b8a114f1b267af89518982de7ed56583f9664dccd098311b",
+      "bytes": 384307,
+      "count": 101,
+      "fromIds": [
+        "moonlit-08"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-041.json",
+      "sha256": "91cf2473deb24daf0b8bdacae2dd6b6d213352c77c3212af0faa4a6acd6a2a2a",
+      "bytes": 382803,
+      "count": 102,
+      "fromIds": [
+        "moonlit-08",
+        "moonlit-09"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-042.json",
+      "sha256": "5477c2bccd1cf8d10f378c53e6c211dae4503b21e8d7f312c5a985d30961c407",
+      "bytes": 384395,
+      "count": 103,
+      "fromIds": [
+        "moonlit-09"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-043.json",
+      "sha256": "75201b7fc8387771b08c3ddaf9a2575a508340943a571b24711f0d3a58b874ec",
+      "bytes": 384088,
+      "count": 104,
+      "fromIds": [
+        "moonlit-09"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-044.json",
+      "sha256": "84e5e2a1b7807d44ee2327229a2a3c635648d798870d1ff192b58d24d32f9731",
+      "bytes": 381640,
+      "count": 104,
+      "fromIds": [
+        "moonlit-09"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-045.json",
+      "sha256": "05e41acf11057b4368f2c61ef1fc378169ccf689bafcb5bf228227ec00386e23",
+      "bytes": 384462,
+      "count": 105,
+      "fromIds": [
+        "moonlit-09"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-046.json",
+      "sha256": "c265d4b6034a8cebdfc5e915fa3b03bb029d7648a2de07f7d71bd75a9bd53efb",
+      "bytes": 382422,
+      "count": 102,
+      "fromIds": [
+        "moonlit-09",
+        "moonlit-10"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-047.json",
+      "sha256": "c95fbd53a74ea9e8a7a0a8625f159cd39c60b754f8f20f2184448b75d345eda6",
+      "bytes": 380726,
+      "count": 100,
+      "fromIds": [
+        "moonlit-10"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-048.json",
+      "sha256": "4aebfa034dc8b8d3feaa71a40633457408f153bc2f9ee4ee9612e55d935fab47",
+      "bytes": 383946,
+      "count": 102,
+      "fromIds": [
+        "moonlit-10"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-049.json",
+      "sha256": "b41a40c45768688ddb7f5d7bd12fd6c597da178b8138eea74c91dcd22632d670",
+      "bytes": 382593,
+      "count": 102,
+      "fromIds": [
+        "moonlit-10"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-050.json",
+      "sha256": "20b9a99e2de3e9c1719dbb4f778f6d713a7bb651fe188961ca326eb1f8a0b921",
+      "bytes": 382551,
+      "count": 102,
+      "fromIds": [
+        "moonlit-10"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-051.json",
+      "sha256": "fd5461984e7db6b1f24fe69cd375d12fb640896ad64cb5a9956717731ddc8f49",
+      "bytes": 381144,
+      "count": 102,
+      "fromIds": [
+        "moonlit-10",
+        "moonlit-11"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-052.json",
+      "sha256": "94fe7f50e772cc75586bf2bdbe2cf1276190af8b72d0f238b395e6d27592e330",
+      "bytes": 380988,
+      "count": 102,
+      "fromIds": [
+        "moonlit-11"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-053.json",
+      "sha256": "b5cc082b0e1af119c4d168e26680de676ff31628b4923c67588831b74d12f58c",
+      "bytes": 383125,
+      "count": 104,
+      "fromIds": [
+        "moonlit-11"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-054.json",
+      "sha256": "8df02ff1f3f1530ab708d29d16314469724592c538f070eeed5be41ef7ca9c53",
+      "bytes": 381541,
+      "count": 104,
+      "fromIds": [
+        "moonlit-11"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-055.json",
+      "sha256": "5a53c11a709395c63e6e73beab63193735fa291261f678bd03ab19b0484992c8",
+      "bytes": 383589,
+      "count": 105,
+      "fromIds": [
+        "moonlit-11"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-056.json",
+      "sha256": "c02ac2bad1bbcbd525a63d260f35f07d180269ad99b8a4fa1d138ecda96051ca",
+      "bytes": 381306,
+      "count": 102,
+      "fromIds": [
+        "moonlit-11",
+        "moonlit-12"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-057.json",
+      "sha256": "5110aba43ec06a2e527376bd2571d5933b993094148c8bb16c34535a8d805342",
+      "bytes": 381643,
+      "count": 101,
+      "fromIds": [
+        "moonlit-12"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-058.json",
+      "sha256": "fd72f7d08c802ca75baf782ec262e8342f04c6bcc9f29ab65b81d699d0fad492",
+      "bytes": 383348,
+      "count": 103,
+      "fromIds": [
+        "moonlit-12"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-059.json",
+      "sha256": "56812cf85ec99f77567487fc4c1d7544d3afc0990f4db28730efa0ef14a8c05c",
+      "bytes": 381689,
+      "count": 103,
+      "fromIds": [
+        "moonlit-12"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-060.json",
+      "sha256": "5242a083675cf06dbc5b3f1269c4fa7cc6eac2822aa60ccad573f63e64dbf737",
+      "bytes": 384436,
+      "count": 104,
+      "fromIds": [
+        "moonlit-12"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-061.json",
+      "sha256": "3ee1ff94caaecff946a5cd61ac09a4f7ee8e79d0c433c91f30213037e7a8eb4e",
+      "bytes": 383394,
+      "count": 102,
+      "fromIds": [
+        "moonlit-12",
+        "moonlit-13"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-062.json",
+      "sha256": "57fe4518283a9dcbad46cd7d1d924867a8973ce8803ab57caafdc4b2cde91773",
+      "bytes": 380782,
+      "count": 101,
+      "fromIds": [
+        "moonlit-13"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-063.json",
+      "sha256": "2066a0ed6f213463c4df4fbc1efe80b42bbb54be3424ddb47001f7a2fe8282bd",
+      "bytes": 384083,
+      "count": 103,
+      "fromIds": [
+        "moonlit-13"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-064.json",
+      "sha256": "b4f238117206f1846546af1a1cd42843198f2a67f7ae0ca35a85a3e46f312d59",
+      "bytes": 382580,
+      "count": 103,
+      "fromIds": [
+        "moonlit-13"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-065.json",
+      "sha256": "b44c71c8b413e5a626bb120daf1d1f970f9a4cd8b7ac34c6998261c58eb5bed9",
+      "bytes": 384430,
+      "count": 104,
+      "fromIds": [
+        "moonlit-13"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-066.json",
+      "sha256": "6b18dfd49409bd804db0f8b2968b56a87bc82688e44c0c39e355d55c77e11827",
+      "bytes": 383364,
+      "count": 102,
+      "fromIds": [
+        "moonlit-13",
+        "moonlit-14"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-067.json",
+      "sha256": "c253583179d02d36f54c0678430ead4a08eacb2c050c8d76a5cabd58fcf7e9ac",
+      "bytes": 380728,
+      "count": 101,
+      "fromIds": [
+        "moonlit-14"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-068.json",
+      "sha256": "9cc0ad96f1c0b3cfe4f9813c904fe786ec22733d5238a026adc7e7de396b6ad3",
+      "bytes": 382955,
+      "count": 103,
+      "fromIds": [
+        "moonlit-14"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-069.json",
+      "sha256": "9a8b36b4a2601ebce54bdf2aacc33e48962976b7101c8237c139a408dd3632c3",
+      "bytes": 383605,
+      "count": 104,
+      "fromIds": [
+        "moonlit-14"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-070.json",
+      "sha256": "fb665ba9cddf71f15e45031e17b4d63f73474fd4de0e87e1af286745c7c6d2ec",
+      "bytes": 383410,
+      "count": 104,
+      "fromIds": [
+        "moonlit-14",
+        "moonlit-15"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-071.json",
+      "sha256": "06d316b77c5b4f0c8c67ffa14d6a9f32b8b7fa3d2ccb4264e06429a68f7dfa38",
+      "bytes": 382359,
+      "count": 102,
+      "fromIds": [
+        "moonlit-15"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-072.json",
+      "sha256": "a7b5c6bfa0bfe0578c9c72faf1c3b1507f7923be310a2d97eb3e3071184a7ce4",
+      "bytes": 384111,
+      "count": 102,
+      "fromIds": [
+        "moonlit-15"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-073.json",
+      "sha256": "e8a20d4eec3975d98aba5a0c716c26eae64e8301777dab166a2f3a036dc2315f",
+      "bytes": 382775,
+      "count": 103,
+      "fromIds": [
+        "moonlit-15"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-074.json",
+      "sha256": "4747a74a6c851171000ebae9c788a87b847307ed1e6a7eb59611dd6c0f1e845f",
+      "bytes": 382369,
+      "count": 104,
+      "fromIds": [
+        "moonlit-15"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-075.json",
+      "sha256": "c7a8b41a3b4b461d2279ea88e647b809da1cd2d7f9decd5ee16ced0021284353",
+      "bytes": 380771,
+      "count": 103,
+      "fromIds": [
+        "moonlit-15",
+        "moonlit-16"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-076.json",
+      "sha256": "694ca0079ce809f5ac4a3194a23f5a120690cd64291289a1a4acd599c6876513",
+      "bytes": 383514,
+      "count": 102,
+      "fromIds": [
+        "moonlit-16"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-077.json",
+      "sha256": "34fafb1ca59973ce0c92dd0d3c5b4369a23aa38ebc8cccb31123ec2e39de2ebf",
+      "bytes": 384108,
+      "count": 102,
+      "fromIds": [
+        "moonlit-16"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-078.json",
+      "sha256": "ec423846f2ef59a1a1186d0101bbd3bc66692c71ae78636163707484630ffa8b",
+      "bytes": 383669,
+      "count": 103,
+      "fromIds": [
+        "moonlit-16"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-079.json",
+      "sha256": "a623f9bafcfb8108ab8b061381cbf17ac3f0715ad804cef9c8a76f3f6246cc74",
+      "bytes": 383206,
+      "count": 104,
+      "fromIds": [
+        "moonlit-16"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-080.json",
+      "sha256": "a87885ec6c8915422464c9d1ee34c58c37a75a71a3d6577c59c8f924dee1f42c",
+      "bytes": 382639,
+      "count": 104,
+      "fromIds": [
+        "moonlit-16",
+        "moonlit-17"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-081.json",
+      "sha256": "3ba1a8bfe580532dd4e13ec7b5b8aee234244d66590e19ac97e211706bc6b054",
+      "bytes": 382275,
+      "count": 105,
+      "fromIds": [
+        "moonlit-17"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-082.json",
+      "sha256": "057d9c5d39d06a86974ab3d7afd345a695fd188f30952559586f5532035a6f75",
+      "bytes": 382779,
+      "count": 105,
+      "fromIds": [
+        "moonlit-17"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-083.json",
+      "sha256": "3643b1162b663199b09bd140d3f4b19143b9e7cdb3603d60965fadccd8c96748",
+      "bytes": 382682,
+      "count": 106,
+      "fromIds": [
+        "moonlit-17"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-084.json",
+      "sha256": "cb7cebd39f98090352b61563f59ff9e02e3296ee60b74fc0fae1dcfb040c8445",
+      "bytes": 383272,
+      "count": 107,
+      "fromIds": [
+        "moonlit-17"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-085.json",
+      "sha256": "ec6864f3ac2016e7a0d16f9e5e39494390c664dc6a5a9cbc47304279afbfc165",
+      "bytes": 383267,
+      "count": 106,
+      "fromIds": [
+        "moonlit-17",
+        "moonlit-18"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-086.json",
+      "sha256": "3887fa7a0362277b7f13cdd3b70fda15ba8e48c91b63678b744aba9b091467f0",
+      "bytes": 382876,
+      "count": 104,
+      "fromIds": [
+        "moonlit-18"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-087.json",
+      "sha256": "a6a3036c506af7919824e9f6c65e9a0b1284747f32a6b28efcf4dc7b9f6ad96d",
+      "bytes": 383571,
+      "count": 105,
+      "fromIds": [
+        "moonlit-18"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-088.json",
+      "sha256": "d371e423ca6c0c82e0b285f8603cf573079b0f60ca2a26062e67a4c03aa8a3cb",
+      "bytes": 382656,
+      "count": 105,
+      "fromIds": [
+        "moonlit-18"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-089.json",
+      "sha256": "7e813dd77a6a18008e055243cc0e9afa2b5a37a4a5b544718f7f6f80f4aa3adc",
+      "bytes": 382067,
+      "count": 106,
+      "fromIds": [
+        "moonlit-18"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-090.json",
+      "sha256": "10eb820218590d846c38d6e2905355262a60d375611ff4864cae9d3f1e58567a",
+      "bytes": 383952,
+      "count": 105,
+      "fromIds": [
+        "moonlit-18",
+        "moonlit-19"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-091.json",
+      "sha256": "e5a18390730385dfcdc2f3d65c31a69e6ac57cc6eb25d2710681e51808e7c8ca",
+      "bytes": 381938,
+      "count": 103,
+      "fromIds": [
+        "moonlit-19"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-092.json",
+      "sha256": "6d87ed88c95255745bdb5301fe56b31736c76a049536ed0b47e1a8714f012758",
+      "bytes": 383382,
+      "count": 105,
+      "fromIds": [
+        "moonlit-19"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-093.json",
+      "sha256": "3594c6b4ff2b7f47470e234c7d3e0c7dc4519199f7eadf495a22a35d2d76f7b8",
+      "bytes": 382116,
+      "count": 105,
+      "fromIds": [
+        "moonlit-19"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-094.json",
+      "sha256": "e119e96abfa01ca72a8605e754e8b97624bcbdd74347c936852e963d20736af7",
+      "bytes": 382979,
+      "count": 106,
+      "fromIds": [
+        "moonlit-19"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-095.json",
+      "sha256": "c14659f48cffb6d35d2a76975566255c2928a71e67d2c00c03989c5146377d9a",
+      "bytes": 382657,
+      "count": 104,
+      "fromIds": [
+        "moonlit-19",
+        "moonlit-20"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-096.json",
+      "sha256": "b98c008412b64cc3429a2455879994c0ba8cf75adf359f98db8cd646638a6a40",
+      "bytes": 382910,
+      "count": 103,
+      "fromIds": [
+        "moonlit-20"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-097.json",
+      "sha256": "4a0b326bf54c29290c5987f89ce08acf3b10233f3e36bbff796024ada7edca06",
+      "bytes": 381322,
+      "count": 104,
+      "fromIds": [
+        "moonlit-20"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-098.json",
+      "sha256": "c26e314488e0162aa4421be21725007a31904d7b07d4f104c0184d46faa4203b",
+      "bytes": 383793,
+      "count": 105,
+      "fromIds": [
+        "moonlit-20"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-099.json",
+      "sha256": "f9d9cad4735ed7c92a49aa9ba5d14e933fd9c0bea069a3944f71eb16da8fe7ff",
+      "bytes": 381825,
+      "count": 105,
+      "fromIds": [
+        "moonlit-20"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-100.json",
+      "sha256": "df4c0a2ac117097487bc8b76aea2413d203bbd5e45c093a054fe2a9511ec6f5e",
+      "bytes": 384250,
+      "count": 104,
+      "fromIds": [
+        "moonlit-20",
+        "moonlit-21"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-101.json",
+      "sha256": "1e0904589438313a9de8ce818e33f251dd0291ba789d9517cde9d89e45a6d05d",
+      "bytes": 382400,
+      "count": 103,
+      "fromIds": [
+        "moonlit-21"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-102.json",
+      "sha256": "af128d67cfa1567950647cf4b4ff4d76c3a674241a14428a3bd872f8672e81a1",
+      "bytes": 381418,
+      "count": 104,
+      "fromIds": [
+        "moonlit-21"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-103.json",
+      "sha256": "73279c6904c32c5b90537b8f8c03fe86a873c51508d868c29a48fc0ec15bc32c",
+      "bytes": 383547,
+      "count": 105,
+      "fromIds": [
+        "moonlit-21"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-104.json",
+      "sha256": "a9804d80679c1f8f2733c6d6ad010e3682e13bfee4c82d70fe1644a874be6f21",
+      "bytes": 383553,
+      "count": 105,
+      "fromIds": [
+        "moonlit-21",
+        "moonlit-22"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-105.json",
+      "sha256": "0ca1d6620f8dccee276545f4bc6d3ad1950b67ddc986bc2765101cd284a68b26",
+      "bytes": 380894,
+      "count": 103,
+      "fromIds": [
+        "moonlit-22"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-106.json",
+      "sha256": "e403893cd9a5c82fcbf19e9b15b2ea645735297b265eb9241550f38b4dcc7b4b",
+      "bytes": 381062,
+      "count": 103,
+      "fromIds": [
+        "moonlit-22"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-107.json",
+      "sha256": "34611b90205db01ad77b687da5027a3197d080822325869cf7c6ba90724bba72",
+      "bytes": 384003,
+      "count": 105,
+      "fromIds": [
+        "moonlit-22"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-108.json",
+      "sha256": "80c43de61cbf271b3e5a937b70061f4f42a0574c8e93d84e0a545ff779f5a09f",
+      "bytes": 381669,
+      "count": 105,
+      "fromIds": [
+        "moonlit-22"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-109.json",
+      "sha256": "32f1f29ceaddc014f21d267e8c56bc81e403733096211ac664a9963d1ac5ae65",
+      "bytes": 383592,
+      "count": 105,
+      "fromIds": [
+        "moonlit-22",
+        "moonlit-23"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-110.json",
+      "sha256": "00532c2320d4bef092aa8fbd319809c9c27c4b57982b7678fcfea20efaf32bfd",
+      "bytes": 381254,
+      "count": 103,
+      "fromIds": [
+        "moonlit-23"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-111.json",
+      "sha256": "b9a024f2960b5e7ec7b3ce2f6ed81ed0cd9002b4fc06138015b2e42a69d0c96f",
+      "bytes": 381350,
+      "count": 103,
+      "fromIds": [
+        "moonlit-23"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-112.json",
+      "sha256": "014eb788b227871084ec973d4442d50ad2f8bd1ba3f4f152abf4cbd703929ee1",
+      "bytes": 381859,
+      "count": 104,
+      "fromIds": [
+        "moonlit-23"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-113.json",
+      "sha256": "f9fcbc8acdfd007449d3c15a7f0d28d0c12d35782f90cd052766443924068a6d",
+      "bytes": 382224,
+      "count": 105,
+      "fromIds": [
+        "moonlit-23"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-114.json",
+      "sha256": "b91fd0e73bf5eb8fbddd373ba555c54cbf8faea202737af030f6b2729ec951b6",
+      "bytes": 380854,
+      "count": 104,
+      "fromIds": [
+        "moonlit-23",
+        "moonlit-24"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-115.json",
+      "sha256": "a76a69bf43aa29bb5657638ce1f19bc6aedea5de5fcecdc2fb4a8f15d4e3a841",
+      "bytes": 381332,
+      "count": 103,
+      "fromIds": [
+        "moonlit-24"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-116.json",
+      "sha256": "b1cec8954b51559f8ed620a0f77d629f79a84af0b520f669e2900550aaecef33",
+      "bytes": 382270,
+      "count": 104,
+      "fromIds": [
+        "moonlit-24"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-117.json",
+      "sha256": "f6e065f34755390752983156ffb7702862b6b82c3f46f30913808d7a2399d9bf",
+      "bytes": 381271,
+      "count": 104,
+      "fromIds": [
+        "moonlit-24"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-118.json",
+      "sha256": "db247e3b67ff3721a0b47869416f09affe072786d6f9ace610c42e864d246bf2",
+      "bytes": 384341,
+      "count": 106,
+      "fromIds": [
+        "moonlit-24"
+      ]
+    },
+    {
+      "url": "/oracle-reading-triples-119.json",
+      "sha256": "4b2e9f03144eacdb0ff4894306f0dd89a5c2c5b500961775b665678f584130b5",
+      "bytes": 207216,
+      "count": 57,
+      "fromIds": [
+        "moonlit-24"
+      ]
+    }
+  ],
+  "page": {
+    "url": "/oracle-relations.html",
+    "sha256": "1cc5504185c5196b4687b8700be18658bcebf95ae2141ebb4820c249ae27b86c",
+    "bytes": 32503
+  }
+}

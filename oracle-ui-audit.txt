@@ -21,7 +21,7 @@ const report={
   actualExportPayloadVerified:false,actualPristineHTMLExportVerified:false,
   actualResponsiveFrameLayoutsVerified:false,actualFixedViewportNoScrollPageLayoutsVerified:false,
   actualViewportContentReachabilityVerified:false,actualViewportNativeControlsReachabilityVerified:false,
-  actualShuffleAutoAdvanceVerified:false,actualReshuffleAutoAdvanceVerified:false,actualDrawAgainAutoAdvanceVerified:false,actualSinglePageReadingsVerified:false,actualMobileReadingSelectorsVerified:false,actualTextEditingInternalScrollVerified:false,actualOSKeyboardVerified:false,actualOSZoom200Verified:false,
+  actualReadingCatalogNativeLayoutsVerified:false,actualReadingCatalogRecordsVerified:false,actualAuthoredReadingCoverageVerified:false,actualReadingDepthNativeTabsVerified:false,actualReadingDepthNoScrollLayoutsVerified:false,actualReadingDepthExportPayloadVerified:false,actualReadingDomainPersistenceVerified:false,actualReadingDepthMobileSelectorsVerified:false,actualShuffleAutoAdvanceVerified:false,actualReshuffleAutoAdvanceVerified:false,actualDrawAgainAutoAdvanceVerified:false,actualSinglePageReadingsVerified:false,actualMobileReadingSelectorsVerified:false,actualTextEditingInternalScrollVerified:false,actualOSKeyboardVerified:false,actualOSZoom200Verified:false,
   actualDownloadTransportVerified:false,actualClipboardTransportVerified:false,actualScreenshotCaptured:false,
   actualProductionUserStorageRead:false,actualProductionUserStorageWritten:false
  },
@@ -184,6 +184,381 @@ async function viewportTour(label){
  while(a.page>1)a=await viewportStep("prev");
  return{label,view:a.view,viewport:{width:win.innerWidth,height:win.innerHeight},totalPages:total,eligibleUnits:ids.length,nativeControls:wantedControls.length};
 }
+/* ORACLE_DEPTH_QA_SOURCE_BEGIN */
+async function readingDepthChecks(){
+ const api=win.oracleReading;
+ const coverage={schemaVersion:"1.0",kind:"actual_reading_depth_extension",pureScenariosSynthetic:true,productionJournalTouched:false,nativeLayouts:[],directedPairsChecked:0,positionedTriplesChecked:0,domainChanges:[],exportImportReload:false};
+ report.readingDepthCoverage=coverage;
+ const nonempty=value=>typeof value==="string"&&value.trim().length>0;
+ const exact=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+ const fields=["symbolism","focus","resource","shadow","roleReading","contextReading","action","check"];
+ check("depth_actual_frozen_engine_available",!!api&&Object.isFrozen(api)&&typeof api.interpret==="function"&&typeof api.detectDomain==="function"&&!!api.profiles&&!!api.pairs);
+ const ids=qaDeck.map(c=>c.id),c=api.coverage;
+ check("depth_complete_authored_coverage",ids.length===24&&Object.keys(api.profiles).length===24&&Object.keys(api.pairs).length===552&&c.profiles===24&&c.domains===5&&c.directedPairs===552&&c.pairsComplete===true&&c.positionedTriples===12144,{profiles:24,domains:5,directedPairs:552,positionedTriples:12144});
+ for(const from of ids)for(const to of ids)if(from!==to){
+  const pair=api.pairs[from+"|"+to];
+  if(!pair||!["bridge","tension","transition"].every(k=>nonempty(pair[k])))throw failure("DEPTH_AUTHORED_PAIR_MISSING");
+  coverage.directedPairsChecked++;
+ }
+ check("depth_all_552_directed_pairs_nonempty",coverage.directedPairsChecked===552,{directedPairsChecked:coverage.directedPairsChecked});
+ const light=api.profiles["moonlit-06"];
+ check("depth_light_authored_candle_grounding",light&&light.name==="微光"&&/燭|蠟|火焰|燈芯/.test(light.symbolism)&&/支持|資源|協助|援助|幫助/.test(light.resource),{cardId:"moonlit-06",originalArtMotif:"candle",independentMotifChecked:true});
+ const scenarios=[
+  ["general","今天，我想把注意力放在哪裡？"],
+  ["work","工作專案一直卡住，我可以先改哪一步？"],
+  ["relationships","我和伴侶溝通不順，可以怎麼表達需求？"],
+  ["decision","兩個選項應該怎麼比較？"],
+  ["selfcare","最近很疲憊，睡眠和休息可以怎麼調整？"]
+ ];
+ const results=scenarios.map(([domain,question])=>{
+  const value=api.interpret({cardIds:["moonlit-06"],question,mode:"1"});
+  check("depth_question_domain_"+domain,api.detectDomain(question)===domain&&value.domain===domain&&value.domainSource==="question"&&value.cards.length===1&&fields.every(k=>nonempty(value.cards[0][k]))&&value.plan.length===3&&value.plan.every(p=>nonempty(p.action)&&nonempty(p.check)),{expectedDomain:domain,syntheticQAQuestion:true});
+  return value;
+ });
+ check("depth_same_card_changes_with_question",new Set(results.map(r=>r.cards[0].contextReading)).size===5&&new Set(results.map(r=>r.cards[0].action)).size===5&&new Set(results.map(r=>r.cards[0].check)).size===5,{sameCardId:"moonlit-06",distinctDomainReadings:5,distinctActions:5,distinctObservationCriteria:5});
+ check("depth_ambiguous_question_remains_neutral",api.detectDomain("我不知道這件事代表什麼。")==="general",{unknownPersonalFactsInferred:false});
+ const p=api.interpret({cardIds:["moonlit-06","moonlit-05","moonlit-03"],question:scenarios[1][1],mode:"3"});
+ const swapped=api.interpret({cardIds:["moonlit-05","moonlit-06","moonlit-03"],question:scenarios[1][1],mode:"3"});
+ check("depth_position_changes_same_card_reading",p.cards[0].id===swapped.cards[1].id&&p.cards[0].roleKey==="present"&&swapped.cards[1].roleKey==="obstacle"&&p.cards[0].roleReading!==swapped.cards[1].roleReading&&nonempty(swapped.cards[1].shadow)&&p.threePairs[0].pairKey!==swapped.threePairs[0].pairKey&&p.threePairs[0].reading!==swapped.threePairs[0].reading,{sameCardId:"moonlit-06",presentVersusObstacle:true,orderedPairInfluencesReading:true});
+ const originalInMemory={cardIds:["moonlit-06"],question:scenarios[1][1],mode:"1",note:"synthetic-memory-only"};
+ const fingerprint=JSON.stringify(originalInMemory),deterministic=JSON.stringify(api.interpret(originalInMemory));
+ check("depth_pure_interpreter_deterministic_no_input_mutation",JSON.stringify(api.interpret(originalInMemory))===deterministic&&JSON.stringify(originalInMemory)===fingerprint,{inputMutation:false,randomReinterpretation:false});
+ const combinations=new Set();let tripleFailure=null;
+ for(let a=0;a<ids.length&&!tripleFailure;a++){
+  for(let b=0;b<ids.length&&!tripleFailure;b++)if(b!==a)for(let d=0;d<ids.length;d++)if(d!==a&&d!==b){
+   const chosen=[ids[a],ids[b],ids[d]],value=api.interpret({cardIds:chosen,question:scenarios[0][1],mode:"3"});
+   const expectedPairs=[chosen[0]+"|"+chosen[1],chosen[1]+"|"+chosen[2],chosen[0]+"|"+chosen[2]];
+   const valid=exact(value.cardIds,chosen)&&value.cards.length===3&&value.cards.every((card,i)=>card.id===chosen[i]&&card.roleKey===["present","obstacle","advice"][i]&&fields.every(k=>nonempty(card[k])))&&nonempty(value.summary)&&nonempty(value.connection)&&nonempty(value.contradiction)&&nonempty(value.resolution)&&value.threePairs.length===3&&value.threePairs.every((pair,i)=>pair.pairKey===expectedPairs[i]&&pair.basis==="authored-directed-pair"&&nonempty(pair.reading))&&value.plan.length===3&&value.plan.every(step=>nonempty(step.action)&&nonempty(step.check));
+   if(!valid){tripleFailure=chosen;break;}
+   combinations.add(chosen.join("|"));coverage.positionedTriplesChecked++;
+  }
+  budget();if(a%4===0)await pause(0);
+ }
+ check("depth_all_12144_positioned_triples_structural",!tripleFailure&&coverage.positionedTriplesChecked===12144&&combinations.size===12144,{positionedTriplesChecked:coverage.positionedTriplesChecked,uniqueOrderedCombinations:combinations.size,completeOriginalAuthoredPairsUsed:true,manualReadingValidationClaimed:false,firstFailingCardIds:tripleFailure});
+ report.execution.actualAuthoredReadingCoverageVerified=true;
+ const target=qaState().entries.find(e=>e.mode==="3");
+ check("depth_existing_native_three_card_QA_entry",!!target,{newDrawRequired:false});
+ const before={id:target.id,cardIds:target.cardIds.slice(),question:target.question,note:target.note,interpretationDomain:target.interpretationDomain};
+ async function openTarget(){
+  await show("journal");
+  const historyPages=required("history-pages");
+  for(let i=0;i<4;i++){
+   const previous=[...historyPages.querySelectorAll("button")].find(n=>n.textContent.trim()==="上一頁");
+   if(!previous||previous.disabled)break;await click(previous);
+  }
+  const title=before.cardIds.map(id=>qaDeck.find(card=>card.id===id).name).join(" · ");
+  for(let i=0;i<Math.ceil(qaState().entries.length/6)+1;i++){
+   const item=[...required("history-list").querySelectorAll(".history-item")].find(n=>n.querySelector(".history-question").textContent===before.question&&n.querySelector("h3").textContent===title);
+   if(item){await click(item.querySelector(".history-buttons button"));await until(()=>activeQA()?.id===before.id,"depth_native_history_open",2000);return;}
+   const next=[...historyPages.querySelectorAll("button")].find(n=>n.textContent.trim()==="下一頁");
+   if(!next||next.disabled)break;await click(next);
+  }
+  throw failure("DEPTH_QA_HISTORY_ENTRY_UNREACHABLE");
+ }
+ function visibleText(node){
+  const walker=doc.createTreeWalker(node,win.NodeFilter.SHOW_TEXT);let text="",part;
+  while(part=walker.nextNode())if(part.parentElement&&visible(part.parentElement)&&!part.parentElement.closest("script,style,textarea,input,select"))text+=part.textContent;
+  return text;
+ }
+ async function layout(label){
+  const a=await viewportSettled(),geometry=viewportGeometry(),entry=activeQA();
+  check("depth_single_result_geometry_"+label,a.view==="reading"&&a.total===1&&a.page===1&&!a.fallback&&geometry.passed&&!visible(required("or-vp-pager"))&&visible(required("journal"))&&["save-note","copy-reading","download","draw-again"].every(id=>visible(required(id)))&&entry?.id===before.id&&exact(entry.cardIds,before.cardIds)&&entry.question===before.question,{width:win.innerWidth,height:win.innerHeight,totalPages:a.total,geometry,questionAndCardsPreserved:true});
+  coverage.nativeLayouts.push({label,width:win.innerWidth,height:win.innerHeight,totalPages:a.total,noScroll:geometry.passed});
+ }
+ await openTarget();
+ const draft="depth-QA-note-"+randomToken();await input(required("journal"),draft);
+ await click(required("save-note"));
+ await until(()=>activeQA()?.note===draft,"depth_note_saved",1500);
+ for(const domain of["work","relationships","decision"]){
+  const select=required("reading-domain");await reach(select);select.value=domain;
+  select.dispatchEvent(new win.Event("change",{bubbles:true}));await viewportSettled();
+  await until(()=>activeQA()?.interpretationDomain===domain,"depth_native_domain_persisted",2000);
+  check("depth_native_domain_selection_"+domain,select.value===domain&&activeQA().note===draft&&required("journal").value===draft&&exact(activeQA().cardIds,before.cardIds)&&activeQA().question===before.question&&api.interpret(activeQA()).domain===domain,{actualNativeChangeHandler:true,draftPreserved:true,questionAndCardsPreserved:true});
+  coverage.domainChanges.push(domain);await layout("domain_"+domain);
+ }
+ for(const [width,height]of[[1280,800],[375,812]]){
+  iframe.style.width=width+"px";iframe.style.height=height+"px";
+  await until(()=>win.innerWidth===width&&win.innerHeight===height,"depth_actual_frame_dimensions",2000);await viewportSettled();
+  await click(required("reading-tab-overview"));await layout(width+"_overview");
+  await click(required("reading-tab-detail"));
+  for(const subsection of["symbol","position","balance"]){
+   await click(required("reading-detail-"+subsection));
+   for(const pos of(width<900?[0,1,2]:[0])){
+    if(width<900)await click(required("reading-choice-"+pos));
+    const interpreted=win.oracleReading.interpret(activeQA()),positions=width<900?[pos]:[0,1,2];
+    const wanted=subsection==="symbol"?["symbolism","focus"]:subsection==="position"?["roleReading","contextReading"]:["resource","shadow"];
+    check("depth_actual_visible_detail_"+width+"_"+subsection+"_"+pos,positions.every(i=>{const panel=required("reading-deep-panel-"+i),text=visibleText(panel);return visible(panel)&&wanted.every(field=>text.includes(interpreted.cards[i][field]));})&&required("journal").value===draft&&activeQA().note===draft,{nativeSubsectionClicked:true,fullAuthoredFieldsVisible:wanted,draftPreserved:true});
+    await layout(width+"_detail_"+subsection+"_"+pos);
+   }
+  }
+  await click(required("reading-tab-relations"));
+  for(const lens of["role","bridge","tension","transition"]){
+   await click(required("reading-relation-"+lens));
+   for(const edge of(width<900?[0,1,2]:[0])){
+    if(width<900)await click(required("reading-edge-"+edge));
+    const interpreted=win.oracleReading.interpret(activeQA()),positions=width<900?[edge]:[0,1,2],field=lens==="role"?"reading":lens;
+    check("depth_actual_visible_ordered_pair_"+width+"_"+lens+"_"+edge,positions.every(i=>{const panel=required("reading-edge-panel-"+i),text=visibleText(panel),pair=interpreted.threePairs[i];return visible(panel)&&text.includes(pair.fromName)&&text.includes(pair.toName)&&text.includes(pair[field]);})&&required("journal").value===draft,{actualNativePairSelectorClicked:width<900,actualRelationLensClicked:lens,completeAuthoredPairFieldVisible:field,draftPreserved:true});
+    await layout(width+"_relations_"+lens+"_"+edge);
+   }
+  }
+  await click(required("reading-tab-plan"));
+  for(const lens of["steps","why"]){
+   await click(required("reading-plan-lens-"+lens));
+   for(const step of(width<900?[0,1,2]:[0])){
+    if(width<900)await click(required("reading-plan-"+step));
+    const interpreted=win.oracleReading.interpret(activeQA()),positions=width<900?[step]:[0,1,2],wanted=lens==="steps"?["action","check"]:["rationale","obstacleCue"];
+    check("depth_actual_visible_action_plan_"+width+"_"+lens+"_"+step,positions.every(i=>{const panel=required("reading-plan-panel-"+i),text=visibleText(panel),plan=interpreted.plan[i];return visible(panel)&&wanted.every(field=>nonempty(plan[field])&&text.includes(plan[field]));})&&required("journal").value===draft,{actualNativePlanSelectorClicked:width<900,actualPlanLensClicked:lens,completePlanFieldsVisible:wanted,draftPreserved:true});
+    await layout(width+"_plan_"+lens+"_"+step);
+   }
+  }
+ }
+ report.execution.actualReadingDepthNativeTabsVerified=true;
+ report.execution.actualReadingDepthNoScrollLayoutsVerified=true;
+ iframe.style.width="1280px";iframe.style.height="800px";
+ await until(()=>win.innerWidth===1280&&win.innerHeight===800,"depth_restore_desktop",2000);await viewportSettled();
+ await click(required("reading-tab-overview"));
+ await click(required("download"));
+ await until(()=>$("handout-text")&&required("handout-text").value.length>0,"depth_actual_handout_payload",1500);
+ const handout=required("handout-text").value,interpretation=win.oracleReading.interpret(activeQA());
+ check("depth_actual_handout_contains_complete_interpretation",handout.includes(before.question)&&handout.includes(draft)&&interpretation.cards.every(card=>fields.every(field=>handout.includes(card[field])))&&interpretation.threePairs.every(pair=>["bridge","tension","transition"].every(field=>handout.includes(pair[field])))&&interpretation.plan.every(step=>["action","check","rationale","obstacleCue"].every(field=>nonempty(step[field])&&handout.includes(step[field]))),{actualOriginalNativeDownloadHandler:true,transport:"real native handout textarea",OSDownloadTransportVerified:false,completeDepthPairsPlanPresent:true});
+ report.execution.actualReadingDepthExportPayloadVerified=true;
+ await click(required("close-handout"));await layout("handout_closed");
+ await openTarget();await click(required("reading-tab-overview"));
+ const select=required("reading-domain");await reach(select);select.value="work";
+ select.dispatchEvent(new win.Event("change",{bubbles:true}));await viewportSettled();
+ await until(()=>activeQA()?.interpretationDomain==="work","depth_persistence_domain_work",2000);
+ await show("journal");await click(required("export-journal"));
+ const exported=required("backup-text").value,backup=JSON.parse(exported),saved=backup.entries.find(e=>e.id===before.id),savedCount=backup.entries.length;
+ check("depth_optional_domain_original_version1_export",backup.version===1&&saved?.interpretationDomain==="work"&&saved.note===draft&&exact(saved.cardIds,before.cardIds)&&saved.question===before.question,{version:1,optionalField:"interpretationDomain",actualNativeExportHandler:true});
+ const legacy=JSON.parse(exported);legacy.entries.forEach(e=>delete e.interpretationDomain);
+ const oldParsed=win.parseState(JSON.stringify(legacy)),currentParsed=win.parseState(exported);
+ check("depth_legacy_version1_and_optional_domain_validation",oldParsed.status==="ok"&&oldParsed.state.entries.length===savedCount&&currentParsed.status==="ok"&&currentParsed.state.entries.find(e=>e.id===before.id)?.interpretationDomain==="work",{originalVersion1EntriesAccepted:true,optionalDomainSurvivesValidation:true,onlyInMemoryBackupParsed:true});
+ await openTarget();await show("journal");
+ const title=before.cardIds.map(id=>qaDeck.find(card=>card.id===id).name).join(" · ");
+ let deleteItem=[...required("history-list").querySelectorAll(".history-item")].find(n=>n.querySelector(".history-question").textContent===before.question&&n.querySelector("h3").textContent===title);
+ if(!deleteItem){
+  for(let i=0;i<Math.ceil(savedCount/6);i++){
+   const next=[...required("history-pages").querySelectorAll("button")].find(n=>n.textContent.trim()==="下一頁");
+   if(!next||next.disabled)break;await click(next);
+   deleteItem=[...required("history-list").querySelectorAll(".history-item")].find(n=>n.querySelector(".history-question").textContent===before.question&&n.querySelector("h3").textContent===title);if(deleteItem)break;
+  }
+ }
+ if(!deleteItem)throw failure("DEPTH_NATIVE_QA_DELETE_TARGET_MISSING");
+ await click(deleteItem.querySelector(".delete-entry"));
+ await until(()=>required("delete-dialog").open,"depth_native_QA_delete_dialog",1500);
+ await click(required("delete-dialog").querySelector('button[value="delete"]'));
+ await until(()=>!qaState().entries.some(e=>e.id===before.id),"depth_optional_domain_QA_deleted",1500);
+ const file=new win.File([exported],"oracle-depth-QA-backup.json",{type:"application/json"}),transfer=new win.DataTransfer();
+ transfer.items.add(file);required("import-file").files=transfer.files;
+ required("import-file").dispatchEvent(new win.Event("change",{bubbles:true}));
+ await until(()=>qaState().entries.length===savedCount&&qaState().entries.some(e=>e.id===before.id&&e.interpretationDomain==="work"&&e.note===draft),"depth_real_FileReader_optional_domain_import",3000);
+ check("depth_actual_FileReader_restores_optional_domain",qaState().entries.some(e=>e.id===before.id&&e.interpretationDomain==="work"&&e.note===draft&&exact(e.cardIds,before.cardIds)&&e.question===before.question),{actualFileReader:true,deletedQAEntryRestored:true,productionNamespaceTouched:false});
+ await openTarget();const beforeReload=win.oracleReading.interpret(activeQA());
+ await mount(true);await until(()=>activeQA()?.id===before.id&&visible(required("or-pane-reading")),"depth_native_optional_domain_reload",2000);
+ check("depth_original_namespace_reload_keeps_domain_cards_question_note",activeQA().interpretationDomain==="work"&&required("reading-domain").value==="work"&&activeQA().note===draft&&required("journal").value===draft&&exact(activeQA().cardIds,before.cardIds)&&activeQA().question===before.question&&exact(win.oracleReading.interpret(activeQA()),beforeReload),{actualIsolatedNamespaceReload:true,noRerandomization:true,optionalDomainRestored:true,notePreserved:true});
+ coverage.exportImportReload=true;report.execution.actualReadingDomainPersistenceVerified=true;
+ await click(required("reading-tab-detail"));await click(required("reading-detail-position"));await layout("postreload_detail");
+ await click(required("reading-tab-overview"));
+ const restoreSelect=required("reading-domain");await reach(restoreSelect);restoreSelect.value=before.interpretationDomain||"auto";
+ restoreSelect.dispatchEvent(new win.Event("change",{bubbles:true}));await viewportSettled();
+ await input(required("journal"),before.note);await click(required("save-note"));
+ await until(()=>activeQA()?.note===before.note,"depth_original_QA_note_restored",1500);
+ await click(required("reading-tab-overview"));await layout("final_overview");
+ report.execution.actualReadingDepthMobileSelectorsVerified=true;
+}
+/* ORACLE_DEPTH_QA_SOURCE_END */
+/* ORACLE_CATALOG_QA_SOURCE_BEGIN */
+async function readingCatalogChecks(){
+ const appWindow=win,appDocument=doc,appFrame=iframe,parentRoute=qaHost.location.href;
+ const coverage={schemaVersion:"1.0",kind:"actual_first_party_reading_catalog",path:"/oracle-relations.html",nativeLayouts:[],recordSelections:[],verifiedTripleFiles:[],actualHTMLSourceVerified:false,actualNativeDOMRead:false,privateJournalRead:false,privateJournalWritten:false,cleanup:false};
+ report.readingCatalogCoverage=coverage;
+ let catalogFrame=null,catalogWindow=null,catalogDocument=null,catalogErrors=0;
+ const cache=new Map(),same=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
+ function canonical(value){return Array.isArray(value)?value.map(canonical):value&&typeof value==="object"?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;}
+ const page=await sameOriginText("/oracle-relations.html",2000000),pageSHA=await sha(page.bytes);
+ check("catalog_actual_source_HTML_SHA256",typeof config.expectedRelationsPageSHA256==="string"&&pageSHA===config.expectedRelationsPageSHA256,{actualHTTP:true,actualPageSHA256:pageSHA,expectedPageSHA256:config.expectedRelationsPageSHA256});
+ coverage.actualHTMLSourceVerified=true;
+ const manifestSource=await sameOriginText("/oracle-reading-manifest.json",2000000),manifestSHA=await sha(manifestSource.bytes);
+ check("catalog_actual_reading_manifest_SHA256",typeof config.expectedReadingManifestSHA256==="string"&&manifestSHA===config.expectedReadingManifestSHA256,{actualHTTP:true,actualReadingManifestSHA256:manifestSHA,expectedReadingManifestSHA256:config.expectedReadingManifestSHA256});
+ coverage.actualReadingManifestSHA256=manifestSHA;
+ const manifest=JSON.parse(manifestSource.text),descriptors=[manifest.engine,manifest.profiles,...manifest.pairs,...manifest.triples];
+ check("catalog_actual_manifest_counts",manifest.schemaVersion==="oracle-reading-library-v1"&&manifest.counts.profiles===24&&manifest.counts.domains===5&&manifest.counts.directedPairs===552&&manifest.counts.positionedTriples===12144&&manifest.triples.reduce((n,d)=>n+d.count,0)===12144,{profiles:24,domains:5,directedPairs:552,positionedTriples:12144});
+ function requiredCatalog(id){const n=catalogDocument?.getElementById(id);if(!n)throw failure("CATALOG_REQUIRED_NATIVE_NODE_MISSING_"+id);return n;}
+ function catalogVisible(node){
+  if(!node||node.hidden)return false;
+  for(let n=node;n&&n.nodeType===1;n=n.parentElement){const style=catalogWindow.getComputedStyle(n);if(n.hidden||n.inert||n.classList.contains("sr-only")||style.display==="none"||style.visibility==="hidden")return false;}
+  return node.getClientRects().length>0;
+ }
+ function snapshot(){return catalogWindow?.oracleRelationsAudit?.snapshot();}
+ async function settled(id,condition=()=>true,maxMs=25000){
+  await until(()=>{const s=snapshot();if(s?.phase==="error")throw failure("CATALOG_ACTUAL_SOURCE_RECORD_ERROR");return s?.phase==="ready"&&s.ready===true&&s.integrity===true&&s.recordVerified===true&&condition(s);},id,maxMs);
+  let timer;
+  try{await Promise.race([new Promise(resolve=>catalogWindow.requestAnimationFrame(()=>catalogWindow.requestAnimationFrame(resolve))),new Promise((_,reject)=>{timer=setTimeout(()=>reject(failure("CATALOG_LAYOUT_SETTLE_TIMEOUT")),Math.min(6000,deadline-Date.now()));})]);}finally{clearTimeout(timer);}
+  budget();return snapshot();
+ }
+ function textOf(node){
+  const walker=catalogDocument.createTreeWalker(node,catalogWindow.NodeFilter.SHOW_TEXT);let text="",part;
+  while(part=walker.nextNode())if(part.parentElement&&catalogVisible(part.parentElement)&&!part.parentElement.closest("script,style,textarea,input,select,svg"))text+=part.textContent;
+  return text;
+ }
+ function geometry(){
+  const issues=[],vw=catalogWindow.innerWidth,vh=catalogWindow.innerHeight,epsilon=2;
+  const add=(kind,node)=>{if(issues.length<16)issues.push({kind,node:node.id||node.tagName});};
+  const within=(rect,node)=>{
+   if(rect.width<=0||rect.height<=0)return;
+   if(rect.left< -epsilon||rect.top< -epsilon||rect.right>vw+epsilon||rect.bottom>vh+epsilon)add("outside_viewport",node);
+   for(let a=node.parentElement;a&&a!==catalogDocument.documentElement;a=a.parentElement){
+    const style=catalogWindow.getComputedStyle(a),box=a.getBoundingClientRect(),x=box.left+a.clientLeft,y=box.top+a.clientTop;
+    if(/^(hidden|clip|auto|scroll)$/.test(style.overflowX)&&(rect.left<x-epsilon||rect.right>x+a.clientWidth+epsilon))add("ancestor_horizontal_clipping",node);
+    if(/^(hidden|clip|auto|scroll)$/.test(style.overflowY)&&(rect.top<y-epsilon||rect.bottom>y+a.clientHeight+epsilon))add("ancestor_vertical_clipping",node);
+   }
+  };
+  const s=snapshot();
+  for(const n of[catalogDocument.documentElement,catalogDocument.body,requiredCatalog("app"),requiredCatalog("workspace"),requiredCatalog("view-"+s.view)]){
+   if(!catalogVisible(n)||n.clientWidth===0||n.clientHeight===0)continue;
+   if(n.scrollWidth>n.clientWidth+epsilon||n.scrollHeight>n.clientHeight+epsilon)add("content_scroll_overflow",n);
+   if(n.scrollLeft||n.scrollTop)add("content_scroll_position",n);
+  }
+  if(catalogWindow.scrollX||catalogWindow.scrollY)add("window_scroll_position",catalogDocument.documentElement);
+  const controls=[...catalogDocument.querySelectorAll("button,input,select,summary,a[href]")].filter(catalogVisible);
+  for(const n of controls)within(n.getBoundingClientRect(),n);
+  const walker=catalogDocument.createTreeWalker(catalogDocument.body,catalogWindow.NodeFilter.SHOW_TEXT);let n,fragments=0;
+  while(n=walker.nextNode()){
+   const p=n.parentElement;if(!n.textContent.trim()||!p||p.closest("script,style,textarea,input,select,svg")||!catalogVisible(p))continue;
+   const range=catalogDocument.createRange();range.selectNodeContents(n);for(const r of range.getClientRects()){fragments++;within(r,p);}range.detach();
+  }
+  return{passed:issues.length===0,viewport:{width:vw,height:vh},nativeControls:controls.length,visibleTextFragments:fragments,issues};
+ }
+ async function layout(label){
+  const s=await settled("catalog_layout_"+label),g=geometry();
+  check("catalog_actual_no_scroll_layout_"+label,s.fallback===false&&g.passed&&s.lastError===""&&catalogWindow.location.pathname==="/oracle-relations.html"&&catalogWindow.location.search===""&&catalogWindow.location.hash==="",{geometry:g,view:s.view,recordVerified:s.recordVerified,privateQuestionInURL:false});
+  coverage.nativeLayouts.push({label,width:catalogWindow.innerWidth,height:catalogWindow.innerHeight,view:s.view,noScroll:g.passed});
+ }
+ async function nativeClick(node,id,condition=()=>true){
+  if(!catalogVisible(node)||node.disabled)throw failure("CATALOG_NATIVE_CLICK_UNAVAILABLE");
+  node.click();return settled(id,condition);
+ }
+ async function nativeSelect(id,value,condition=()=>true){
+  const n=requiredCatalog(id);if(!catalogVisible(n)||n.disabled||![...n.options].some(o=>o.value===value&&!o.disabled))throw failure("CATALOG_NATIVE_SELECT_UNAVAILABLE_"+id);
+  n.value=value;n.dispatchEvent(new catalogWindow.Event("change",{bubbles:true}));
+  return settled("catalog_native_select_"+id,condition);
+ }
+ async function fetchRecord(ids){
+  const wanted=manifest.triples.filter(d=>d.fromIds.includes(ids[0])),matches=[];
+  for(const descriptor of wanted){
+   const url=new URL(descriptor.url,config.productionOrigin);
+   if(url.origin!==config.productionOrigin||url.search||url.hash)throw failure("CATALOG_RECORD_FIRST_PARTY_PATH_REQUIRED");
+   let shard=cache.get(url.pathname);
+   if(!shard){
+    const source=await sameOriginText(url.pathname,2000000),digest=await sha(source.bytes);
+    check("catalog_actual_record_shard_"+cache.size,digest===descriptor.sha256,{path:url.pathname,actualHTTP:true,actualSHA256:digest,expectedSHA256:descriptor.sha256});
+    shard=JSON.parse(source.text);
+    if(shard.schemaVersion!=="oracle-positioned-triples-v1"||!Array.isArray(shard.records)||shard.records.length!==descriptor.count)throw failure("CATALOG_RECORD_SHARD_SHAPE");
+    cache.set(url.pathname,shard);coverage.verifiedTripleFiles.push({url:url.pathname,sha256:digest,recordCount:shard.records.length});
+   }
+   matches.push(...shard.records.filter(r=>same(r.cardIds,ids)));
+  }
+  if(matches.length!==1)throw failure("CATALOG_EXACT_MATERIALIZED_RECORD_MISSING");
+  return matches[0];
+ }
+ const normalizePairs=values=>values.map(p=>({key:p.key,fromId:p.fromId,toId:p.toId,pairKey:p.pairKey,reading:p.reading,bridge:p.bridge,tension:p.tension,transition:p.transition}));
+ async function verifySelection(label,ids){
+  const s=await settled("catalog_verified_selection_"+label,view=>same(view.cardIds,ids));
+  const record=await fetchRecord(ids),base=appWindow.oracleReading.interpret({cardIds:ids,question:""},"general");
+  const values=s.verifiedFiles.every(file=>{const d=descriptors.find(d=>new URL(d.url,config.productionOrigin).pathname===file.url);return !!d&&d.sha256===file.sha256;});
+  check("catalog_actual_materialized_record_"+label,s.recordVerified===true&&s.integrity===true&&s.recordId===record.id&&same(s.recordCardIds,ids)&&same(s.displayedCardIds,ids)&&["headline","summary","overall","action","check"].every(k=>same(record[k],base[k]))&&same(normalizePairs(record.relations),normalizePairs(base.threePairs))&&values,{cardIds:ids,recordId:record.id,actualSelectedMaterializedRecordCompared:true,actualPublicShardSHA256Verified:true,ownSnapshotComparedToSeparateSealedAppEngine:true});
+  coverage.recordSelections.push({label,cardIds:ids,recordId:record.id,recordVerified:true});return base;
+ }
+ function expected(){const s=snapshot();return appWindow.oracleReading.interpret({cardIds:s.cardIds,question:requiredCatalog("question").value},s.domain);}
+ async function mobilePosition(view,index){
+  const nav=requiredCatalog("view-"+view).querySelector(".mobile-nav"),buttons=nav?[...nav.querySelectorAll("button")]:[];
+  if(buttons.length!==3)throw failure("CATALOG_THREE_NATIVE_MOBILE_POSITIONS_MISSING");
+  await nativeClick(buttons[index],"catalog_mobile_position_"+view+"_"+index);
+  const currentButtons=[...requiredCatalog("view-"+view).querySelectorAll(".mobile-nav button")];
+  check("catalog_actual_native_mobile_position_"+view+"_"+snapshot().overviewLens+"_"+snapshot().pairField+"_"+snapshot().planLens+"_"+index,currentButtons[index].getAttribute("aria-pressed")==="true"&&currentButtons.filter(b=>b.getAttribute("aria-pressed")==="true").length===1,{view,index,actualNativeHandler:true});
+ }
+ try{
+  catalogFrame=qaHost.document.createElement("iframe");
+  catalogFrame.id="oracle-reading-catalog-QA-frame";catalogFrame.title="三牌關係圖鑑獨立原生驗收";
+  catalogFrame.setAttribute("sandbox","allow-scripts allow-same-origin allow-forms");
+  catalogFrame.style.cssText="position:fixed;left:0;top:0;z-index:3;display:block;width:1280px;height:800px;border:0;background:#181320";
+  qaHost.document.body.append(catalogFrame);
+  catalogFrame.src=new URL("/oracle-relations.html",config.productionOrigin).href;
+  await until(()=>{catalogWindow=catalogFrame.contentWindow;catalogDocument=catalogFrame.contentDocument;return !!catalogWindow?.oracleRelationsAudit&&catalogDocument?.getElementById("app");},"catalog_actual_same_origin_mount",25000);
+  catalogWindow.addEventListener("error",()=>{catalogErrors++;});
+  catalogWindow.addEventListener("unhandledrejection",()=>{catalogErrors++;});
+  await settled("catalog_initial_records_ready");
+  const initial=snapshot();
+  check("catalog_actual_frozen_snapshot_and_complete_counts",Object.isFrozen(catalogWindow.oracleRelationsAudit)&&initial.engineVersion===manifest.version&&initial.corpusVersion===manifest.corpusVersion&&initial.pairVersion===manifest.pairVersion&&initial.engineVersion===appWindow.oracleReading.version&&initial.coverage.profiles===24&&initial.coverage.domains===5&&initial.coverage.directedPairs===552&&initial.coverage.pairsComplete===true&&initial.coverage.positionedTriples===12144&&initial.manifestCounts.positionedTriples===12144&&initial.verifiedFiles.length>0&&same(initial.cardIds,["moonlit-15","moonlit-18","moonlit-03"]),{actualSnapshotRead:true,initialDataIntegrity:true});
+  coverage.actualNativeDOMRead=true;
+  await nativeClick(requiredCatalog("swap-order"),"catalog_prepare_selector_changes",s=>same(s.cardIds,["moonlit-18","moonlit-15","moonlit-03"]));
+  await nativeSelect("obstacle-card","moonlit-06",s=>same(s.cardIds,["moonlit-18","moonlit-06","moonlit-03"]));
+  await nativeSelect("present-card","moonlit-15",s=>same(s.cardIds,["moonlit-15","moonlit-06","moonlit-03"]));
+  await nativeSelect("obstacle-card","moonlit-18",s=>same(s.cardIds,["moonlit-15","moonlit-18","moonlit-03"]));
+  await nativeSelect("advice-card","moonlit-06",s=>same(s.cardIds,["moonlit-15","moonlit-18","moonlit-06"]));
+  await nativeSelect("advice-card","moonlit-03",s=>same(s.cardIds,["moonlit-15","moonlit-18","moonlit-03"]));
+  const first=await verifySelection("mountain_home_root",["moonlit-15","moonlit-18","moonlit-03"]);
+  await nativeClick(requiredCatalog("swap-order"),"catalog_reverse_native_order",s=>same(s.cardIds,["moonlit-18","moonlit-15","moonlit-03"]));
+  const reversed=await verifySelection("home_mountain_root",["moonlit-18","moonlit-15","moonlit-03"]);
+  check("catalog_native_reverse_changes_directional_reading",first.cards[2].id===reversed.cards[2].id&&first.threePairs[0].pairKey!==reversed.threePairs[0].pairKey&&first.threePairs[0].reading!==reversed.threePairs[0].reading&&first.summary!==reversed.summary,{sameAdviceCard:true,presentAndObstacleChanged:true,orderedRelationAndSummaryChanged:true});
+  await nativeSelect("advice-card","moonlit-06",s=>same(s.cardIds,["moonlit-18","moonlit-15","moonlit-06"]));
+  const changed=await verifySelection("home_mountain_light",["moonlit-18","moonlit-15","moonlit-06"]);
+  check("catalog_native_advice_changes_action_and_observation",reversed.plan[0].action!==changed.plan[0].action&&reversed.plan[0].check!==changed.plan[0].check,{nativeAdviceSelectorChanged:true,concreteActionChanged:true,observationCriterionChanged:true});
+  await nativeSelect("domain","work",s=>s.domain==="work");
+  const question=requiredCatalog("question"),questionToken=snapshot().updateToken;
+  question.value="工作專案卡住，我可以先改哪一步？";question.dispatchEvent(new catalogWindow.Event("input",{bubbles:true}));
+  await settled("catalog_actual_question_input",s=>s.updateToken>=questionToken+2);
+  const contextual=expected();
+  check("catalog_native_domain_changes_context_without_URL",contextual.domain==="work"&&contextual.cards[2].contextReading!==changed.cards[2].contextReading&&catalogWindow.location.search===""&&catalogWindow.location.hash==="",{actualNativeDomainAndQuestionHandlers:true,syntheticQAQuestion:true,privateQuestionInURL:false});
+  for(const [width,height]of[[1280,800],[375,812]]){
+   catalogFrame.style.width=width+"px";catalogFrame.style.height=height+"px";
+   await until(()=>catalogWindow.innerWidth===width&&catalogWindow.innerHeight===height,"catalog_actual_frame_dimensions",2000);await settled("catalog_resize_settled");
+   await nativeClick(requiredCatalog("tab-overview"),"catalog_overview_native_tab",s=>s.view==="overview");
+   for(const lens of["roleReading","summary","contextReading","symbolism","focus","resource","shadow"]){
+    await nativeSelect("overview-lens",lens,s=>s.overviewLens===lens);
+    for(const index of(width<900&&lens!=="summary"?[0,1,2]:[0])){
+     if(width<900&&lens!=="summary")await mobilePosition("overview",index);
+     const value=expected(),pane=requiredCatalog("view-overview"),papers=[...pane.querySelectorAll(".reading-paper")].filter(catalogVisible);
+     const correct=lens==="summary"?textOf(pane).includes(value.summary):papers.length===(width<900?1:3)&&papers.every((paper,i)=>{const position=width<900?index:i;return textOf(paper).includes(value.cards[position].name)&&textOf(paper).includes(value.cards[position][lens]);});
+     check("catalog_actual_full_overview_field_"+width+"_"+lens+"_"+index,correct,{lens,actualNativeReadingAngle:true,fullAuthoredTextVisible:true});
+     await layout(width+"_overview_"+lens+"_"+index);
+    }
+   }
+   await nativeClick(requiredCatalog("tab-relations"),"catalog_relations_native_tab",s=>s.view==="relations");
+   for(const lens of["reading","bridge","tension","transition"]){
+    const button=requiredCatalog("view-relations").querySelector('[data-focus-key="pair-field-'+lens+'"]');
+    await nativeClick(button,"catalog_relation_native_angle",s=>s.pairField===lens);
+    for(const index of(width<900?[0,1,2]:[0])){
+     if(width<900)await mobilePosition("relations",index);
+     const value=expected(),papers=[...requiredCatalog("view-relations").querySelectorAll(".relation-paper")].filter(catalogVisible);
+     check("catalog_actual_full_pair_field_"+width+"_"+lens+"_"+index,papers.length===(width<900?1:3)&&papers.every((paper,i)=>{const pair=value.threePairs[width<900?index:i],text=textOf(paper);return text.includes(pair.fromName)&&text.includes(pair.toName)&&text.includes(pair[lens]);}),{lens,actualNativeDirectionalPairText:true,fullAuthoredTextVisible:true});
+     await layout(width+"_relations_"+lens+"_"+index);
+    }
+   }
+   await nativeClick(requiredCatalog("tab-plan"),"catalog_plan_native_tab",s=>s.view==="plan");
+   for(const lens of["action","check","rationale","obstacleCue"]){
+    await nativeSelect("plan-lens",lens,s=>s.planLens===lens);
+    for(const index of(width<900?[0,1,2]:[0])){
+     if(width<900)await mobilePosition("plan",index);
+     const value=expected(),papers=[...requiredCatalog("view-plan").querySelectorAll(".three-grid>.paper")].filter(catalogVisible);
+     check("catalog_actual_full_plan_field_"+width+"_"+lens+"_"+index,papers.length===(width<900?1:3)&&papers.every((paper,i)=>{const plan=value.plan[width<900?index:i],text=textOf(paper);return text.includes(plan.label)&&typeof plan[lens]==="string"&&text.includes(plan[lens]);}),{lens,actualNativePlanAngle:true,fullAuthoredTextVisible:true});
+     await layout(width+"_plan_"+lens+"_"+index);
+    }
+   }
+  }
+  check("catalog_native_execution_errors_zero",catalogErrors===0&&win===appWindow&&doc===appDocument&&iframe===appFrame&&qaHost.location.href===parentRoute,{capturedCatalogRuntimeErrors:catalogErrors,appRuntimeReferencesPreserved:true,parentRouteUnchanged:true});
+  report.execution.actualReadingCatalogNativeLayoutsVerified=true;
+  report.execution.actualReadingCatalogRecordsVerified=true;
+ }catch(error){
+  try{coverage.failure={code:error.auditCode||"CATALOG_EXTENSION_FAILED",snapshot:snapshot(),geometry:catalogDocument?.getElementById("app")?geometry():null};}catch(_){}
+  throw error;
+ }finally{
+  if(catalogFrame){catalogFrame.remove();coverage.cleanup=!catalogFrame.isConnected;}
+  if(win!==appWindow||doc!==appDocument||iframe!==appFrame||qaHost.location.href!==parentRoute)throw failure("CATALOG_APP_OR_ROUTE_ISOLATION_FAILED");
+  if(catalogFrame&&!coverage.cleanup)throw failure("CATALOG_NATIVE_IFRAME_CLEANUP_FAILED");
+ }
+}
+/* ORACLE_CATALOG_QA_SOURCE_END */
 async function fixedViewportChecks(){
  const coverage=[];
  for(const [width,height]of[[375,812],[1280,800]]){
@@ -549,6 +924,8 @@ publish();
   if(mode==="all"||mode==="draw"||mode==="journal")await shuffleAutoAdvanceChecks(question);
   if(mode==="all"||mode==="draw"||mode==="journal")dailyId=await drawChecks(question);
   if(mode==="all"||mode==="journal")await journalChecks(question,note,dailyId);
+  if(mode==="all")await readingDepthChecks();
+  if(mode==="all")await readingCatalogChecks();
   if(mode==="all"||mode==="smoke")await fixedViewportChecks();
   check("native_runtime_unhandled_error_count_zero",runtimeErrors===0,{capturedRuntimeErrorCount:runtimeErrors});
   report.phase="completed";
@@ -577,4 +954,4 @@ publish();
   publish();
  }
 })();
-})({"schemaVersion":"1.0","expectedManifestSHA":"d1926f5d2ae94bf82e53a4c3b852cac2c30c0543ca793366f457ce064d5ab3cd","finalHTMLSHA256":"5e071624109c1272d979eba465f3100d4fbe119f0f29fdfee07934835a76dbe0","productionOrigin":"https://brendonlee1006.github.io","productionHTMLPath":"/oracle-room.txt","productionHTMLParts":[{"url":"/oracle-room.txt","sha256":"3e5c6bcae2384bc278b330536e1b6c6384c562ac096ff71140c95129f2b7fad5","utf8Bytes":390000,"chars":304662},{"url":"/oracle-room-part-02.txt","sha256":"08704d0fc30bb095d2fb7a60814498dd1d1214ffb8c553a3df93963f78640778","utf8Bytes":390000,"chars":275516},{"url":"/oracle-room-part-03.txt","sha256":"dfbfa8dc6990ed7e8ed859d94060d42701a5c2373379c97d5bf0ca441a5bdc09","utf8Bytes":46107,"chars":44385}],"expectedTopicCount":134,"expectedCardDeclarationSHA256":"b683ce3238ff59437ec07932cf6dcf508bc0747c87caa2333e76bc561d68a9ab","budgetMs":120000,"relatedTopicId":"oracle-02"});</script></body></html>
+})({"schemaVersion":"1.0","expectedManifestSHA":"d1926f5d2ae94bf82e53a4c3b852cac2c30c0543ca793366f457ce064d5ab3cd","finalHTMLSHA256":"f0a0e4f7d261b72ab4bc4ee6852cc1c1d063c3c51a1e9f5192d4fc181a327747","productionOrigin":"https://brendonlee1006.github.io","productionHTMLPath":"/oracle-room.txt","productionHTMLParts":[{"url":"/oracle-room.txt","sha256":"e23f6613ce28ad0cfd84f4457fd4abb2d5f2acb0b8780cbab30bceea0f83020b","utf8Bytes":389999,"chars":285797},{"url":"/oracle-room-part-02.txt","sha256":"d29400a98081a55c14df64e67a30cd68a9ef3ff5c6d1f5a3d501f53bf5a1f0c9","utf8Bytes":390000,"chars":204729},{"url":"/oracle-room-part-03.txt","sha256":"b83841499489ef6f1fec76897e2c355913e14cd40022410581623c796d54bc5f","utf8Bytes":390000,"chars":284540},{"url":"/oracle-room-part-04.txt","sha256":"fef790618de7a66170b2b9766055501e434100dde72f3bde281b790c13c913d4","utf8Bytes":26404,"chars":26262}],"expectedTopicCount":134,"expectedCardDeclarationSHA256":"b683ce3238ff59437ec07932cf6dcf508bc0747c87caa2333e76bc561d68a9ab","budgetMs":240000,"relatedTopicId":"oracle-02","expectedRelationsPageSHA256":"1cc5504185c5196b4687b8700be18658bcebf95ae2141ebb4820c249ae27b86c","expectedReadingManifestSHA256":"7b64e7b51fc220d9471e8c140343592dc7c1a42252ab44b0cd52a8d9dea49d20"});</script></body></html>

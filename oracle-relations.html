@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="月光手札三牌關係圖鑑：24張原創牌義、552組有方向的兩牌關係與12,144組現況／阻礙／建議牌序。">
+<title>三牌關係圖鑑｜神諭之間</title>
+<style>
+:root{color-scheme:dark;--bg:#181320;--panel:#272032;--ink:#f3eede;--muted:#beb3ca;--gold:#d4b77e;--line:rgba(212,183,126,.28);--serif:"Noto Serif TC","Songti TC","PMingLiU",serif;--sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{color:var(--ink);font:15px/1.65 var(--sans);background:radial-gradient(ellipse at 75% 16%,#33263f 0,transparent 60%),var(--bg)}button,input,select{font:inherit}button,input,select,a{touch-action:manipulation}button{cursor:pointer}button:disabled{cursor:wait;opacity:.55}button,a,input,select{outline-offset:3px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #f0d494}a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}h1,h2,h3,p{margin:0}button{color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:4px;min-height:38px;padding:6px 13px}button:hover{background:#3a2b46}button[aria-selected="true"],button[aria-pressed="true"]{border-color:var(--gold);background:rgba(212,183,126,.14);color:#f3d697}.app{height:100%;height:100dvh;max-width:1440px;margin:auto;display:grid;grid-template-rows:auto auto auto minmax(0,1fr) auto;gap:12px;padding:16px 26px 12px}.masthead{display:flex;gap:20px;align-items:center;justify-content:space-between;min-width:0;border-bottom:1px solid var(--line);padding-bottom:12px}.brandline{font:11px Georgia,serif;letter-spacing:.18em;color:var(--gold)}h1{font:24px/1.5 var(--serif);letter-spacing:.08em}.masthead a{font-size:14px;white-space:nowrap}.moon{font:24px/1 Georgia,serif;color:var(--gold);margin-right:10px}.controls{border:1px solid var(--line);background:rgba(39,32,50,.8);border-radius:5px;padding:13px 16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,.9fr);gap:10px 14px}.field{min-width:0;display:grid;gap:4px}.field label{font-size:13px;color:var(--gold)}input,select{width:100%;min-width:0;min-height:38px;background:#1c1526;border:1px solid var(--line);border-radius:3px;color:var(--ink);padding:6px 10px;font-size:14px}select option{background:#211a2c}.question-field{grid-column:1/4}.control-tail{align-self:end;display:flex;align-items:center;justify-content:flex-end;gap:10px}.status{font-size:12px;color:var(--muted);min-width:0}.switch-order{font-size:13px;white-space:nowrap}.tabs{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px}.tabs button{min-width:95px}.tabs .small-status{margin-left:auto;font-size:12px;color:var(--muted);text-align:right}.workspace{min-width:0;min-height:0;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:5px;background:rgba(32,25,43,.72)}.view{height:100%;padding:18px 22px;display:flex;flex-direction:column;gap:14px;min-width:0;min-height:0}.view[hidden],.state-box[hidden],.mobile-nav[hidden],.paper[hidden],[hidden]{display:none!important}.view-title{font:21px/1.5 var(--serif);color:var(--ink)}.section-heading{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;min-width:0}.section-heading .view-title{flex:1;min-width:0}.lens-select{width:130px;flex-shrink:0;min-height:34px;font-size:14px;padding:4px 7px}.lede{color:var(--muted);max-width:1040px;font-size:15px}.three-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;min-width:0}.paper{min-width:0;border:1px solid var(--line);border-radius:4px;padding:16px 18px;background:rgba(63,49,77,.25);display:flex;flex-direction:column;gap:10px}.paper h3{font:22px/1.5 var(--serif);overflow-wrap:anywhere}.role{font-size:12px;color:var(--gold);letter-spacing:.13em}.focus{font-size:14px;color:var(--gold)}.prose{font-size:15px;overflow-wrap:anywhere}.caption{font-size:12px;color:var(--muted)}.pair-toolbar,.mobile-nav,.plan-nav{display:flex;gap:8px;flex-wrap:wrap}.pair-toolbar button{font-size:14px;min-height:34px;padding:4px 12px}.pair-toolbar{align-items:center}.pair-toolbar .caption{margin-left:auto}.pair-value{font-size:15px}.summary-text{white-space:pre-line}.support-note{padding-top:10px;border-top:1px solid var(--line);color:var(--muted);font-size:14px;display:grid;grid-template-columns:auto 1fr;gap:10px}.support-note b{color:var(--gold);font-weight:400}.plan-label{font-size:12px;color:var(--gold)}.action-check{border-top:1px solid var(--line);padding-top:10px}.action-check span{font-size:12px;color:var(--gold);display:block;margin-bottom:4px}.state-box{padding:24px;position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;text-align:center;background:var(--bg);z-index:3}.state-box p{max-width:500px;color:var(--muted)}.footer{display:flex;align-items:center;justify-content:space-between;gap:14px;min-width:0;font-size:12px;color:var(--muted)}.footer-links{display:flex;align-items:center;gap:15px;white-space:nowrap}.footer button{font-size:12px;min-height:28px;padding:2px 9px}.fallback-note{font-size:12px;color:var(--gold)}.fallback .workspace{overflow:auto}.fallback .view{height:auto;min-height:100%}dialog{max-width:min(650px,calc(100vw - 30px));max-height:calc(100dvh - 40px);background:#241b30;border:1px solid var(--gold);border-radius:6px;color:var(--ink);padding:22px;overflow:auto}dialog::backdrop{background:rgba(0,0,0,.6)}dialog h2{font:22px/1.5 var(--serif);margin-bottom:14px}dialog p{margin:10px 0}dialog button{margin-top:12px}dialog a{text-decoration:underline}.noscript{padding:30px;color:var(--gold)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:720px){.app{padding:10px 12px;gap:9px}.masthead{padding-bottom:8px;gap:10px}.brandline{font-size:9px}h1{font-size:21px}.masthead a{font-size:12px}.moon{font-size:19px;margin-right:5px}.controls{padding:9px 10px;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px 8px}.field label{font-size:12px}input,select{min-height:35px;font-size:14px;padding:5px 6px}.domain-field{grid-column:1/2}.question-field{grid-column:2/4}.question-field label{font-size:11px}.control-tail{grid-column:1/4;justify-content:space-between;min-height:25px}.status{font-size:11px}.switch-order{font-size:12px;min-height:29px;padding:3px 8px}.tabs{gap:6px;padding-bottom:8px}.tabs button{min-width:0;flex:1;min-height:36px;padding:5px 7px;font-size:14px}.tabs .small-status{display:none}.view{padding:13px 14px;gap:11px}.view-title{font-size:18px}.section-heading{gap:8px}.lens-select{width:112px;min-height:32px;font-size:13px}.lede{font-size:14px}.three-grid{grid-template-columns:1fr;gap:10px}.paper{padding:13px 14px;gap:8px}.paper h3{font-size:21px}.prose,.pair-value{font-size:14px;line-height:1.7}.mobile-nav button{flex:1;padding:4px 6px;font-size:12px;min-height:34px;min-width:0}.pair-toolbar{gap:6px}.pair-toolbar button{flex:1;padding:4px 6px;font-size:13px;min-height:32px}.pair-toolbar .caption{display:none}.support-note{font-size:13px;gap:6px;grid-template-columns:1fr}.footer{font-size:10px;gap:7px;align-items:flex-start}.footer-links{gap:8px}.footer button{font-size:10px;padding:2px 6px;min-height:24px}.caption{font-size:11px}.role{font-size:11px}.focus{font-size:13px}.state-box{padding:16px}.plan-nav button{flex:1;font-size:12px;padding:4px 6px}.fallback .footer{flex-wrap:wrap}}
+.brandline,.field label,.status,.caption,.role,.plan-label,.footer,.footer button,.masthead a,.switch-order,.pair-toolbar button,.support-note,.mobile-nav button{font-size:14px}
+@media(max-width:720px){.field label{font-size:14px;line-height:1.25}.brandline{font-size:14px;letter-spacing:.08em}.status,.caption,.role,.plan-label,.focus,.footer,.footer button,.masthead a,.switch-order,.mobile-nav button,.pair-toolbar button,.lens-select,.question-field label,.support-note{font-size:14px}.reading-paper,.relation-paper{display:grid;grid-template-columns:auto 1fr;column-gap:8px;row-gap:8px}.reading-paper>.role,.relation-paper>.role{align-self:center}.reading-paper>.prose,.reading-paper>.focus,.relation-paper>.pair-value{grid-column:1/-1}.support-note{display:none}.footer{align-items:center}.footer-links{gap:7px}.section-heading .view-title{font-size:18px}.lens-select{width:114px}}
+html.page-fallback,html.page-fallback body{height:auto;overflow:auto}.app.page-fallback{height:auto;min-height:100dvh;grid-template-rows:auto auto auto minmax(240px,auto) auto}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<noscript><p class="noscript">請啟用 JavaScript 以查閱三牌關係。公開資料亦可從 <a href="./oracle-reading-manifest.json">解讀資料目錄</a> 取得。</p></noscript>
+<div class="app" id="app">
+<header class="masthead"><div><div class="brandline">THE ORACLE ROOM · <span aria-label="月相">☽ ◐ ○ ◑ ☾</span></div><h1>三牌關係圖鑑</h1></div><a href="./oracle-room.html?view=draw">返回抽牌 ↗</a></header>
+<form class="controls" id="controls" aria-label="選擇三張牌的順序">
+<div class="field"><label for="present-card">01 現況</label><select id="present-card" disabled></select></div>
+<div class="field"><label for="obstacle-card">02 阻礙</label><select id="obstacle-card" disabled></select></div>
+<div class="field"><label for="advice-card">03 建議</label><select id="advice-card" disabled></select></div>
+<div class="field domain-field"><label for="domain">提問領域</label><select id="domain" disabled><option value="general">今日方向</option><option value="work">工作與學業</option><option value="relationships">關係與相處</option><option value="decision">選擇與轉折</option><option value="selfcare">自我照顧</option></select></div>
+<div class="field question-field"><label for="question">你的情境（可留空）</label><input id="question" type="text" maxlength="300" title="最多 300 字" autocomplete="off" placeholder="例如：這個選擇需要再確認什麼？" disabled></div>
+<div class="control-tail"><span class="status" id="load-status" role="status" aria-live="polite">正在載入原創解讀資料…</span><button type="button" id="swap-order" class="switch-order" disabled>互換前兩張</button></div>
+</form>
+<nav class="tabs" id="view-tabs" role="tablist" aria-label="解讀層次">
+<button id="tab-overview" type="button" role="tab" aria-selected="true" aria-controls="view-overview" data-view="overview">精要</button>
+<button id="tab-relations" type="button" role="tab" aria-selected="false" aria-controls="view-relations" data-view="relations" tabindex="-1">三牌關係</button>
+<button id="tab-plan" type="button" role="tab" aria-selected="false" aria-controls="view-plan" data-view="plan" tabindex="-1">行動與回顧</button>
+<span class="small-status" id="library-count">24 張牌 · 12,144 種牌序</span>
+</nav>
+<main class="workspace" id="workspace" aria-busy="true">
+<section class="view" id="view-overview" role="tabpanel" aria-labelledby="tab-overview" hidden></section>
+<section class="view" id="view-relations" role="tabpanel" aria-labelledby="tab-relations" hidden></section>
+<section class="view" id="view-plan" role="tabpanel" aria-labelledby="tab-plan" hidden></section>
+<div class="state-box" id="loading-box"><h2 class="view-title">讓三張牌開始對話。</h2><p>正在核對牌義、方向關係與選定的牌序。</p></div>
+<div class="state-box" id="error-box" hidden><h2 class="view-title">資料暫時無法讀取</h2><p id="error-message"></p><button type="button" id="retry">重新讀取</button></div>
+</main>
+<footer class="footer"><div><span>月光手札 · 原創作者式解讀</span><span id="fallback-note" class="fallback-note" hidden> · 視窗較小，內容區可捲動</span></div><div class="footer-links"><button type="button" id="method-open">解讀依據</button><a href="./oracle-reading-manifest.json" target="_blank" rel="noopener">AI 資料 ↗</a></div></footer>
+</div>
+<dialog id="method-dialog" aria-labelledby="method-title"><h2 id="method-title">這些關係如何整理？</h2><p>圖鑑使用 24 張原創月光手札牌義，與 552 組逐組撰寫、有方向的兩牌關係。相同兩張牌交換順序，解讀也會改變。</p><p>12,144 組現況／阻礙／建議牌序，依三個位置與三條兩牌關係整理成完整目錄：現況→阻礙、阻礙→建議、現況→建議。這個數量代表組合涵蓋範圍；不是 12,144 篇獨立人工創作，也不是占驗次數或研究證據。</p><p>提問領域會帶出不同的生活情境、行動與回顧問題。分鐘數、三天與七天是可以調整的作者建議；請依自己的實際條件安排。</p><p>解讀提供可核對的觀察角度，不替你判定他人的內心或未來。這一頁不會把新輸入的問題放進資料請求或存入手札；輸入只在本頁使用。</p><p><a href="./oracle-reading-manifest.json" target="_blank" rel="noopener">查閱公開牌義、關係與牌序資料</a></p><button type="button" id="method-close">回到解讀</button></dialog>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const domains=["general","work","relationships","decision","selfcare"];
+const cardIds=Array.from({length:24},(_,i)=>"moonlit-"+String(i+1).padStart(2,"0"));
+const roles=["現況","阻礙","建議"];
+const selectIds=["present-card","obstacle-card","advice-card"];
+const media=window.matchMedia("(max-width:720px)");
+const sealedCache=new Map(), tripleIndex=new Map();
+let manifest=null,corpus=null,engine=null,current=null,selectedRecord=null;
+let selectedIds=["moonlit-15","moonlit-18","moonlit-03"],view="overview",mobileCard=0,mobilePair=0,mobilePlan=0,pairField="reading",overviewLens="roleReading",planLens="action";
+let updateToken=0,loadToken=0,questionTimer=0,ready=false,integrity=false,fallback=false,phase="loading",lastError="",verifiedUrls=[];
+let lastValidIds=selectedIds.slice();
+const params=new URLSearchParams(location.search),fragment=new URLSearchParams(location.hash.slice(1));
+const incoming=(params.get("cards")||"").split(",").filter(Boolean).map(id=>/^\d{1,2}$/.test(id)?"moonlit-"+id.padStart(2,"0"):id);
+if(incoming.length===3&&new Set(incoming).size===3&&incoming.every(id=>cardIds.includes(id)))selectedIds=incoming;
+lastValidIds=selectedIds.slice();
+if(domains.includes(params.get("domain")))$("domain").value=params.get("domain");
+$("question").value=(fragment.get("question")||fragment.get("q")||params.get("question")||params.get("q")||"").slice(0,300);
+const node=(tag,className,text)=>{const n=document.createElement(tag);if(className)n.className=className;if(text!==undefined)n.textContent=String(text);return n;};
+const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==="object"?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
+const same=(a,b)=>JSON.stringify(canonical(a))===JSON.stringify(canonical(b));
+const firstSentence=text=>{const s=String(text||"");const match=s.match(/^[\s\S]*?[。！？.!?](?:[」』”’])?/);return match?match[0]:s;};
+function descriptorURL(value){if(!value||typeof value.url!=="string"||!/^[a-f0-9]{64}$/.test(value.sha256||""))throw new Error("invalid-descriptor");const u=new URL(value.url,location.href);if(u.origin!==location.origin||u.username||u.password)throw new Error("external-descriptor");return u.href;}
+async function fetchSealed(descriptor,asJSON=true){
+ const url=descriptorURL(descriptor),key=url+"#"+descriptor.sha256;
+ if(!sealedCache.has(key))sealedCache.set(key,(async()=>{const response=await fetch(url,{cache:"no-cache",credentials:"omit",redirect:"error"});if(!response.ok)throw new Error("http-"+response.status);const text=await response.text();const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(text));const actual=Array.from(new Uint8Array(digest),x=>x.toString(16).padStart(2,"0")).join("");if(actual!==descriptor.sha256)throw new Error("version-mismatch");verifiedUrls.push({url:new URL(url).pathname,sha256:actual});return text;})().catch(error=>{sealedCache.delete(key);throw error;}));
+ const text=await sealedCache.get(key);return asJSON?JSON.parse(text):text;
+}
+function validateManifest(m){
+ if(!m||m.version!=="oracle-reading-2.3"||m.corpusVersion!=="moonlit-authored-depth-v1"||m.pairVersion!=="moonlit-directed-pairs-v1")throw new Error("library-version-mismatch");
+ if(!m||m.schemaVersion!=="oracle-reading-library-v1"||!m.counts||m.counts.profiles!==24||m.counts.domains!==5||m.counts.directedPairs!==552||m.counts.positionedTriples!==12144)throw new Error("invalid-library");
+ if(!Array.isArray(m.pairs)||!m.pairs.length||!Array.isArray(m.triples)||!m.triples.length)throw new Error("missing-shards");
+ [m.engine,m.profiles,...m.pairs,...m.triples].forEach(descriptorURL);
+ let total=0;const seen=new Set();
+ m.triples.forEach(shard=>{if(!Number.isInteger(shard.count)||shard.count<1||!Array.isArray(shard.fromIds)||!shard.fromIds.length)throw new Error("invalid-triple-shard");total+=shard.count;for(const id of shard.fromIds){if(!cardIds.includes(id))throw new Error("invalid-triple-from-id");seen.add(id);}});
+ if(total!==12144||seen.size!==24)throw new Error("incomplete-triple-index");
+}
+function setControls(enabled){for(const id of [...selectIds,"domain","question","swap-order"])$(id).disabled=!enabled;}
+function options(){
+ selectIds.forEach((id,pos)=>{const select=$(id);select.replaceChildren();for(const key of cardIds){const option=node("option","",corpus.profiles[key].name);option.value=key;option.disabled=selectedIds.some((other,index)=>index!==pos&&other===key);select.append(option);}select.value=selectedIds[pos];});
+}
+function loading(message){phase="loading";integrity=false;$("workspace").setAttribute("aria-busy","true");$("load-status").textContent=message||"正在核對這組牌序…";$("loading-box").hidden=false;$("error-box").hidden=true;for(const key of ["overview","relations","plan"])$("view-"+key).hidden=true;}
+function errorState(error){phase="error";integrity=false;lastError=String(error&&error.message||"unknown");$("workspace").setAttribute("aria-busy","false");$("loading-box").hidden=true;$("error-box").hidden=false;$("error-message").textContent=lastError==="version-mismatch"?"資料版本尚未一致，請更新此頁後重試。":"請確認網路連線後重試。你的選牌、問題與領域仍保留在本頁。";$("load-status").textContent="讀取未完成；可以重新讀取。";for(const key of ["overview","relations","plan"])$("view-"+key).hidden=true;requestOverflow();}
+async function initialize(){
+ const token=++loadToken;++updateToken;ready=false;setControls(false);loading("正在載入原創解讀資料…");lastError="";sealedCache.clear();tripleIndex.clear();verifiedUrls=[];
+ try{
+  const response=await fetch("./oracle-reading-manifest.json",{cache:"no-cache",credentials:"omit",redirect:"error"});if(!response.ok)throw new Error("http-"+response.status);
+  const m=await response.json();validateManifest(m);
+  const [source,c,pairShards]=await Promise.all([fetchSealed(m.engine,false),fetchSealed(m.profiles),Promise.all(m.pairs.map(d=>fetchSealed(d)))]);
+  if(token!==loadToken)return;
+  if(!c||!c.profiles||Object.keys(c.profiles).length!==24)throw new Error("invalid-profiles");
+  const pairMap=Object.create(null);
+  for(const shard of pairShards){if(!shard||shard.schemaVersion!=="oracle-directed-pairs-v1"||!Array.isArray(shard.pairs))throw new Error("invalid-pair-shard");for(const p of shard.pairs){const key=p.from+"|"+p.to;if(Object.prototype.hasOwnProperty.call(pairMap,key))throw new Error("repeated-pair");pairMap[key]={bridge:p.bridge,tension:p.tension,transition:p.transition};}}
+  if(Object.keys(pairMap).length!==552)throw new Error("incomplete-pairs");
+  c.pairs=pairMap;
+  const factory=new Function(source+"\n;return createOracleInterpreter;")();
+  if(typeof factory!=="function")throw new Error("missing-engine");
+  const interpreter=factory({...c,version:m.corpusVersion,pairVersion:m.pairVersion,pairs:pairMap});
+  if(interpreter.version!==m.version)throw new Error("engine-version-mismatch");
+  if(!interpreter.coverage||interpreter.coverage.pairsComplete!==true||interpreter.coverage.positionedTriples!==12144)throw new Error("incomplete-engine");
+  manifest=m;corpus=c;engine=interpreter;
+  for(const shard of m.triples)for(const id of shard.fromIds){if(!tripleIndex.has(id))tripleIndex.set(id,[]);tripleIndex.get(id).push(shard);}
+  ready=true;options();setControls(true);await update();
+ }catch(error){if(token!==loadToken)return;errorState(error);}
+}
+function normalizedRelations(values){return values.map(p=>({key:p.key,fromId:p.fromId,toId:p.toId,pairKey:p.pairKey,reading:p.reading,bridge:p.bridge,tension:p.tension,transition:p.transition}));}
+function verifyRecord(record,base){
+ if(!record||record.id!==base.cardIds.join("|")||!same(record.cardIds,base.cardIds))throw new Error("missing-arrangement");
+ for(const key of ["headline","summary","overall","action","check"])if(!same(record[key],base[key]))throw new Error("arrangement-mismatch");
+ if(!Array.isArray(record.relations)||!same(normalizedRelations(record.relations),normalizedRelations(base.threePairs)))throw new Error("relation-mismatch");
+}
+async function update(){
+ if(!ready)return;
+ const token=++updateToken,ids=selectedIds.slice(),domain=$("domain").value,question=$("question").value.slice(0,300);loading();
+ try{
+  if(ids.length!==3||new Set(ids).size!==3||!ids.every(id=>cardIds.includes(id))||!domains.includes(domain))throw new Error("invalid-selection");
+  const descriptors=tripleIndex.get(ids[0]);if(!Array.isArray(descriptors)||!descriptors.length)throw new Error("missing-triple-shard");
+  const shards=await Promise.all(descriptors.map(d=>fetchSealed(d)));
+  if(token!==updateToken)return;
+  const matches=[];
+  shards.forEach((shard,index)=>{if(!shard||shard.schemaVersion!=="oracle-positioned-triples-v1"||!Array.isArray(shard.records)||shard.records.length!==descriptors[index].count)throw new Error("invalid-triples");for(const record of shard.records)if(same(record.cardIds,ids))matches.push(record);});
+  if(matches.length!==1)throw new Error("ambiguous-arrangement");
+  const record=matches[0],base=engine.interpret({cardIds:ids,question:""},"general");verifyRecord(record,base);
+  const reading=engine.interpret({cardIds:ids,question},domain);
+  if(token!==updateToken)return;
+  selectedRecord=record;current=reading;integrity=true;phase="ready";lastError="";$("loading-box").hidden=true;$("error-box").hidden=true;$("workspace").setAttribute("aria-busy","false");$("load-status").textContent="已核對 · "+reading.domainLabel;render();
+ }catch(error){if(token!==updateToken)return;errorState(error);}
+}
+function choiceBar(labels,index,change,hidden=false){
+ const bar=node("div","mobile-nav");bar.hidden=hidden;bar.setAttribute("aria-label","切換閱讀位置");
+ labels.forEach((label,i)=>{const button=node("button","",label);button.type="button";button.dataset.focusKey=labels.join("|")+"-"+i;button.setAttribute("aria-pressed",String(i===index));button.addEventListener("click",()=>change(i));bar.append(button);});return bar;
+}
+function lensHeading(title,id,values,currentValue,change){
+ const heading=node("div","section-heading");heading.append(node("h2","view-title",title));const select=node("select","lens-select");select.id=id;select.setAttribute("aria-label","切換閱讀角度");for(const [key,label]of values){const option=node("option","",label);option.value=key;select.append(option);}select.value=currentValue;select.addEventListener("change",()=>change(select.value));heading.append(select);return heading;
+}
+function renderOverview(){
+ const pane=$("view-overview");pane.replaceChildren(lensHeading(current.cards.map(c=>c.name).join(" → "),"overview-lens",[["roleReading","牌位解讀"],["summary","整體解讀"],["contextReading","你的情境"],["symbolism","圖像依據"],["focus","核心焦點"],["resource","可用資源"],["shadow","失衡面向"]],overviewLens,value=>{overviewLens=value;render();}));
+ if(overviewLens==="summary"){const paper=node("article","paper summary-paper");paper.setAttribute("aria-label","三牌整體解讀");paper.append(node("p","prose summary-text",current.summary));pane.append(paper);return;}
+ if(overviewLens==="roleReading")pane.append(node("p","lede",current.overview||firstSentence(current.summary)));
+ pane.append(choiceBar(current.cards.map(c=>c.roleLabel+" · "+c.name),mobileCard,i=>{mobileCard=i;render();},!media.matches));
+ const grid=node("div","three-grid");
+ current.cards.forEach((card,i)=>{const paper=node("article","paper reading-paper");paper.hidden=media.matches&&i!==mobileCard;paper.append(node("div","role",card.roleLabel),node("h3","",card.name));if(!media.matches&&overviewLens!=="focus")paper.append(node("p","focus",card.focus));paper.append(node("p","prose",card[overviewLens]));grid.append(paper);});
+ pane.append(grid);
+ const note=node("div","support-note");note.append(node("b","","如何帶回你的問題"),node("p","",current.overall.decisionCriterion));pane.append(note);
+}
+function renderRelations(){
+ const pane=$("view-relations");pane.replaceChildren(node("h2","view-title","三個位置，三條有方向的關係。"));
+ const fieldBar=node("div","pair-toolbar");for(const [key,label]of [["reading","牌位作用"],["bridge","呼應"],["tension","張力"],["transition","轉向"]]){const button=node("button","",label);button.type="button";button.dataset.focusKey="pair-field-"+key;button.setAttribute("aria-pressed",String(pairField===key));button.addEventListener("click",()=>{pairField=key;render();});fieldBar.append(button);}fieldBar.append(node("span","caption","依兩張原創牌義逐組撰寫"));pane.append(fieldBar);
+ const labels=["現況 → 阻礙","阻礙 → 建議","現況 → 建議"];
+ pane.append(choiceBar(labels,mobilePair,i=>{mobilePair=i;render();},!media.matches));
+ const grid=node("div","three-grid");
+ current.threePairs.forEach((pair,i)=>{const paper=node("article","paper relation-paper");paper.hidden=media.matches&&i!==mobilePair;paper.append(node("div","role",labels[i]),node("h3","",corpus.profiles[pair.fromId].name+" → "+corpus.profiles[pair.toId].name),node("p","pair-value",pair[pairField]));grid.append(paper);});pane.append(grid);
+ const note=node("div","support-note");note.append(node("b","","建議牌如何接住卡點"),node("p","",current.overall.resolution));pane.append(note);
+}
+function renderPlan(){
+ const pane=$("view-plan");pane.replaceChildren(lensHeading("試一次，再用紀錄調整。","plan-lens",[["action","行動步驟"],["check","回顧指標"],["rationale","為何這樣做"],["obstacleCue","留意的卡點"]],planLens,value=>{planLens=value;render();}),node("p","caption","作者建議，可依條件調整。"));
+ pane.append(choiceBar(["今天先做","3 天試行","7 天回顧"],mobilePlan,i=>{mobilePlan=i;render();},!media.matches));
+ const grid=node("div","three-grid");
+ current.plan.forEach((plan,i)=>{const paper=node("article","paper");paper.hidden=media.matches&&i!==mobilePlan;paper.append(node("div","plan-label",plan.when),node("h3","",plan.label),node("p","prose",plan[planLens]));const check=node("div","action-check");check.append(node("span","","回顧時，核對這一點"),node("p","prose",plan.check));if(!media.matches&&planLens!=="check")paper.append(check);grid.append(paper);});pane.append(grid);
+}
+function render(){
+ if(!current||phase!=="ready")return;
+ const oldFocus=document.activeElement,focusId=oldFocus&&oldFocus.id,focusKey=oldFocus&&oldFocus.dataset&&oldFocus.dataset.focusKey;
+ renderOverview();renderRelations();renderPlan();
+ for(const key of ["overview","relations","plan"])$("view-"+key).hidden=key!==view;
+ for(const button of $("view-tabs").querySelectorAll("[data-view]")){const active=button.dataset.view===view;button.setAttribute("aria-selected",String(active));button.tabIndex=active?0:-1;}
+ if(oldFocus&&!oldFocus.isConnected){const restored=focusId?$(focusId):focusKey?Array.from(document.querySelectorAll("[data-focus-key]")).find(n=>n.dataset.focusKey===focusKey&&!n.closest("[hidden]")):null;if(restored)restored.focus({preventScroll:true});}
+ requestOverflow();
+}
+let overflowFrame=0;
+function requestOverflow(){if(overflowFrame)cancelAnimationFrame(overflowFrame);overflowFrame=requestAnimationFrame(()=>{overflowFrame=0;$("app").classList.remove("fallback","page-fallback");document.documentElement.classList.remove("page-fallback");$("fallback-note").hidden=true;fallback=false;if(phase!=="ready")return;const workspace=$("workspace"),pane=$("view-"+view);const bounds=workspace.getBoundingClientRect();const clipped=pane.scrollHeight>workspace.clientHeight+1.5||pane.scrollWidth>workspace.clientWidth+1.5||Array.from(pane.querySelectorAll("p,h2,h3,button")).some(n=>{if(n.closest("[hidden]"))return false;const r=n.getBoundingClientRect();return r.width>0&&r.height>0&&(r.right>bounds.right+1.5||r.bottom>bounds.bottom+1.5);});const tiny=workspace.clientHeight<120||$("app").scrollHeight>$("app").clientHeight+1.5;fallback=clipped||tiny;if(fallback){$("app").classList.add("fallback");if(tiny){$("app").classList.add("page-fallback");document.documentElement.classList.add("page-fallback");}$("fallback-note").hidden=false;}});}
+$("controls").addEventListener("submit",event=>event.preventDefault());
+selectIds.forEach(id=>$(id).addEventListener("change",()=>{const ids=selectIds.map(key=>$(key).value);if(new Set(ids).size!==3){selectedIds=lastValidIds.slice();options();$("load-status").textContent="三個位置需選擇不同的牌。";return;}selectedIds=ids;lastValidIds=ids.slice();options();update();}));
+$("swap-order").addEventListener("click",()=>{[selectedIds[0],selectedIds[1]]=[selectedIds[1],selectedIds[0]];lastValidIds=selectedIds.slice();options();update();});
+$("domain").addEventListener("change",()=>update());
+$("question").addEventListener("input",()=>{clearTimeout(questionTimer);const token=++updateToken;questionTimer=setTimeout(()=>{if(token===updateToken)update();},300);});
+$("view-tabs").addEventListener("click",event=>{const button=event.target.closest("[data-view]");if(!button)return;view=button.dataset.view;render();});
+$("view-tabs").addEventListener("keydown",event=>{const keys=["ArrowLeft","ArrowRight","Home","End"];if(!keys.includes(event.key))return;const buttons=Array.from($("view-tabs").querySelectorAll("[data-view]")),index=buttons.findIndex(b=>b.dataset.view===view);const next=event.key==="Home"?0:event.key==="End"?buttons.length-1:(index+(event.key==="ArrowRight"?1:-1)+buttons.length)%buttons.length;event.preventDefault();view=buttons[next].dataset.view;render();buttons[next].focus({preventScroll:true});});
+$("retry").addEventListener("click",()=>initialize());
+$("method-open").addEventListener("click",()=>$("method-dialog").showModal());
+$("method-close").addEventListener("click",()=>$("method-dialog").close());
+if(media.addEventListener)media.addEventListener("change",render);else media.addListener(render);
+window.addEventListener("resize",requestOverflow);
+if(window.visualViewport)window.visualViewport.addEventListener("resize",requestOverflow);
+const snapshot=()=>({phase,ready,recordVerified:integrity,integrity,view,pairField,overviewLens,planLens,fallback,cardIds:selectedIds.slice(),selectedIds:selectedIds.slice(),domain:$("domain").value,updateToken,recordId:selectedRecord&&selectedRecord.id||null,recordCardIds:selectedRecord?selectedRecord.cardIds.slice():[],displayedCardIds:current?current.cardIds.slice():[],engineVersion:engine?engine.version:null,corpusVersion:manifest?manifest.corpusVersion:null,pairVersion:manifest?manifest.pairVersion:null,coverage:engine?engine.coverage:null,manifestCounts:manifest?{...manifest.counts}:null,currentSections:current?["overview","relations","plan"]:[],verifiedFiles:verifiedUrls.map(file=>({...file})),lastError,privateStorageUsed:false});
+Object.defineProperty(window,"oracleRelationsAudit",{configurable:false,value:Object.freeze({snapshot,getState:snapshot})});
+initialize();
+})();
+</script>
+</body>
+</html>

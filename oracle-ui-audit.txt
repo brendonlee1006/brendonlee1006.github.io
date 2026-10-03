@@ -467,6 +467,11 @@ publish();
   report.phase="completed";
  }catch(e){
   report.phase="failed";report.failureCode=e&&e.auditCode||"UI_AUDIT_EXECUTION_FAILED";
+  try{
+   const geom=id=>{const n=doc&&doc.getElementById(id);if(!n)return null;const r=n.getBoundingClientRect(),s=win.getComputedStyle(n);return {id,classes:n.className,width:n.clientWidth,height:n.clientHeight,scrollWidth:n.scrollWidth,scrollHeight:n.scrollHeight,rect:{x:r.x,y:r.y,width:r.width,height:r.height},style:{display:s.display,position:s.position,overflowX:s.overflowX,overflowY:s.overflowY,minHeight:s.minHeight,maxHeight:s.maxHeight,gridTemplateRows:s.gridTemplateRows}};};
+   report.failureDetails={frameStyle:iframe&&iframe.style.cssText,frameComputedLeft:iframe&&qaHost.getComputedStyle(iframe).left,childVisibility:doc&&doc.visibilityState,viewport:win&&{width:win.innerWidth,height:win.innerHeight},audit:win&&win.oracleViewportPages&&win.oracleViewportPages.getAudit(),geometry:["or-shell","or-main","or-vp-pager","or-pane-daily","or-pane-knowledge"].map(geom)};
+  }catch(debugError){report.failureDetails={diagnosticError:String(debugError)};}
+
  }finally{
   try{
    menuListenersCleanup();

@@ -343,6 +343,7 @@ async function readingOnePageChecks(number){
   await until(()=>win.innerWidth===width&&win.innerHeight===height,"reading_frame_resize",2000);await viewportSettled();
   if(number===3&&width<900){
    const draft="same-page-QA-"+randomToken();await input(journal,draft);
+   await until(()=>qaState().entries.find(e=>e.id===entry.id)?.note===draft,"reading_draft_autosaved",1500);
    const controls=[...required("reading-switcher").querySelectorAll("button")];
    check("reading_mobile_three_native_selectors",controls.length===3&&controls.every(visible));
    for(let pos=0;pos<3;pos++){

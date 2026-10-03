@@ -21,7 +21,7 @@ const report={
   actualExportPayloadVerified:false,actualPristineHTMLExportVerified:false,
   actualResponsiveFrameLayoutsVerified:false,actualFixedViewportNoScrollPageLayoutsVerified:false,
   actualViewportContentReachabilityVerified:false,actualViewportNativeControlsReachabilityVerified:false,
-  actualTextEditingInternalScrollVerified:false,actualOSKeyboardVerified:false,actualOSZoom200Verified:false,
+  actualSinglePageReadingsVerified:false,actualMobileReadingSelectorsVerified:false,actualTextEditingInternalScrollVerified:false,actualOSKeyboardVerified:false,actualOSZoom200Verified:false,
   actualDownloadTransportVerified:false,actualClipboardTransportVerified:false,actualScreenshotCaptured:false,
   actualProductionUserStorageRead:false,actualProductionUserStorageWritten:false
  },
@@ -44,7 +44,7 @@ const report={
   "This is UI acceptance, not the complete public-source API, evidence-scope or corpus audit."
  ]
 };
-let iframe=null,win=null,doc=null,qaKey=null,forkedHTML=null,runtimeErrors=0;
+let iframe=null,win=null,doc=null,qaKey=null,forkedHTML=null,runtimeErrors=0,qaDeck=[];
 let records=[],tracking=false,productionStage=null;
 const originalAdd=qaHost.addEventListener,originalRemove=qaHost.removeEventListener;
 function publish(){result.textContent=JSON.stringify(report,null,2);}
@@ -320,6 +320,46 @@ async function responsiveAndKnowledge(){
  check("original_gallery_native_previous_page",visibleGallery().map(n=>n.dataset.card).join(",")===firstGallery);
  report.execution.actualResponsiveFrameLayoutsVerified=true;
 }
+
+async function readingOnePageChecks(number){
+ const entry=activeQA(),journal=required("journal"),originalNote=journal.value,coverage=[];
+ const dimensions=number===3?[[1280,800],[1920,950],[375,812]]:[[1280,800]];
+ const assertLayout=async(label)=>{
+  const a=await viewportSettled(),geometry=viewportGeometry(),panels=[...required("result-grid").querySelectorAll(".reading-card")];
+  const displayed=panels.filter(visible),expectedVisible=win.innerWidth<900&&number===3?1:number;
+  check("reading_one_page_"+label,a.view==="reading"&&a.total===1&&a.page===1&&!a.fallback&&geometry.passed&&!visible(required("or-vp-pager"))&&displayed.length===expectedVisible,
+   {viewport:{width:win.innerWidth,height:win.innerHeight},pageCount:a.total,visibleCards:displayed.length,geometry});
+  for(const panel of displayed){
+   const pos=panels.indexOf(panel),c=qaDeck.find(c=>c.id===entry.cardIds[pos]),texts=panel.querySelectorAll(".action p");
+   check("reading_full_card_text_"+label+"_"+pos,!!c&&visible(panel.querySelector(".meaning"))&&panel.querySelector(".meaning").textContent===c.message&&texts.length===2&&visible(texts[0])&&visible(texts[1])&&texts[0].textContent===c.action&&texts[1].textContent===c.prompt,
+    {cardPosition:pos+1,messageActionAndPromptVisible:true});
+  }
+  check("reading_journal_same_page_"+label,required("journal")===journal&&visible(journal)&&["save-note","copy-reading","download","draw-again"].every(id=>visible(required(id)))&&activeQA().id===entry.id,
+   {journalAndAllActionsVisible:true});
+  coverage.push({label,width:win.innerWidth,height:win.innerHeight,pageCount:a.total,visibleCards:displayed.length,noScrollGeometryPassed:geometry.passed});
+ };
+ for(const [width,height]of dimensions){
+  iframe.style.width=width+"px";iframe.style.height=height+"px";
+  await until(()=>win.innerWidth===width&&win.innerHeight===height,"reading_frame_resize",2000);await viewportSettled();
+  if(number===3&&width<900){
+   const draft="same-page-QA-"+randomToken();await input(journal,draft);
+   const controls=[...required("reading-switcher").querySelectorAll("button")];
+   check("reading_mobile_three_native_selectors",controls.length===3&&controls.every(visible));
+   for(let pos=0;pos<3;pos++){
+    await click(controls[pos]);
+    const panel=required("reading-panel-"+pos);
+    check("reading_mobile_native_selector_"+pos,controls[pos].getAttribute("aria-pressed")==="true"&&visible(panel)&&journal.value===draft&&qaState().entries.find(e=>e.id===entry.id).note===draft,
+     {draftPreserved:true,actualNativeSelectorClicked:true});
+    await assertLayout(number+"_"+width+"_"+pos);
+   }
+   await input(journal,originalNote);report.execution.actualMobileReadingSelectorsVerified=true;
+  }else await assertLayout(number+"_"+width);
+ }
+ iframe.style.width="1280px";iframe.style.height="800px";await until(()=>win.innerWidth===1280&&win.innerHeight===800,"reading_restore_frame",2000);await viewportSettled();
+ report.readingOnePageCoverage=(report.readingOnePageCoverage||[]).concat(coverage);
+ if(number===3)report.execution.actualSinglePageReadingsVerified=true;
+}
+
 async function drawOneOrThree(number,question,withGuard=false){
  await show("draw");await click(doc.querySelector('[data-mode="'+number+'"]'));
  await input(required("question"),question);
@@ -346,6 +386,7 @@ async function drawOneOrThree(number,question,withGuard=false){
  const active=activeQA();
  check("native_actual_"+number+"_card_reading_success",!!active&&active.mode===String(number)&&active.cardIds.length===number&&new Set(active.cardIds).size===number&&active.question===question&&qaState().entries.length===before+1,
   {mode:String(number),readingCardNodes:required("result-grid").querySelectorAll(".reading-card").length,broadHookReadingPaneVisible:true});
+ if(withGuard)await readingOnePageChecks(number);
  return active.id;
 }
 async function drawChecks(question){
@@ -446,7 +487,7 @@ publish();
   const deckStart=script.textContent.indexOf("const cards="),deckEnd=script.textContent.indexOf("\nconst cardMap=",deckStart);
   if(deckStart<0||deckEnd<=deckStart)throw failure("ACTUAL_ORIGINAL_DECK_ANCHORS_MISSING");
   const declaration=script.textContent.slice(deckStart,deckEnd);
-  const cards=JSON.parse(declaration.slice("const cards=".length).trim().replace(/;$/,""));
+  const cards=JSON.parse(declaration.slice("const cards=".length).trim().replace(/;$/,""));qaDeck=cards;
   check("actual_original_24_card_literal_unchanged",cards.length===24&&new Set(cards.map(c=>c.id)).size===24&&(await sha(new TextEncoder().encode(declaration)))===config.expectedCardDeclarationSHA256,
    {originalCardCount:cards.length,cardDeclarationSHA256:config.expectedCardDeclarationSHA256});
   for(let i=0;i<3;i++){const candidate="oracle-qa:"+randomToken();if(qaHost.localStorage.getItem(candidate)===null){qaKey=candidate;break;}}
@@ -492,4 +533,4 @@ publish();
   publish();
  }
 })();
-})({"schemaVersion":"1.0","expectedManifestSHA":"d1926f5d2ae94bf82e53a4c3b852cac2c30c0543ca793366f457ce064d5ab3cd","finalHTMLSHA256":"ead0e3489cdeb68cfaeca5b232b4b6753b9e829e117c34fee82fc4d7745335f4","productionOrigin":"https://brendonlee1006.github.io","productionHTMLPath":"/oracle-room.txt","productionHTMLParts":[{"url":"/oracle-room.txt","sha256":"f4fb83f4b84a696606ee6571c260d35515f25452b0bc0757fe40f7de616f868a","utf8Bytes":389999,"chars":300371},{"url":"/oracle-room-part-02.txt","sha256":"00c6c031b0e04aed8c92eaf235742b813a16dd3d965024ff21a0593d106bdb31","utf8Bytes":390000,"chars":279308},{"url":"/oracle-room-part-03.txt","sha256":"8ea2eb5e70e39b5991472e65b57eaae1c37cec34cce0007ed171dd5ce5fe26f5","utf8Bytes":36792,"chars":35604}],"expectedTopicCount":134,"expectedCardDeclarationSHA256":"b683ce3238ff59437ec07932cf6dcf508bc0747c87caa2333e76bc561d68a9ab","budgetMs":120000,"relatedTopicId":"oracle-02"});</script></body></html>
+})({"schemaVersion":"1.0","expectedManifestSHA":"d1926f5d2ae94bf82e53a4c3b852cac2c30c0543ca793366f457ce064d5ab3cd","finalHTMLSHA256":"8dc6fd81fd606967ff92daf65ad76910f59acffe64043787d508f7952ced5650","productionOrigin":"https://brendonlee1006.github.io","productionHTMLPath":"/oracle-room.txt","productionHTMLParts":[{"url":"/oracle-room.txt","sha256":"06244ad059600e8bdec692b4eadbaae919d1cf25a8dfb190f86bb50c6ccb4c1b","utf8Bytes":389998,"chars":304646},{"url":"/oracle-room-part-02.txt","sha256":"4fd921379dde8361eaf1c62daeee18b87e72ef02374c9f81c375648e2e223251","utf8Bytes":390000,"chars":275530},{"url":"/oracle-room-part-03.txt","sha256":"4a24e6333dcff27ca7432e479afaf7fd9a56d5b9393dd89b164179b29271d237","utf8Bytes":45074,"chars":43352}],"expectedTopicCount":134,"expectedCardDeclarationSHA256":"b683ce3238ff59437ec07932cf6dcf508bc0747c87caa2333e76bc561d68a9ab","budgetMs":120000,"relatedTopicId":"oracle-02"});</script></body></html>

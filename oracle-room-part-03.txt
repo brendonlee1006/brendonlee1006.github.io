@@ -1,4 +1,177 @@
-|{}).domain===sourceDomain)&&(!sourceLanguage||(s.publicationLanguage||s.language)===sourceLanguage)&&(!query||fold([s.title,s.author,s.publisher,sourceClassification(s),s.traceability&&s.traceability.libraryName,s.url].join(" ")).includes(query)));
+;
+host.history.replaceState(null,"",url);
+}
+function show(next,options={}){if(!titles[next])next="daily";
+if(next!=="reader")readerToken++;
+view=next;
+for(const [key]of Object.entries(titles))$("or-pane-"+key).hidden=key!==next;
+for(const b of shell.querySelectorAll("[data-or-view]")){if(b.dataset.orView===next)b.setAttribute("aria-current","page");
+else b.removeAttribute("aria-current");
+} $("or-view-title").querySelector("span").textContent=titles[next];
+setMenu(false);
+$("or-main").scrollTop=0;
+if(options.route!==false)publicRoute(next,options);
+if(options.focus!==false)$("or-pane-"+next).focus({preventScroll:true});
+}
+function resolveId(id){let steps=0;
+while(aliases.has(id)&&steps++<20)id=aliases.get(id);
+return id;
+}
+function status(text){$("or-status").textContent=text;
+}
+async function getJSON(path,kind){if(offline)throw Error("離線檔保留內附知識與來源；完整文獻目錄請開啟正式網站。");
+if(!/^\/[a-z0-9._-]+$/i.test(path))throw Error("Invalid catalog file path");
+if(!fetchCache.has(path))fetchCache.set(path,fetch(new URL(path,origin),{cache:"no-store",credentials:"omit"}).then(r=>{if(!r.ok)throw Error("資料載入失敗 "+r.status);
+return r.json();
+}).then(x=>{if(x.schemaVersion!=="1.0"||x.kind!==kind)throw Error("資料格式不符");
+return x;
+}).catch(e=>{fetchCache.delete(path);
+throw e;
+}));
+return fetchCache.get(path);
+}
+async function loadIndex(){if(sourceIndexReady||offline)return;
+if(indexPromise)return indexPromise;
+indexPromise=(async()=>{for(const path of cfg.externalCatalog.sourceIndexUrls||[]){const json=await getJSON(path,"source_index");
+for(const s of json.sources||[]){if(!s.id||!isHTTP(s.url||s.canonicalUrl))continue;
+if(!fullSourceIDs.has(s.id))sourceMap.set(s.id,{...sourceMap.get(s.id),...s});
+}}if(cfg.externalCatalog.aliasesUrl){const a=await getJSON(cfg.externalCatalog.aliasesUrl,"source_aliases");
+for(const [from,to]of Object.entries(a.aliases||{}))aliases.set(from,to);
+}sourceIndexReady=true;
+})().catch(e=>{indexPromise=null;
+throw e;
+});
+return indexPromise;
+}
+async function getSource(id){id=resolveId(id);
+let s=sourceMap.get(id);
+if(s&&fullSourceIDs.has(id))return s;
+await loadIndex();
+id=resolveId(id);
+s=sourceMap.get(id);
+if(!s)throw Error("找不到這個來源。");
+if(fullSourceIDs.has(id))return s;
+if(s.detailShardUrl){const json=await getJSON(s.detailShardUrl,"sources");
+for(const full of json.sources||[]){sourceMap.set(full.id,full);
+fullSourceIDs.add(full.id);
+}
+s=sourceMap.get(id)||s;
+}return s;
+}
+function pager(parent,current,total,count,onChange){const n=element("div","or-pager"),pages=Math.max(1,Math.ceil(count/pageSize()));
+n.append(element("span","",count+" 筆・第 "+current+" / "+pages+" 頁"));
+const controls=element("div");
+const prev=button("上一頁",()=>onChange(current-1),true),next=button("下一頁",()=>onChange(current+1),true);
+prev.disabled=current<=1;
+next.disabled=current>=pages;
+controls.append(prev,next);
+n.append(controls);
+parent.append(n);
+}
+function makeSelect(heading,values,value,onChange){const n=element("select","or-select");
+n.setAttribute("aria-label",heading);
+n.append(new Option(heading,""));
+for(const v of values)n.append(new Option(label(v),v));
+n.value=value;
+n.addEventListener("change",()=>onChange(n.value));
+return n;
+}
+function safeLink(text,url){if(!isHTTP(url))return element("span","",text);
+const a=element("a","",text);
+a.href=url;
+a.target="_blank";
+a.rel="noopener noreferrer";
+return a;
+}
+function rerender(fn){const active=document.activeElement,key=active&&active.id,start=active&&active.selectionStart,end=active&&active.selectionEnd;
+fn();
+if(key){const n=$(key);
+if(n){n.focus({preventScroll:true});
+if(typeof start==="number"&&n.setSelectionRange)n.setSelectionRange(start,end);
+}}}
+function renderTopics(){const pane=$("or-pane-knowledge");
+pane.replaceChildren(element("h2","","讀一點知識，再聽見自己的聯想"));
+paragraph(pane,data.units.length+" 篇可查閱文章；每篇保留出處。主題與篇數會持續擴充。");
+const tools=element("div","or-toolbar"),input=element("input","or-input");
+input.id="or-topic-query";
+input.type="search";
+input.placeholder="搜尋主題、關鍵字或內文";
+input.setAttribute("aria-label","搜尋神諭卡知識");
+input.value=topicQuery;
+input.addEventListener("input",()=>{topicQuery=input.value;
+topicPage=1;
+rerender(renderTopics);
+});
+const filter=makeSelect("所有知識分類",[...new Set(data.units.map(x=>x.category))],topicCategory,v=>{topicCategory=v;
+topicPage=1;
+rerender(renderTopics);
+});
+filter.id="or-topic-category";
+tools.append(input,filter,button("重設",()=>{topicQuery="";
+topicCategory="";
+topicPage=1;
+renderTopics();
+$("or-topic-query").focus();
+},true));
+pane.append(tools);
+const query=fold(topicQuery);
+const matches=data.units.filter(x=>(!topicCategory||x.category===topicCategory)&&(!query||fold([x.title,x.summary,...(x.tags||[]),...(x.sections||[]).map(s=>s.heading+" "+s.text)].join(" ")).includes(query)));
+topicPage=Math.min(topicPage,Math.max(1,Math.ceil(matches.length/pageSize())));
+const grid=element("div","or-grid");
+for(const u of matches.slice((topicPage-1)*pageSize(),topicPage*pageSize())){const card=element("article","or-card");
+card.append(element("div","or-kicker",u.category),element("h3","",u.title),element("p","or-short",u.summary));
+let b;
+b=button("閱讀文章",()=>openTopic(u.id,b));
+card.append(b);
+grid.append(card);
+}pane.append(grid);
+if(!matches.length)paragraph(pane,"沒有符合的文章，試試其他關鍵字。","or-state");
+pager(pane,topicPage,0,matches.length,p=>{topicPage=p;
+renderTopics();
+show("knowledge");
+});
+}
+function sourceStatus(s){const reviewed=s.status==="checked"&&((s.inspection?.contentOpened===true&&s.inspection?.semanticReviewed===true)||(s.contentOpened===true&&s.semanticReviewed===true));return reviewed?"已核對指定頁面":s.status==="checked"?"來源細節待載入":s.status==="catalogued"?"已整理書目":"待核候選";
+}
+function sourceClassification(s){const c=s.classification||{};
+return [c.domain,...(c.topics||[]),...(c.documentTypes||[])].filter(Boolean).map(label).join("・");
+}
+function renderSources(){const pane=$("or-pane-sources");
+pane.replaceChildren(element("h2","","從哪裡來，讀到哪裡"));
+paragraph(pane,"書目、館藏與已核對頁面列在整理目錄；搜尋摘要另列為待核候選。找到出處不代表其中的預測或療癒宣稱已獲證實。");
+const modes=element("div","or-tabs");
+for(const [key,label]of [["bibliography","整理目錄"],["candidates","待核探索"]]){const b=button(label,()=>{sourceMode=key;
+sourcePage=1;
+renderSources();
+},true);
+b.setAttribute("aria-pressed",String(sourceMode===key));
+modes.append(b);
+}pane.append(modes);
+const values=[...sourceMap.values()],tools=element("div","or-toolbar"),input=element("input","or-input");
+input.id="or-source-query";
+input.type="search";
+input.value=sourceQuery;
+input.placeholder="搜尋作者、出版社、館藏或書名";
+input.setAttribute("aria-label","搜尋來源書目");
+input.addEventListener("input",()=>{sourceQuery=input.value;
+sourcePage=1;
+rerender(renderSources);
+});
+const domains=[...new Set(values.map(s=>s.classification&&s.classification.domain).filter(Boolean))].sort();
+const languages=[...new Set(values.map(s=>s.publicationLanguage||s.language).filter(Boolean))].sort();
+const domain=makeSelect("所有研究分類",domains,sourceDomain,v=>{sourceDomain=v;
+sourcePage=1;
+rerender(renderSources);
+});
+domain.id="or-source-domain";
+const language=makeSelect("所有出版語言",languages,sourceLanguage,v=>{sourceLanguage=v;
+sourcePage=1;
+rerender(renderSources);
+});
+language.id="or-source-language";
+tools.append(input,domain,language);
+pane.append(tools);
+const query=fold(sourceQuery),matches=values.filter(s=>(sourceMode==="candidates"?s.status==="candidate":s.status==="catalogued"||s.status==="checked")&&(!sourceDomain||(s.classification||{}).domain===sourceDomain)&&(!sourceLanguage||(s.publicationLanguage||s.language)===sourceLanguage)&&(!query||fold([s.title,s.author,s.publisher,sourceClassification(s),s.traceability&&s.traceability.libraryName,s.url].join(" ")).includes(query)));
 sourcePage=Math.min(sourcePage,Math.max(1,Math.ceil(matches.length/pageSize())));
 const grid=element("div","or-grid");
 for(const s of matches.slice((sourcePage-1)*pageSize(),sourcePage*pageSize())){const card=element("article","or-card");
@@ -267,15 +440,16 @@ rerender(renderSources);
  function restoreFocus(saved){const node=saved&&saved.node;if(!node||!node.isConnected||node===document.body||node===document.documentElement||node.closest(".or-vp-away,.or-vp-empty,[hidden]"))return;node.focus({preventScroll:true});if(typeof saved.start==="number"&&node.setSelectionRange){try{node.setSelectionRange(saved.start,saved.end,saved.direction||"none");}catch(_){}node.scrollTop=saved.scrollTop;node.scrollLeft=saved.scrollLeft;}}
  function pageForNode(node){if(!node)return -1;const index=state.units.findIndex(unit=>unit.nodes.some(part=>part===node||part.contains(node)));return index<0?-1:state.pages.findIndex(page=>page.includes(index));}
  function updatePager(){const title=document.getElementById("or-view-title")?.querySelector("span")?.textContent||"";position.textContent=state.fallback?title+" · 視窗較小，請捲動閱讀；所有內容均已展開。":title+" · 第 "+(state.page+1)+" / "+state.pages.length+" 頁";prev.disabled=state.fallback||state.page===0;next.disabled=state.fallback||state.page>=state.pages.length-1;nav.dataset.orVpFallback=String(state.fallback);}
- function fallback(reason){state.fallback=true;state.reason=reason;state.pages=[state.units.map((_,index)=>index)];state.page=0;apply(state.pages[0]);root.classList.add("or-vp-fallback");main.prepend(nav);updatePager();}
+ function fallback(reason){root.classList.remove("or-reading-page");state.fallback=true;state.reason=reason;state.pages=[state.units.map((_,index)=>index)];state.page=0;apply(state.pages[0]);root.classList.add("or-vp-fallback");main.prepend(nav);updatePager();}
  function pagerReplacement(){if(!clickedPager)return null;const {container,text}=clickedPager;clickedPager=null;const host=container.id?document.getElementById(container.id):container;if(!host?.isConnected)return null;return [...host.querySelectorAll("button")].find(button=>button.textContent.trim()===text)||null;}
  function fit(){
-  const pane=activePane();if(!pane)return;vpTrace.fitCount++;working=true;observer.disconnect();const saved=rememberFocus(),previous=state,oldAnchor=previous.units[previous.pages[previous.page]?.[0]]?.nodes[0];
+  const pane=activePane();if(!pane)return;root.classList.toggle("or-reading-page",pane.id==="or-pane-reading");vpTrace.fitCount++;working=true;observer.disconnect();const saved=rememberFocus(),previous=state,oldAnchor=previous.units[previous.pages[previous.page]?.[0]]?.nodes[0];
   try{
    clearMarks();root.classList.remove("or-vp-fallback");if(nav.parentElement===main)main.append(nav);restoreProse(pane);
-   state={pane,view:pane.id.replace("or-pane-",""),units:[],branches:[],pages:[],page:0,fallback:false,reason:""};let collected=collect(pane);state.units=collected.units;state.branches=collected.branches;const paneRect=pane.getBoundingClientRect();
+   state={pane,view:pane.id.replace("or-pane-",""),units:[],branches:[],pages:[],page:0,fallback:false,reason:""};if(state.view==="reading")syncReadingPanels();let collected=collect(pane);state.units=collected.units;state.branches=collected.branches;const paneRect=pane.getBoundingClientRect();
    if(paneRect.width<220||paneRect.height<160)fallback("viewport-too-small");else if(state.units.length>600)fallback("content-needs-scroll");else{
     let complete=false;
+    if(state.view==="reading"){const all=state.units.map((_,index)=>index);apply(all);if(fits(all)){state.pages=[all];complete=true;}else{fallback("reading-needs-room");complete=true;}}
     for(let pass=0;pass<32&&!complete;pass++){
      const pages=[];let current=[],oversized=-1;apply([]);
      for(let index=0;index<state.units.length;index++){

@@ -235,7 +235,7 @@ async function mount(reload=false){
   iframe=qaHost.document.createElement("iframe");
   iframe.id="oracle-ui-audit-frame";
   iframe.title="神諭之間：獨立 QA namespace 驗收";
-  iframe.setAttribute("sandbox","allow-scripts allow-same-origin");
+  iframe.setAttribute("sandbox","allow-scripts allow-same-origin allow-forms");
   iframe.style.cssText="position:fixed;left:0;top:0;z-index:2;pointer-events:auto;display:block;box-sizing:content-box;width:1280px;height:800px;border:1px solid #b8c5bd;background:#f3f0ea";
   productionStage.append(iframe);
  }

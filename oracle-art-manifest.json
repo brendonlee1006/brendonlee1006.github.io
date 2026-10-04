@@ -990,13 +990,13 @@
   "pages": {
     "gallery": {
       "url": "/oracle-art-gallery.html",
-      "sha256": "b82618c284627bfb9f92ec037310777121ddbeb4958dc4c4480dc43bf18274d5",
-      "bytes": 50909
+      "sha256": "b3e59fc1cd9bf88c83e3e939e41c5634e53623640a36b0c8bd84d8d77e959042",
+      "bytes": 51036
     },
     "moonlight": {
       "url": "/oracle-art-moonlight.html",
-      "sha256": "005b2e9cf0bd244a07e46d2a594a40fbaa2c47880b1fca55cea8e8ac29805524",
-      "bytes": 49879
+      "sha256": "557656f728a91acb463191f92882d0a3d254669ed061258db14341f2a996a73d",
+      "bytes": 50006
     },
     "archive": {
       "url": "/oracle-art-archive.html",
@@ -1005,7 +1005,7 @@
     }
   },
   "app": {
-    "sourceSHA256": "2e0f7083c25681b0e30a34eebfd1f8398f8c9e96ce77854f96e826be47fb2a4d",
+    "sourceSHA256": "4d7c4b65cce89b8d1479ddb552888d9100039da908da404293a48fe12723986a",
     "parts": [
       {
         "url": "/oracle-room.txt",
@@ -1015,21 +1015,21 @@
       },
       {
         "url": "/oracle-room-part-02.txt",
-        "sha256": "6385dfde5b6c509f70e98a7cd301c2ca232b0238fe96bf2ef3d4f1030062e5cf",
-        "utf8Bytes": 389999,
-        "chars": 209646
+        "sha256": "45617054ef64ad96aa0dfd6072ba4c0624a101e046f7988fe371fcb4f08daab4",
+        "utf8Bytes": 390000,
+        "chars": 209731
       },
       {
         "url": "/oracle-room-part-03.txt",
-        "sha256": "d4b98f02fc242fd418f3f23365c419589e478fe3f69b378f7b8bd15c1004081f",
+        "sha256": "a3aca7c252c324d3f3a8a40cf4619a6c1269130824bd7fedb8f648b8ab7a8c25",
         "utf8Bytes": 390000,
-        "chars": 245445
+        "chars": 245361
       },
       {
         "url": "/oracle-room-part-04.txt",
-        "sha256": "40138532a0068c825ffcb8407892dbb423e1472515a480b57396e977dffea7d7",
-        "utf8Bytes": 121519,
-        "chars": 107494
+        "sha256": "4c2fb7ec6e6ee1d8da7fee53dc6426b431ea34c1b864ba9e36b3a8a211f20356",
+        "utf8Bytes": 121645,
+        "chars": 107620
       }
     ]
   },

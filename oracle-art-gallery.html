@@ -203,17 +203,18 @@ function art(c,uid){
  const refresh=()=>{
   queued=false;
   for(const card of document.querySelectorAll("svg[data-art-card]")){
-   if(card.dataset.artObserved)continue;card.dataset.artObserved="true";
    const rect=card.getBoundingClientRect();
    const localVisible=rect.width>0&&rect.height>0&&rect.bottom>-80&&rect.right>-80&&rect.top<innerHeight+80&&rect.left<innerWidth+80&&getComputedStyle(card).visibility!=="hidden";
    if(localVisible)request(card);
+   if(card.dataset.artObserved)continue;card.dataset.artObserved="true";
    if(observer)observer.observe(card);else request(card);
   }
  };
  const schedule=()=>{if(!queued){queued=true;requestAnimationFrame(refresh);}};
  document.addEventListener("load",event=>{const image=event.target;if(image?.localName==="image"&&image.hasAttribute("data-art-source"))setState(image,"loaded");},true);
  document.addEventListener("error",event=>{const image=event.target;if(image?.localName==="image"&&image.hasAttribute("data-art-source"))setState(image,"fallback");},true);
- new MutationObserver(records=>{if(records.some(r=>r.addedNodes.length))schedule();}).observe(document.body,{childList:true,subtree:true});
+ new MutationObserver(records=>{if(records.some(r=>r.type==="attributes"||r.addedNodes.length))schedule();}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["hidden","class","style"]});
+ window.addEventListener("resize",schedule);
  const frozenCards=Object.freeze(oracleArtCards.map(c=>Object.freeze({...c,viewBox:Object.freeze(c.viewBox.slice())})));
  const frozenAssets=Object.freeze(oracleArtAssets.map(a=>Object.freeze({...a})));
  Object.defineProperty(window,"oracleArtwork",{value:Object.freeze({

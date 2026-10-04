@@ -182,6 +182,8 @@ function art(c,uid){
   const image=card.querySelector("image[data-art-source]");
   if(!image||image.dataset.artRequested)return;
   image.dataset.artRequested="true";
+  image.addEventListener("load",()=>setState(image,"loaded"));
+  image.addEventListener("error",()=>setState(image,"fallback"));
   image.setAttribute("href",image.dataset.artSource);
  };
  const observer=typeof IntersectionObserver==="function"?new IntersectionObserver(entries=>{
@@ -191,6 +193,9 @@ function art(c,uid){
   queued=false;
   for(const card of document.querySelectorAll("svg[data-art-card]")){
    if(card.dataset.artObserved)continue;card.dataset.artObserved="true";
+   const rect=card.getBoundingClientRect();
+   const localVisible=rect.width>0&&rect.height>0&&rect.bottom>-80&&rect.right>-80&&rect.top<innerHeight+80&&rect.left<innerWidth+80&&getComputedStyle(card).visibility!=="hidden";
+   if(localVisible)request(card);
    if(observer)observer.observe(card);else request(card);
   }
  };

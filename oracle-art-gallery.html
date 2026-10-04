@@ -186,8 +186,8 @@ function art(c,uid){
   const card=image.closest("svg[data-art-card]");if(!card)return;
   card.dataset.artReady=state;
   const fallback=card.querySelector("[data-art-fallback]"),overlay=card.querySelector("[data-art-overlay]");
-  if(fallback)fallback.style.visibility=state==="loaded"?"hidden":"visible";
-  if(overlay)overlay.style.visibility=state==="loaded"?"visible":"hidden";
+  if(fallback){fallback.style.visibility=state==="loaded"?"hidden":"visible";fallback.style.opacity=state==="loaded"?"0":"1";}
+  if(overlay){overlay.style.visibility=state==="loaded"?"visible":"hidden";overlay.style.opacity=state==="loaded"?"1":"0";}
  };
  const request=card=>{
   const image=card.querySelector("image[data-art-source]");

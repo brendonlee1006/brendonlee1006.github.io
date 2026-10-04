@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#130f1d">
+<meta name="description" content="神諭之間初版典藏。24 張月光線畫神諭卡原稿完整保留，供所有人欣賞。">
+<title>初版典藏｜神諭之間</title>
+<style>
+:root{color-scheme:dark;--bg:#130f1d;--panel:#211a2e;--gold:#d9bf87;--text:#f0e6d3;--muted:#b9abc7;--line:rgba(217,191,135,.26);font-family:Georgia,"Noto Serif TC","Microsoft JhengHei",serif}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{background:radial-gradient(ellipse at 70% 0,rgba(107,72,127,.22),transparent 54%),linear-gradient(135deg,#181120,#100d19);color:var(--text)}
+button,a{-webkit-tap-highlight-color:transparent}
+button{font:inherit;cursor:pointer}
+button:disabled{opacity:.38;cursor:default}
+button:focus-visible,a:focus-visible{outline:2px solid #f2d99d;outline-offset:4px}
+a{color:inherit;text-decoration:none}
+.shell{height:100dvh;width:min(1440px,100%);margin:0 auto;padding:22px 30px 16px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:16px}
+.header{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:15px;border-bottom:1px solid var(--line)}
+.eyebrow{margin:0 0 6px;color:var(--gold);font:10px/1.3 Georgia,serif;letter-spacing:.25em}
+h1{margin:0;font-size:28px;line-height:1.3;font-weight:500;letter-spacing:.14em}
+.subtitle{margin:7px 0 0;color:var(--muted);font-size:13px;line-height:1.5;letter-spacing:.035em}
+.nav{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.nav a,.page-button,.dialog-button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:9px 15px;border:1px solid var(--line);border-radius:8px;background:rgba(217,191,135,.04);color:var(--gold);font-size:13px;line-height:1.3}
+.nav a:hover,.page-button:not(:disabled):hover,.dialog-button:not(:disabled):hover{background:rgba(217,191,135,.12);border-color:rgba(217,191,135,.65)}
+.gallery{min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:14px}
+.card-tile{position:relative;min-width:0;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:7px;padding:13px 13px 10px;color:var(--text);border:1px solid var(--line);border-radius:15px;background:radial-gradient(ellipse at center 38%,rgba(145,104,168,.13),transparent 66%),linear-gradient(150deg,rgba(65,48,79,.43),rgba(27,21,39,.82));overflow:hidden;transition:border-color .2s,background .2s,transform .2s}
+.card-tile:before{content:"";position:absolute;left:13px;top:11px;color:var(--gold);font-size:10px;letter-spacing:.15em}
+.card-tile:hover{border-color:rgba(217,191,135,.74);background:radial-gradient(ellipse at center 38%,rgba(145,104,168,.23),transparent 66%),linear-gradient(150deg,rgba(65,48,79,.59),rgba(27,21,39,.82))}
+.art-frame{min-width:0;min-height:0;display:grid;place-items:center;padding:0 2px;filter:drop-shadow(0 8px 15px rgba(0,0,0,.34))}
+.art-frame svg{display:block;width:auto;height:100%;max-width:100%;max-height:100%;aspect-ratio:3/5}
+.card-meta{min-width:0;text-align:center}
+.card-name{margin:0;font-size:17px;line-height:1.3;letter-spacing:.16em}
+.card-keywords{margin:3px 0 0;color:var(--muted);font-family:"Microsoft JhengHei",sans-serif;font-size:11px;line-height:1.5;letter-spacing:.02em}
+.footer{display:flex;justify-content:space-between;align-items:center;gap:15px;padding-top:12px;border-top:1px solid var(--line)}
+.footer-note{margin:0;color:var(--muted);font-family:"Microsoft JhengHei",sans-serif;font-size:11px;line-height:1.5}
+.page-controls{display:flex;align-items:center;gap:14px}
+.page-label{min-width:70px;text-align:center;color:var(--gold);font-size:12px;white-space:nowrap}
+.page-button{min-width:74px;min-height:40px}
+dialog{padding:0;border:1px solid rgba(217,191,135,.4);border-radius:18px;color:var(--text);background:radial-gradient(ellipse at center top,#392843,#191222 65%);width:min(780px,calc(100vw - 32px));height:min(820px,calc(100dvh - 32px));max-width:none;max-height:none;overflow:hidden;box-shadow:0 28px 90px rgba(0,0,0,.66)}
+dialog::backdrop{background:rgba(7,5,13,.84);backdrop-filter:blur(7px)}
+.dialog-shell{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:20px 24px;gap:16px}
+.dialog-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.dialog-heading{margin:0;color:var(--gold);font-size:12px;line-height:1.5;letter-spacing:.1em}
+.dialog-main{min-height:0;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(220px,.8fr);align-items:center;gap:30px}
+.dialog-art{height:100%;min-height:0;min-width:0;display:grid;place-items:center;filter:drop-shadow(0 16px 22px rgba(0,0,0,.4))}
+.dialog-art svg{display:block;max-height:100%;max-width:100%;width:auto;height:100%;aspect-ratio:3/5}
+.dialog-copy{min-width:0}
+.dialog-type{margin:0 0 11px;color:var(--muted);font-size:12px;line-height:1.5;letter-spacing:.08em}
+.dialog-name{margin:0;font-size:31px;font-weight:500;line-height:1.3;letter-spacing:.17em}
+.dialog-keywords{margin:11px 0 0;color:var(--gold);font-family:"Microsoft JhengHei",sans-serif;font-size:13px;line-height:1.6}
+.dialog-message{margin:19px 0 0;color:var(--text);font-size:16px;line-height:1.8}
+.dialog-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:12px}
+.dialog-hint{margin:0;color:var(--muted);font-family:"Microsoft JhengHei",sans-serif;font-size:11px;line-height:1.5}
+.dialog-move{display:flex;gap:10px}
+.dialog-button{min-height:42px}
+@media(max-width:700px){
+.shell{padding:14px 14px 12px;gap:12px}
+.header{display:grid;grid-template-columns:1fr auto;gap:7px 10px;align-items:end;padding-bottom:11px}
+.eyebrow{font-size:8px;letter-spacing:.18em;margin-bottom:4px}
+h1{font-size:22px;letter-spacing:.1em}
+.subtitle{font-size:11px;line-height:1.5;margin-top:6px}
+.nav{gap:6px;align-self:start}
+.nav a{min-height:38px;padding:8px 10px;font-size:11px;max-width:78px;text-align:center}
+.gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card-tile{padding:10px 7px 8px;gap:6px;border-radius:12px}
+.card-name{font-size:15px}
+.card-keywords{font-size:10px;line-height:1.5;margin-top:3px}
+.footer{padding-top:10px;gap:8px}
+.footer-note{display:none}
+.page-controls{width:100%;justify-content:space-between;gap:8px}
+.page-button{min-height:40px;min-width:78px;padding:9px 12px}
+.page-label{font-size:12px}
+dialog{width:calc(100vw - 24px);height:calc(100dvh - 24px);border-radius:14px}
+.dialog-shell{padding:13px 15px;gap:10px}
+.dialog-header{padding-bottom:9px}
+.dialog-heading{font-size:10px;letter-spacing:.06em}
+.dialog-main{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;gap:12px}
+.dialog-art{height:100%}
+.dialog-copy{text-align:center}
+.dialog-type{font-size:10px;margin:0 0 3px;line-height:1.4}
+.dialog-name{font-size:22px;line-height:1.3}
+.dialog-keywords{font-size:11px;line-height:1.5;margin-top:6px}
+.dialog-message{font-size:13px;line-height:1.6;margin-top:8px}
+.dialog-footer{padding-top:9px}
+.dialog-hint{display:none}
+.dialog-move{width:100%;justify-content:space-between}
+.dialog-button{min-height:40px;font-size:11px;padding:9px 11px}
+}
+@media(max-height:600px) and (min-width:701px){
+.shell{padding-top:12px;gap:10px}.header{padding-bottom:10px}.subtitle{margin-top:3px}.card-tile{padding:7px;gap:4px}.card-name{font-size:14px}.card-keywords{font-size:10px}.footer{padding-top:8px}.dialog-shell{padding:12px 18px;gap:10px}.dialog-main{gap:20px}.dialog-name{font-size:25px}.dialog-message{font-size:14px}
+}
+@media(max-height:560px) and (max-width:700px){
+.shell{padding-top:9px;gap:8px}.header{padding-bottom:8px}.eyebrow{display:none}.subtitle{font-size:10px;margin-top:4px}.card-tile{padding:6px;gap:3px}.card-name{font-size:13px}.card-keywords{font-size:9px;margin-top:1px}.footer{padding-top:7px}.page-button{min-height:38px}.dialog-shell{padding:10px 12px;gap:7px}.dialog-main{gap:8px}.dialog-type{display:none}.dialog-name{font-size:19px}.dialog-keywords{margin-top:3px}.dialog-message{font-size:12px;margin-top:5px}.dialog-header{padding-bottom:7px}.dialog-footer{padding-top:7px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="header">
+<div><p class="eyebrow">THE MOONLIT ORIGINALS</p><h1>初版典藏</h1><p class="subtitle">初版月光線畫・24 張原稿完整保留</p></div>
+<nav class="nav" aria-label="展覽導覽"><a href="oracle-room.html">返回抽牌</a><a href="oracle-art-gallery.html">明亮版</a><a href="oracle-art-moonlight.html">月夜版</a></nav>
+</header>
+<main class="gallery" id="gallery" aria-label="初版神諭卡原稿"></main>
+<footer class="footer">
+<p class="footer-note">把目光留給線條、月色，與最初的靈感。</p>
+<div class="page-controls" aria-label="原稿分頁"><button type="button" class="page-button" id="previous">上一頁</button><span class="page-label" id="page-label" role="status" aria-live="polite" aria-atomic="true"></span><button type="button" class="page-button" id="next">下一頁</button></div>
+</footer>
+</div>
+<dialog id="card-dialog" aria-labelledby="dialog-name" aria-describedby="dialog-keywords dialog-message">
+<div class="dialog-shell">
+<header class="dialog-header"><p class="dialog-heading" id="dialog-heading"></p><button type="button" class="dialog-button" id="dialog-close">返回典藏</button></header>
+<div class="dialog-main"><div class="dialog-art" id="dialog-art"></div><div class="dialog-copy"><p class="dialog-type" id="dialog-type"></p><h2 class="dialog-name" id="dialog-name"></h2><p class="dialog-keywords" id="dialog-keywords"></p><p class="dialog-message" id="dialog-message"></p></div></div>
+<footer class="dialog-footer"><p class="dialog-hint">使用 ← →，讓目光走向下一張原稿。</p><div class="dialog-move"><button type="button" class="dialog-button" id="card-previous">上一張</button><button type="button" class="dialog-button" id="card-next">下一張</button></div></footer>
+</div>
+</dialog>
+
+<script>
+"use strict";
+const cards=[{"name":"留白","en":"STILLNESS","type":"月亮與元素","keywords":"停頓 · 空間 · 傾聽","message":"空出一點時間，聽見自己正在想什麼。","action":"關掉通知五分鐘，寫下此刻最明顯的一個感受。","prompt":"當我暫時放下忙碌，有什麼聲音浮現？","color":"#554268","art":"moon","id":"moonlit-01","number":1},{"name":"潮汐","en":"THE TIDES","type":"月亮與元素","keywords":"情緒 · 流動 · 允許","message":"感受會流動，你可以先陪它待一會兒。","action":"為今天的情緒取一個名字，再寫下它可能需要什麼。","prompt":"我正在感受什麼？哪些事情是我今天能影響的？","color":"#284354","art":"waves","id":"moonlit-02","number":2},{"name":"根系","en":"ROOTED","type":"植物與夢境","keywords":"安住 · 日常 · 支持","message":"回到那些能支持你的日常。","action":"整理桌面上一個小角落，讓接下來的一件事容易開始。","prompt":"哪個簡單的習慣，曾讓我覺得比較安定？","color":"#374d45","art":"roots","id":"moonlit-03","number":3},{"name":"門扉","en":"THE THRESHOLD","type":"植物與夢境","keywords":"開始 · 好奇 · 嘗試","message":"把第一步縮小，讓自己有機會出發。","action":"選一件拖延的小事，只花十分鐘開始。","prompt":"如果第一步不用完美，我願意先做什麼？","color":"#554157","art":"door","id":"moonlit-04","number":4},{"name":"界線","en":"BOUNDARIES","type":"自我關懷","keywords":"選擇 · 尊重 · 清楚","message":"溫柔，也可以有清楚的邊界。","action":"練習說出一句：「我需要想一下，晚一點回覆你。」","prompt":"我在哪裡答應得太快？我真正願意付出多少？","color":"#59414c","art":"mountains","id":"moonlit-05","number":5},{"name":"微光","en":"INNER LIGHT","type":"自我關懷","keywords":"留意 · 資源 · 希望","message":"留意那些尚未被你看見的支持。","action":"寫下三個實際支持過你的人、習慣或事物，今天靠近其中一個。","prompt":"最近有哪些微小的支持，被我忽略了？","color":"#49385e","art":"light","id":"moonlit-06","number":6},{"name":"回聲","en":"THE ECHO","type":"月亮與元素","keywords":"覺察 · 模式 · 需要","message":"反覆出現的感受，值得被慢慢聽見。","action":"記下一件最近重複發生的事，分別列出「發生的事」與「我的解讀」。","prompt":"在這些反覆的經驗裡，哪個需要一直沒有被說出來？","color":"#354653","art":"echo","id":"moonlit-07","number":7},{"name":"同行","en":"TOGETHER","type":"自我關懷","keywords":"連結 · 信任 · 求助","message":"讓值得信任的人，知道你需要怎樣的陪伴。","action":"選一位信任的人，具體提出一個小請求，例如陪你聊十分鐘。","prompt":"我希望別人怎麼陪我？我能如何把這個需要說清楚？","color":"#49434e","art":"together","id":"moonlit-08","number":8},{"name":"新月","en":"NEW MOON","type":"月亮與元素","keywords":"意圖 · 起點 · 可能","message":"為還沒有形狀的願望，留一個開始的位置。","action":"寫下一個這週想實踐的意圖，放在每天看得到的地方。","prompt":"此刻，我想為生活邀請什麼新的可能？","color":"#392b4f","art":"moon","id":"moonlit-09","number":9},{"name":"星河","en":"STARLIT RIVER","type":"月亮與元素","keywords":"視野 · 連結 · 方向","message":"把目光放遠一點，重新看見事情之間的連結。","action":"畫出目前在意的三件事，用線標出它們彼此的關係。","prompt":"當我放大視野，眼前這件事在生活中佔著什麼位置？","color":"#45365b","art":"light","id":"moonlit-10","number":10},{"name":"晨露","en":"MORNING DEW","type":"植物與夢境","keywords":"感官 · 細節 · 當下","message":"一個細小的發現，也值得你停下來。","action":"觀察身邊一株植物一分鐘，記下三個先前沒有留意的細節。","prompt":"今天有哪些細節，讓我感覺自己正在好好生活？","color":"#335a59","art":"roots","id":"moonlit-11","number":11},{"name":"霧林","en":"MISTWOOD","type":"植物與夢境","keywords":"未知 · 線索 · 耐心","message":"看不清全貌時，先辨認手邊的線索。","action":"為正在猶豫的選擇，列出一項已知事實與一項待確認的資訊。","prompt":"關於這件事，我已經知道什麼，又需要了解什麼？","color":"#3b6060","art":"roots","id":"moonlit-12","number":12},{"name":"落葉","en":"FALLING LEAVES","type":"植物與夢境","keywords":"整理 · 減量 · 告別","message":"有些曾經需要的東西，可以在此刻放下。","action":"從今天的待辦清單中，移除一件已經失去目的的小事。","prompt":"什麼曾經幫助過我，現在卻需要重新衡量？","color":"#66524d","art":"roots","id":"moonlit-13","number":13},{"name":"萌芽","en":"FIRST SPROUT","type":"植物與夢境","keywords":"培養 · 照料 · 成長","message":"替你在意的事，提供一點持續的照料。","action":"為一個正在培養的興趣，安排本週十分鐘的練習時間。","prompt":"哪件事正在慢慢生長，而我能給它什麼支持？","color":"#2d5154","art":"roots","id":"moonlit-14","number":14},{"name":"山徑","en":"MOUNTAIN PATH","type":"月亮與元素","keywords":"步伐 · 調整 · 耐力","message":"讓前進的步伐，配合你今天的力氣。","action":"把一件過大的任務拆成三段，圈出今天能完成的一段。","prompt":"我可以怎麼調整步伐，讓這件事持續做得下去？","color":"#554e5b","art":"mountains","id":"moonlit-15","number":15},{"name":"靜湖","en":"STILL LAKE","type":"月亮與元素","keywords":"觀察 · 沉澱 · 清晰","message":"讓念頭沉一沉，再選擇如何回應。","action":"把一則讓你在意的訊息的回覆先存成草稿，十分鐘後再讀一次。","prompt":"留一點時間之後，我會如何理解自己的反應？","color":"#294b4d","art":"waves","id":"moonlit-16","number":16},{"name":"晚風","en":"EVENING BREEZE","type":"月亮與元素","keywords":"鬆動 · 轉換 · 呼吸","message":"換一個位置，給緊繃的思緒一點流動。","action":"走到窗邊或戶外，花三分鐘感受空氣與周圍的聲音。","prompt":"今天哪一處緊繃，需要我換個方式對待？","color":"#4d3b60","art":"echo","id":"moonlit-17","number":17},{"name":"歸巢","en":"HOMECOMING","type":"自我關懷","keywords":"安頓 · 照顧 · 歸屬","message":"為自己準備一個可以安心停靠的片刻。","action":"準備一份簡單的餐點，坐下來慢慢吃完。","prompt":"什麼樣的日常安排，能讓我感到被自己照顧？","color":"#63544e","art":"door","id":"moonlit-18","number":18},{"name":"休憩","en":"REST","type":"自我關懷","keywords":"休息 · 身體 · 節奏","message":"把休息，也放進今天的安排。","action":"在行事曆中留出十五分鐘，讓自己暫時離開工作與螢幕。","prompt":"我的身體正在用哪些訊號提醒我休息？","color":"#45365b","art":"moon","id":"moonlit-19","number":19},{"name":"初心","en":"FIRST INTENTION","type":"自我關懷","keywords":"初衷 · 價值 · 選擇","message":"回到你在意這件事的理由。","action":"補完這句話：「我之所以在意這件事，是因為……」","prompt":"在眾多期待之中，哪些價值是我願意親自守住的？","color":"#392b4f","art":"light","id":"moonlit-20","number":20},{"name":"餘溫","en":"LINGERING WARMTH","type":"自我關懷","keywords":"回憶 · 安慰 · 保存","message":"讓一段溫暖的記憶，陪你停留片刻。","action":"選一段讓你安心的回憶，記下一個聲音、氣味或畫面。","prompt":"那段記憶裡，有什麼感受值得我帶回今天？","color":"#69564f","art":"together","id":"moonlit-21","number":21},{"name":"遠岸","en":"FAR SHORE","type":"月亮與元素","keywords":"願景 · 距離 · 取捨","message":"看看想去的地方，也看看抵達需要的付出。","action":"為一個想追求的目標，寫下一項可能的收穫與一項需要付出的成本。","prompt":"這個目標如何回應我的需要，又需要我做出哪些取捨？","color":"#335a59","art":"waves","id":"moonlit-22","number":22},{"name":"花期","en":"BLOOMING SEASON","type":"植物與夢境","keywords":"時間 · 過程 · 等待","message":"給正在發展的事，一段可以被觀察的時間。","action":"替一件需要時間的事，設定下一次檢視進度的日期。","prompt":"除了眼前的成果，我還能從哪些變化看見進展？","color":"#5f505e","art":"roots","id":"moonlit-23","number":23},{"name":"守燈","en":"LAMPLIGHT","type":"自我關懷","keywords":"承諾 · 持續 · 照看","message":"用做得到的方式，照看你想維持的承諾。","action":"選一個想維持的小習慣，為它設定今天可完成的最小版本。","prompt":"我想持續照看的事情是什麼，怎樣的安排能支持它？","color":"#4d3b60","art":"light","id":"moonlit-24","number":24}];
+function variation(c){
+ const n=c.number,gold="#dbc28e";
+ if(c.name==="新月")return '<circle cx="90" cy="118" r="46" fill="'+c.color+'" stroke="'+gold+'" stroke-width=".6"/><circle cx="90" cy="118" r="54" fill="none" stroke="'+gold+'" stroke-width=".3" stroke-dasharray="1 5"/>';
+ if(c.name==="星河")return '<path d="M51 173L66 129L88 115L105 142L126 92" fill="none" stroke="'+gold+'" stroke-width=".9"/><g fill="'+gold+'"><circle cx="51" cy="173" r="3"/><circle cx="66" cy="129" r="3"/><circle cx="88" cy="115" r="3"/><circle cx="105" cy="142" r="3"/><circle cx="126" cy="92" r="3"/></g>';
+ if(c.name==="晨露")return '<g fill="#d1e2d4"><circle cx="53" cy="119" r="3"/><circle cx="122" cy="137" r="3"/><circle cx="71" cy="155" r="2"/></g>';
+ if(c.name==="霧林")return '<g fill="none" stroke="#c2d9d4" stroke-width="4" opacity=".18"><path d="M24 123Q79 110 152 122M24 145Q82 129 152 144M24 170Q91 154 153 173"/></g>';
+ if(c.name==="落葉")return '<g fill="#c49d7c" stroke="'+gold+'" stroke-width=".5"><path d="M117 176q22 0 13 24q-20-3-13-24Z"/><path d="M38 204q19-9 24 12q-16 12-24-12Z"/></g>';
+ if(c.name==="萌芽")return '<circle cx="90" cy="144" r="55" fill="'+c.color+'" opacity=".94"/><path d="M89 195V137M89 162Q63 164 56 139Q82 133 89 162M89 151Q108 126 124 133Q124 158 89 151M59 196H121" fill="#72978b" stroke="'+gold+'" stroke-width=".9"/>';
+ if(c.name==="山徑")return '<path d="M84 219Q126 202 96 183Q72 163 105 157" fill="none" stroke="'+gold+'" stroke-width="1.5"/>';
+ if(c.name==="靜湖")return '<path d="M29 167H151M31 182H149M37 198H143" stroke="#c6dad3" stroke-width=".7" opacity=".6"/>';
+ if(c.name==="晚風")return '<g fill="none" stroke="'+gold+'" stroke-width=".7" opacity=".7"><path d="M34 117Q73 103 107 115T146 101M30 132Q63 118 112 136M40 196Q78 181 144 190"/></g>';
+ if(c.name==="歸巢")return '<path d="M121 78q10-14 21 0q10-14 20 0" fill="none" stroke="'+gold+'" stroke-width="1"/>';
+ if(c.name==="休憩")return '<g fill="'+gold+'" opacity=".8"><circle cx="40" cy="160" r="1.5"/><circle cx="56" cy="188" r="1.5"/><circle cx="133" cy="179" r="1.5"/></g>';
+ if(c.name==="初心")return '<path d="M90 80l5 10l11 2l-8 8l2 11l-10-6l-10 6l2-11l-8-8l11-2Z" fill="'+gold+'" opacity=".7"/>';
+ if(c.name==="餘溫")return '<circle cx="90" cy="178" r="12" fill="#d5aa80" opacity=".35"/><path d="M68 193q22 10 45 0" fill="none" stroke="'+gold+'" stroke-width=".7"/>';
+ if(c.name==="遠岸")return '<path d="M28 134L48 115L69 134L88 124L104 136L129 111L153 135" fill="#444e65" stroke="'+gold+'" stroke-width=".6"/>';
+ if(c.name==="花期")return '<g fill="#bd98af" stroke="'+gold+'" stroke-width=".5"><circle cx="91" cy="106" r="9"/><circle cx="84" cy="99" r="6"/><circle cx="98" cy="99" r="6"/><circle cx="83" cy="111" r="6"/><circle cx="99" cy="111" r="6"/><circle cx="91" cy="104" r="3" fill="'+gold+'"/></g>';
+ if(c.name==="守燈")return '<path d="M73 129V193H107V129M70 126H110M76 126L82 114H98L104 126M69 196H111" fill="none" stroke="'+gold+'" stroke-width="1"/>';
+ return "";
+}
+
+function art(c,uid){
+let shape="";
+const star=(x,y,s=1)=>`<path d="M${x} ${y-5*s}l${1.5*s} ${3.5*s}l${3.5*s} ${1.5*s}l${-3.5*s} ${1.5*s}l${-1.5*s} ${3.5*s}l${-1.5*s} ${-3.5*s}l${-3.5*s} ${-1.5*s}l${3.5*s} ${-1.5*s}Z" fill="#dbc28e"/>`;
+const branch=`<path d="M45 207Q27 165 34 124M35 145Q18 131 24 119Q39 124 35 145M34 158Q48 142 50 130Q34 131 34 158M39 181Q20 174 23 158Q38 163 39 181M40 185Q60 174 54 157Q40 165 40 185" fill="none" stroke="#b5a17b" stroke-width=".8" opacity=".7"/>`;
+switch(c.art){
+case "moon":shape=`<circle cx="90" cy="118" r="46" fill="#d4bd91" opacity=".95"/><circle cx="109" cy="104" r="44" fill="${c.color}"/><circle cx="90" cy="120" r="63" fill="none" stroke="#d4bd91" stroke-width=".5" opacity=".5"/><path d="M45 205Q90 193 135 205M54 214Q90 208 126 214" fill="none" stroke="#b9aac8" opacity=".4"/>${branch}<g transform="translate(180 0) scale(-1 1)">${branch}</g>`;break;
+case "waves":shape=`<circle cx="90" cy="97" r="28" fill="#ccb989" opacity=".8"/><path d="M28 153Q55 115 85 151T153 149V225H28Z" fill="#234b5c"/><path d="M28 165Q58 140 91 167T153 164V226H28Z" fill="#376879"/><path d="M27 183Q57 157 88 184T153 179V225H27Z" fill="#61909a" opacity=".6"/><g stroke="#c5c4a4" stroke-width=".8" fill="none"><path d="M28 152Q55 115 85 151T153 149M28 165Q58 140 91 167T153 164M27 183Q57 157 88 184T153 179M42 197Q70 190 103 201T147 196"/></g>`;break;
+case "roots":shape=`<circle cx="90" cy="125" r="54" fill="none" stroke="#b6b894" stroke-width=".6" opacity=".5"/><circle cx="90" cy="83" r="16" fill="#d6c698" opacity=".7"/><path d="M89 179Q83 146 91 106M90 130Q62 122 54 101Q80 98 90 130M87 147Q111 140 128 111Q96 112 87 147M87 158Q62 151 53 135Q79 132 87 158M88 176Q112 167 125 148Q100 146 88 176" fill="#687c65" stroke="#d3c79d" stroke-width=".8"/><g fill="none" stroke="#c8bd91" stroke-width=".85"><path d="M35 179H144M88 178Q89 197 73 216M88 183Q109 197 117 216M88 195L95 225M79 207L59 213M104 201L127 200M87 188L68 196"/></g>`;break;
+case "door":shape=`<path d="M52 218V124a38 38 0 0 1 76 0V218Z" fill="#201c30" stroke="#cbb387" stroke-width="1"/><path d="M59 213V125a31 31 0 0 1 62 0V213" fill="none" stroke="#8c7c8e" stroke-width=".8"/><path d="M68 210L84 106L111 100V210Z" fill="#948392" opacity=".45"/><path d="M84 106L111 100V210H68Z" fill="none" stroke="#d0b98c" stroke-width=".7"/><circle cx="104" cy="157" r="2" fill="#dfcd9e"/><circle cx="79" cy="129" r="7" fill="#dfcd9e" opacity=".5"/><path d="M37 218H145M44 227H136" stroke="#cbb387" stroke-width=".7"/>${branch}`;break;
+case "mountains":shape=`<circle cx="91" cy="126" r="54" fill="none" stroke="#d0b787" stroke-width=".7"/><circle cx="91" cy="107" r="22" fill="#d8b28c" opacity=".7"/><path d="M30 199L69 125L101 183L122 154L151 199Z" fill="#51425c" stroke="#bca68f" stroke-width=".8"/><path d="M30 207L82 150L109 196L137 176L151 207Z" fill="#2c2537" stroke="#c9b892" stroke-width=".8"/><path d="M34 217H147" stroke="#bca68f" stroke-width=".7"/>`;break;
+case "light":shape=`<circle cx="90" cy="139" r="56" fill="url(#glow-${uid})"/><g fill="none" stroke="#d8be8d" stroke-width=".7" opacity=".6"><circle cx="90" cy="139" r="48"/><circle cx="90" cy="139" r="57"/><path d="M90 69V55M90 222V208M20 139H7M173 139H160M39 89L30 79M143 189L151 200M39 189L30 199M142 89L151 79"/></g><path d="M83 146Q64 126 90 100Q110 127 96 146Z" fill="#dbbd87"/><path d="M87 145Q80 135 91 119Q100 136 93 145Z" fill="#f5e9c7"/><path d="M81 151H99V204H81Z" fill="#9c82a5" stroke="#d8be8d" stroke-width=".8"/><path d="M70 204H110M65 212H115" stroke="#d8be8d" stroke-width=".8"/>`;break;
+case "echo":shape=`<g fill="none" stroke="#c2bda0" stroke-width=".7"><ellipse cx="90" cy="157" rx="60" ry="36" opacity=".35"/><ellipse cx="90" cy="157" rx="48" ry="28" opacity=".5"/><ellipse cx="90" cy="157" rx="36" ry="20" opacity=".65"/><ellipse cx="90" cy="157" rx="23" ry="13" opacity=".8"/><ellipse cx="90" cy="157" rx="11" ry="6"/><path d="M90 75V141" stroke-dasharray="2 6" opacity=".4"/></g><path d="M90 90Q73 109 90 119Q106 109 90 90Z" fill="#cbd0b5" opacity=".85"/><circle cx="90" cy="79" r="4" fill="#dbc497"/><path d="M34 207Q63 197 91 207T145 206M45 217Q72 210 90 217T138 216" fill="none" stroke="#999ca8" stroke-width=".6"/>`;break;
+case "together":shape=`<circle cx="90" cy="109" r="34" fill="#d6c291" opacity=".65"/><circle cx="102" cy="101" r="33" fill="${c.color}"/><g stroke="#c1b98f" stroke-width=".9"><path d="M59 211Q61 171 72 145M61 184Q38 177 38 162Q58 165 61 184M67 164Q93 161 95 142Q76 141 67 164M63 192Q76 180 85 184Q85 200 63 200" fill="#6b746a"/><path d="M117 211Q119 171 110 135M116 180Q135 163 145 166Q140 185 116 188M116 163Q91 159 89 141Q112 143 116 163M118 200Q138 185 146 190Q142 205 118 210" fill="#887e8c"/></g><path d="M42 213Q90 203 144 213" fill="none" stroke="#c1b98f" stroke-width=".8"/>`;break;
+}
+let stars="";[[37,59,.6],[143,73,.7],[54,88,.4],[129,113,.45],[39,106,.35],[146,129,.4],[68,53,.35],[114,62,.45]].forEach(s=>stars+=star(...s));
+return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 300" role="img" aria-label="${c.name}：${c.keywords}"><defs><linearGradient id="bg-${uid}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${c.color}"/><stop offset="1" stop-color="#201927"/></linearGradient><radialGradient id="glow-${uid}"><stop stop-color="#dcc69e" stop-opacity=".34"/><stop offset="1" stop-color="#b58ad1" stop-opacity="0"/></radialGradient></defs><rect width="180" height="300" fill="url(#bg-${uid})"/><rect x="9" y="9" width="162" height="282" rx="3" fill="none" stroke="#cbb284" stroke-width=".7"/><path d="M14 37V19H32M148 19H166V37M14 263V281H32M148 281H166V263" fill="none" stroke="#cbb284" stroke-width=".6"/><path d="M27 232V104a63 63 0 0 1 126 0V232" fill="none" stroke="#cbb284" stroke-width=".6" opacity=".5"/>${stars}${shape}${c.number>8?variation(c):""}<path d="M45 237H135" stroke="#cbb284" stroke-width=".5"/><text x="90" y="260" text-anchor="middle" fill="#eddfc0" font-family="serif" font-size="17" letter-spacing="5">${c.name}</text><text x="90" y="276" text-anchor="middle" fill="#ccb284" font-family="Georgia,serif" font-size="6.3" letter-spacing="1.8">${c.en}</text></svg>`;
+}
+
+
+
+
+const gallery=document.getElementById("gallery");
+const previous=document.getElementById("previous"),next=document.getElementById("next"),label=document.getElementById("page-label");
+const dialog=document.getElementById("card-dialog"),closeButton=document.getElementById("dialog-close");
+const cardPrevious=document.getElementById("card-previous"),cardNext=document.getElementById("card-next");
+const narrow=window.matchMedia("(max-width:700px)");
+let perPage=narrow.matches?4:6,page=0,uidCount=0,currentCard=0,returnId=null;
+function putText(id,value){document.getElementById(id).textContent=value;}
+function uniqueArt(c){uidCount+=1;return art(c,"original-"+c.id+"-"+uidCount);}
+function render(focusId){
+ const start=page*perPage,end=Math.min(start+perPage,cards.length);
+ gallery.replaceChildren();
+ gallery.setAttribute("aria-label","初版原稿，第 "+(start+1)+" 至 "+end+" 張，共 "+cards.length+" 張");
+ for(let i=start;i<end;i++){
+  const c=cards[i],button=document.createElement("button");
+  button.type="button";button.className="card-tile";button.dataset.cardId=c.id;button.dataset.cardIndex=String(i);
+  button.setAttribute("aria-label","欣賞第 "+c.number+" 張原稿："+c.name+"，"+c.keywords);
+  const frame=document.createElement("div");frame.className="art-frame";frame.innerHTML=uniqueArt(c);
+  frame.setAttribute("aria-hidden","true");
+  const meta=document.createElement("div");meta.className="card-meta";
+  const name=document.createElement("p");name.className="card-name";name.textContent=c.name;
+  const keywords=document.createElement("p");keywords.className="card-keywords";keywords.textContent=c.keywords;
+  meta.append(name,keywords);button.append(frame,meta);
+  button.addEventListener("click",()=>openCard(i));gallery.append(button);
+ }
+ previous.disabled=page===0;next.disabled=page>=Math.ceil(cards.length/perPage)-1;
+ label.textContent="第 "+(page+1)+" / "+Math.ceil(cards.length/perPage)+" 頁";
+ if(focusId){const target=gallery.querySelector('[data-card-id="'+focusId+'"]');if(target)target.focus({preventScroll:true});}
+}
+function goPage(delta){
+ const proposed=Math.max(0,Math.min(Math.ceil(cards.length/perPage)-1,page+delta));
+ if(proposed===page)return;
+ const active=document.activeElement,wasCard=active&&active.classList.contains("card-tile");
+ const offset=wasCard?Number(active.dataset.cardIndex)-page*perPage:0;
+ page=proposed;
+ const focusId=wasCard?cards[Math.min(page*perPage+offset,cards.length-1)].id:null;
+ render(focusId);
+ if((active===previous&&previous.disabled)||(active===next&&next.disabled))gallery.firstElementChild.focus({preventScroll:true});
+}
+function fillDialog(index){
+ currentCard=Math.max(0,Math.min(cards.length-1,index));
+ const c=cards[currentCard];
+ document.getElementById("dialog-art").innerHTML=uniqueArt(c);
+ putText("dialog-heading","初版月光線畫 · "+String(c.number).padStart(2,"0")+" / 24");
+ putText("dialog-type",c.type);putText("dialog-name",c.name);
+ putText("dialog-keywords",c.keywords);putText("dialog-message",c.message);
+ cardPrevious.disabled=currentCard===0;cardNext.disabled=currentCard===cards.length-1;
+}
+function openCard(index){
+ returnId=cards[index].id;fillDialog(index);dialog.showModal();closeButton.focus({preventScroll:true});
+}
+function moveCard(delta){
+ const proposed=currentCard+delta;if(proposed<0||proposed>=cards.length)return;
+ const active=document.activeElement;fillDialog(proposed);
+ if((active===cardPrevious&&cardPrevious.disabled)||(active===cardNext&&cardNext.disabled))closeButton.focus({preventScroll:true});
+}
+previous.addEventListener("click",()=>goPage(-1));next.addEventListener("click",()=>goPage(1));
+closeButton.addEventListener("click",()=>dialog.close());
+cardPrevious.addEventListener("click",()=>moveCard(-1));cardNext.addEventListener("click",()=>moveCard(1));
+dialog.addEventListener("close",()=>{
+ const index=cards.findIndex(c=>c.id===returnId);
+ if(index>=0){page=Math.floor(index/perPage);render(returnId);}returnId=null;
+});
+dialog.addEventListener("click",event=>{
+ if(event.target!==dialog)return;
+ const rect=dialog.getBoundingClientRect();
+ if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close();
+});
+document.addEventListener("keydown",event=>{
+ if(event.altKey||event.ctrlKey||event.metaKey||event.shiftKey)return;
+ if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;
+ event.preventDefault();const delta=event.key==="ArrowLeft"?-1:1;
+ if(dialog.open)moveCard(delta);else goPage(delta);
+});
+function onResize(){
+ const newCount=narrow.matches?4:6;if(newCount===perPage)return;
+ const active=document.activeElement,focusId=active&&active.classList.contains("card-tile")?active.dataset.cardId:null;
+ const firstIndex=page*perPage,index=focusId?cards.findIndex(c=>c.id===focusId):firstIndex;
+ perPage=newCount;page=Math.floor(Math.max(0,index)/perPage);render(focusId);
+}
+if(narrow.addEventListener)narrow.addEventListener("change",onResize);else narrow.addListener(onResize);
+Object.defineProperty(window,"oracleArtArchive",{value:Object.freeze({
+ deckIds:Object.freeze(cards.map(c=>c.id)),
+ cards:Object.freeze(cards.map(c=>Object.freeze({...c}))),
+ snapshot:()=>Object.freeze({page:page+1,perPage,firstId:cards[page*perPage].id,count:cards.length,dialogId:dialog.open?cards[currentCard].id:null})
+}),writable:false,configurable:false,enumerable:true});
+render();
+
+</script>
+</body>
+</html>

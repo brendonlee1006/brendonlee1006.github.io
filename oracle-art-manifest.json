@@ -1,0 +1,1054 @@
+{
+  "schemaVersion": "oracle-art-library-v1",
+  "version": "hopeful-painted-v3",
+  "moonlightVersion": "moonlit-painted-v2",
+  "title": "神諭之間｜晴光花園、墨紫月夜與初版典藏",
+  "language": "zh-Hant",
+  "updatedAt": "2026-10-04",
+  "counts": {
+    "newCards": 24,
+    "moonlightCards": 24,
+    "originalCards": 24,
+    "assets": 12
+  },
+  "design": {
+    "title": "晴光花園",
+    "palette": "暖白、柔紫與金色的網站；晨光、清透藍綠、嫩芽與花草的明亮牌面",
+    "technique": "AI 生成明亮彩繪；網站疊加可讀牌名與細框",
+    "backgroundColorMeaning": "初版配色呼應圖像氣氛，未設定為占卜判讀規則；神諭卡沒有跨牌組通用的底色規範。",
+    "originalColorPalette": [
+      {
+        "id": "moonlit-01",
+        "name": "留白",
+        "color": "#554268"
+      },
+      {
+        "id": "moonlit-02",
+        "name": "潮汐",
+        "color": "#284354"
+      },
+      {
+        "id": "moonlit-03",
+        "name": "根系",
+        "color": "#374d45"
+      },
+      {
+        "id": "moonlit-04",
+        "name": "門扉",
+        "color": "#554157"
+      },
+      {
+        "id": "moonlit-05",
+        "name": "界線",
+        "color": "#59414c"
+      },
+      {
+        "id": "moonlit-06",
+        "name": "微光",
+        "color": "#49385e"
+      },
+      {
+        "id": "moonlit-07",
+        "name": "回聲",
+        "color": "#354653"
+      },
+      {
+        "id": "moonlit-08",
+        "name": "同行",
+        "color": "#49434e"
+      },
+      {
+        "id": "moonlit-09",
+        "name": "新月",
+        "color": "#392b4f"
+      },
+      {
+        "id": "moonlit-10",
+        "name": "星河",
+        "color": "#45365b"
+      },
+      {
+        "id": "moonlit-11",
+        "name": "晨露",
+        "color": "#335a59"
+      },
+      {
+        "id": "moonlit-12",
+        "name": "霧林",
+        "color": "#3b6060"
+      },
+      {
+        "id": "moonlit-13",
+        "name": "落葉",
+        "color": "#66524d"
+      },
+      {
+        "id": "moonlit-14",
+        "name": "萌芽",
+        "color": "#2d5154"
+      },
+      {
+        "id": "moonlit-15",
+        "name": "山徑",
+        "color": "#554e5b"
+      },
+      {
+        "id": "moonlit-16",
+        "name": "靜湖",
+        "color": "#294b4d"
+      },
+      {
+        "id": "moonlit-17",
+        "name": "晚風",
+        "color": "#4d3b60"
+      },
+      {
+        "id": "moonlit-18",
+        "name": "歸巢",
+        "color": "#63544e"
+      },
+      {
+        "id": "moonlit-19",
+        "name": "休憩",
+        "color": "#45365b"
+      },
+      {
+        "id": "moonlit-20",
+        "name": "初心",
+        "color": "#392b4f"
+      },
+      {
+        "id": "moonlit-21",
+        "name": "餘溫",
+        "color": "#69564f"
+      },
+      {
+        "id": "moonlit-22",
+        "name": "遠岸",
+        "color": "#335a59"
+      },
+      {
+        "id": "moonlit-23",
+        "name": "花期",
+        "color": "#5f505e"
+      },
+      {
+        "id": "moonlit-24",
+        "name": "守燈",
+        "color": "#4d3b60"
+      }
+    ],
+    "cardIdentityAndReadingsPreserved": true,
+    "moonlightEditionPreserved": true
+  },
+  "assets": [
+    {
+      "path": "assets/oracle-art-v3-01-f6981b4c6ec3.jpg",
+      "url": "/assets/oracle-art-v3-01-f6981b4c6ec3.jpg",
+      "mimeType": "image/jpeg",
+      "version": "hopeful-painted-v3",
+      "width": 971,
+      "height": 1619,
+      "bytes": 619604,
+      "quality": 88,
+      "originalPNGBytes": 2805270,
+      "pixelDimensionsRetained": true,
+      "sha256": "f6981b4c6ec3593abdd9854d38862cceb48685c94e7372bea96a6e40137222ee",
+      "gitBlobSHA1": "9dcf539a0b0a02df3bf4c880bf7a9a9957c58322"
+    },
+    {
+      "path": "assets/oracle-art-v3-02-3c026b4a3d02.jpg",
+      "url": "/assets/oracle-art-v3-02-3c026b4a3d02.jpg",
+      "mimeType": "image/jpeg",
+      "version": "hopeful-painted-v3",
+      "width": 971,
+      "height": 1619,
+      "bytes": 558727,
+      "quality": 88,
+      "originalPNGBytes": 2622607,
+      "pixelDimensionsRetained": true,
+      "sha256": "3c026b4a3d02f232768a8a89883b7f2add1a3f978833e570fe9a51a9fac5f793",
+      "gitBlobSHA1": "dc638f1267553c2dcc43e4798a96d6bfd1849d5e"
+    },
+    {
+      "path": "assets/oracle-art-v3-03-79609d356da1.jpg",
+      "url": "/assets/oracle-art-v3-03-79609d356da1.jpg",
+      "mimeType": "image/jpeg",
+      "version": "hopeful-painted-v3",
+      "width": 971,
+      "height": 1619,
+      "bytes": 541197,
+      "quality": 88,
+      "originalPNGBytes": 2675091,
+      "pixelDimensionsRetained": true,
+      "sha256": "79609d356da1c8e00c363b9f62faf687b7934f0d23b1fd5bb0cba243beb5312e",
+      "gitBlobSHA1": "a1ab0a5e9f137a2d110bcfd199fe4e70101a9a12"
+    },
+    {
+      "path": "assets/oracle-art-v3-04-098e637f7027.jpg",
+      "url": "/assets/oracle-art-v3-04-098e637f7027.jpg",
+      "mimeType": "image/jpeg",
+      "version": "hopeful-painted-v3",
+      "width": 971,
+      "height": 1619,
+      "bytes": 649095,
+      "quality": 88,
+      "originalPNGBytes": 2888807,
+      "pixelDimensionsRetained": true,
+      "sha256": "098e637f7027a391ab4f9600f25282ff0eb33a4ffecc688402eae7abb85f9619",
+      "gitBlobSHA1": "9b41de2e977bf1fe02e3f7bb31c8e384794438e7"
+    },
+    {
+      "path": "assets/oracle-art-v3-05-65fab883c065.jpg",
+      "url": "/assets/oracle-art-v3-05-65fab883c065.jpg",
+      "mimeType": "image/jpeg",
+      "version": "hopeful-painted-v3",
+      "width": 971,
+      "height": 1619,
+      "bytes": 613595,
+      "quality": 88,
+      "originalPNGBytes": 2789378,
+      "pixelDimensionsRetained": true,
+      "sha256": "65fab883c0659f09987b5fd9f21d872dca10a9ddd0bc79a88986a19a15e1bb94",
+      "gitBlobSHA1": "ef6d34585c58ffeba29c71a1fd1d8d22d482a977"
+    },
+    {
+      "path": "assets/oracle-art-v3-06-13af39a8772b.jpg",
+      "url": "/assets/oracle-art-v3-06-13af39a8772b.jpg",
+      "mimeType": "image/jpeg",
+      "version": "hopeful-painted-v3",
+      "width": 971,
+      "height": 1619,
+      "bytes": 615196,
+      "quality": 88,
+      "originalPNGBytes": 2830013,
+      "pixelDimensionsRetained": true,
+      "sha256": "13af39a8772b5d418a0115a795545641f8484e350b14bf91d901f42052e4bd91",
+      "gitBlobSHA1": "b06dc22964a63abbbeead83bf8c2693b45d6beb7"
+    },
+    {
+      "width": 972,
+      "height": 1619,
+      "bytes": 627687,
+      "path": "assets/oracle-art-v2-01-8a68383cc6df.jpg",
+      "url": "/assets/oracle-art-v2-01-8a68383cc6df.jpg",
+      "mimeType": "image/jpeg",
+      "quality": 88,
+      "originalPNGBytes": 2882278,
+      "pixelDimensionsRetained": true,
+      "sha256": "8a68383cc6df7ce62dd28644f8a0ed6c536832c02842a56d7b551459c0ba2e1e",
+      "gitBlobSHA1": "01e884c3ec4c645275fe67780bb7351312412f29",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "path": "assets/oracle-art-v2-02-d686023b0e96.jpg",
+      "url": "/assets/oracle-art-v2-02-d686023b0e96.jpg",
+      "mimeType": "image/jpeg",
+      "width": 971,
+      "height": 1619,
+      "bytes": 365109,
+      "quality": 88,
+      "originalPNGBytes": 2067869,
+      "pixelDimensionsRetained": true,
+      "sha256": "d686023b0e96ea04698bd9cabd633ed755dbae354059f3e1f992477332313191",
+      "gitBlobSHA1": "231ebe1a8433a6ac78628c6dfcd653574d8ae52f",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "path": "assets/oracle-art-v2-03-058fc1f2c91a.jpg",
+      "url": "/assets/oracle-art-v2-03-058fc1f2c91a.jpg",
+      "mimeType": "image/jpeg",
+      "width": 971,
+      "height": 1619,
+      "bytes": 518150,
+      "quality": 88,
+      "originalPNGBytes": 2725193,
+      "pixelDimensionsRetained": true,
+      "sha256": "058fc1f2c91a537ddc19d4da1ea954485052aed1d4d84b752bf8503729b35628",
+      "gitBlobSHA1": "ad141862b3f0ef68bdba728432b4ac3221c51c19",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "path": "assets/oracle-art-v2-04-fb62d82e2923.jpg",
+      "url": "/assets/oracle-art-v2-04-fb62d82e2923.jpg",
+      "mimeType": "image/jpeg",
+      "width": 971,
+      "height": 1619,
+      "bytes": 474339,
+      "quality": 88,
+      "originalPNGBytes": 2448521,
+      "pixelDimensionsRetained": true,
+      "sha256": "fb62d82e2923c2a9dbd5b209744a01ca03db92c21188c76f499d36143e1366af",
+      "gitBlobSHA1": "1735f5b60af978798a9d5b3c65594be3da6a6191",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "path": "assets/oracle-art-v2-05-b99fa0b0f5f4.jpg",
+      "url": "/assets/oracle-art-v2-05-b99fa0b0f5f4.jpg",
+      "mimeType": "image/jpeg",
+      "width": 971,
+      "height": 1619,
+      "bytes": 497584,
+      "quality": 88,
+      "originalPNGBytes": 2467400,
+      "pixelDimensionsRetained": true,
+      "sha256": "b99fa0b0f5f411399cd4445524eb3f522980b6b2fac81c0effcf6cd574653ca6",
+      "gitBlobSHA1": "fe154d7c2164aeca683b3e6eb250a06f3a7a0bbf",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "path": "assets/oracle-art-v2-06-5d47c63fd9bb.jpg",
+      "url": "/assets/oracle-art-v2-06-5d47c63fd9bb.jpg",
+      "mimeType": "image/jpeg",
+      "width": 971,
+      "height": 1619,
+      "bytes": 539396,
+      "quality": 88,
+      "originalPNGBytes": 2618168,
+      "pixelDimensionsRetained": true,
+      "sha256": "5d47c63fd9bb9bab8ec39b6566a65d65d621600362ff393453357d3c7b7d9c3c",
+      "gitBlobSHA1": "98780421af48acea8162cdf9ed0c017d3e998071",
+      "version": "moonlit-painted-v2"
+    }
+  ],
+  "cards": [
+    {
+      "id": "moonlit-01",
+      "name": "留白",
+      "number": 1,
+      "assetURL": "/assets/oracle-art-v3-01-f6981b4c6ec3.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "牌面以一彎月亮為中心，外圈與兩側枝葉包住未被填滿的空間。這份空間是原創牌義的起點：暫停輸入，辨認自己的聲音。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-02",
+      "name": "潮汐",
+      "number": 2,
+      "assetURL": "/assets/oracle-art-v3-01-f6981b4c6ec3.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "月下的三層波浪高低交錯，讓流動有了可見的節奏。這裡的水是情緒變化的比喻；觀察起伏，比要求每一刻都平靜更實際。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-03",
+      "name": "根系",
+      "number": 3,
+      "assetURL": "/assets/oracle-art-v3-01-f6981b4c6ec3.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "枝葉向上展開，細根向下分岔，地面線把生長與支撐連在一起。根系的原創寓意是：看得見的進展，通常需要看不見的日常安排。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-04",
+      "name": "門扉",
+      "number": 4,
+      "assetURL": "/assets/oracle-art-v3-01-f6981b4c6ec3.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "拱門裡有一道斜開的門片，門把與門前台階都清楚可見。門扉象徵可以試探的入口；跨出一步，與立刻承諾走完整條路，是不同的事。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-05",
+      "name": "界線",
+      "number": 5,
+      "assetURL": "/assets/oracle-art-v3-02-3c026b4a3d02.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "兩層山脊有清楚的輪廓，也保留山谷的通道。原創解讀把這些邊緣當作範圍的比喻：能接近彼此，也能知道哪裡需要停下。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-06",
+      "name": "微光",
+      "number": 6,
+      "assetURL": "/assets/oracle-art-v3-02-3c026b4a3d02.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "小燭焰被兩圈光暈包住，火光照出的是近處，並沒有照亮整張牌。微光的原創重點是找到眼前可用的支持，讓下一步有落腳處。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-07",
+      "name": "回聲",
+      "number": 7,
+      "assetURL": "/assets/oracle-art-v3-02-3c026b4a3d02.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "一滴水位在層層橢圓漣漪上方，圓心與擴散方向都能被看見。回聲讓重複有了形狀：既觀察同一反應，也回到最初發生的事件。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-08",
+      "name": "同行",
+      "number": 8,
+      "assetURL": "/assets/oracle-art-v3-02-3c026b4a3d02.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "兩株不同顏色的枝葉各有莖幹，向中間伸展，卻沒有合成同一株。這是原創牌義的關係比喻：可以相互靠近，也保有各自的立足點。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-09",
+      "name": "新月",
+      "number": 9,
+      "assetURL": "/assets/oracle-art-v3-03-79609d356da1.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "暗色圓面與周圍光點，把尚未成形的部分留在中央。空白容納可能，也提醒你先辨認自己的意圖，再決定要投入什麼。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-10",
+      "name": "星河",
+      "number": 10,
+      "assetURL": "/assets/oracle-art-v3-03-79609d356da1.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "燭火照亮近處，五顆相連的星點延伸出遠方的脈絡。局部線索與整體方向需要一起觀看，連結也需要實際證據。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-11",
+      "name": "晨露",
+      "number": 11,
+      "assetURL": "/assets/oracle-art-v3-03-79609d356da1.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "青綠莖葉、伸展的根與三滴露水，把注意力落在細小而清楚的感受。滋養可以很輕，也需要靠近才能辨認。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-12",
+      "name": "霧林",
+      "number": 12,
+      "assetURL": "/assets/oracle-art-v3-03-79609d356da1.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "莖葉與根仍然存在，三道半透明橫霧遮住部分視線。看不清楚不等於沒有依據，耐心也需要具體的觀察方式。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-13",
+      "name": "落葉",
+      "number": 13,
+      "assetURL": "/assets/oracle-art-v3-04-098e637f7027.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "仍然站立的植物與根，旁邊有兩片落下的褐葉。放下一部分不會抹去曾經的投入，取捨能讓留下的事物得到照顧。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-14",
+      "name": "萌芽",
+      "number": 14,
+      "assetURL": "/assets/oracle-art-v3-04-098e637f7027.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "地線上伸出一株帶著兩片葉的嫩芽。成長需要適合的條件與持續照顧，小小的進展也值得被看見。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-15",
+      "name": "山徑",
+      "number": 15,
+      "assetURL": "/assets/oracle-art-v3-04-098e637f7027.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "層疊山峰旁有圓形天體，金色道路沿著地勢彎行。前進需要讀懂環境，調整步幅與休息也屬於路程的一部分。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-16",
+      "name": "靜湖",
+      "number": 16,
+      "assetURL": "/assets/oracle-art-v3-04-098e637f7027.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "重疊水波與三道水平映光，呈現表面變化與清楚輪廓的共存。沉澱讓觀察更細緻，也讓不同層次的感受被辨認。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-17",
+      "name": "晚風",
+      "number": 17,
+      "assetURL": "/assets/oracle-art-v3-05-65fab883c065.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "層層橢圓波紋圍著水滴展開，三道金色風線穿過畫面。水與風的流動，讓鬆開、調整與重新呼吸成為這張牌的核心。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-18",
+      "name": "歸巢",
+      "number": 18,
+      "assetURL": "/assets/oracle-art-v3-05-65fab883c065.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "開敞的拱門與一側門板留下可進可出的界線，枝條和右上方的簡筆飛鳥，讓歸屬連結到停留、補給與再次出發。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-19",
+      "name": "休憩",
+      "number": 19,
+      "assetURL": "/assets/oracle-art-v3-05-65fab883c065.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "彎月、枝條與三顆小星留下疏朗的空間。畫面的留白把注意力帶向安靜、身體與節奏，提醒你為恢復保留位置。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-20",
+      "name": "初心",
+      "number": 20,
+      "assetURL": "/assets/oracle-art-v3-05-65fab883c065.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "燭火上方懸著一顆金色五角星，讓眼前的光與較遠的方向彼此呼應。火焰指向日常投入，星光則引出價值與初衷。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-21",
+      "name": "餘溫",
+      "number": 21,
+      "assetURL": "/assets/oracle-art-v3-06-13af39a8772b.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "彎月下，兩枝帶葉的枝條各自舒展，小小的橙色暖光留在它們之間。下方弧線承接著這份微光，讓記憶連結到可以保存的溫柔。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-22",
+      "name": "遠岸",
+      "number": 22,
+      "assetURL": "/assets/oracle-art-v3-06-13af39a8772b.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "水波之上，遠方山岸以清楚的稜線展開。岸線提供方向，波浪讓距離有了可感受的層次，引出路程、資源與取捨的思考。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-23",
+      "name": "花期",
+      "number": 23,
+      "assetURL": "/assets/oracle-art-v3-06-13af39a8772b.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "圓潤的五瓣花開在葉片上方，根系留在下方。花朵讓成果被看見，根與葉呈現生長所需的支持，引出不同階段的照顧。",
+      "version": "hopeful-painted-v3"
+    },
+    {
+      "id": "moonlit-24",
+      "name": "守燈",
+      "number": 24,
+      "assetURL": "/assets/oracle-art-v3-06-13af39a8772b.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "燭火被矩形燈籠輪廓包圍，上有頂蓋，下有底座。外框與火焰讓持續的光連結到遮護、補充與日常照料。",
+      "version": "hopeful-painted-v3"
+    }
+  ],
+  "moonlightCards": [
+    {
+      "id": "moonlit-01",
+      "name": "留白",
+      "number": 1,
+      "assetURL": "/assets/oracle-art-v2-01-8a68383cc6df.jpg",
+      "viewBox": [
+        0,
+        0,
+        486,
+        809.5
+      ],
+      "description": "牌面以一彎月亮為中心，外圈與兩側枝葉包住未被填滿的空間。這份空間是原創牌義的起點：暫停輸入，辨認自己的聲音。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-02",
+      "name": "潮汐",
+      "number": 2,
+      "assetURL": "/assets/oracle-art-v2-01-8a68383cc6df.jpg",
+      "viewBox": [
+        486,
+        0,
+        486,
+        809.5
+      ],
+      "description": "月下的三層波浪高低交錯，讓流動有了可見的節奏。這裡的水是情緒變化的比喻；觀察起伏，比要求每一刻都平靜更實際。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-03",
+      "name": "根系",
+      "number": 3,
+      "assetURL": "/assets/oracle-art-v2-01-8a68383cc6df.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        486,
+        809.5
+      ],
+      "description": "枝葉向上展開，細根向下分岔，地面線把生長與支撐連在一起。根系的原創寓意是：看得見的進展，通常需要看不見的日常安排。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-04",
+      "name": "門扉",
+      "number": 4,
+      "assetURL": "/assets/oracle-art-v2-01-8a68383cc6df.jpg",
+      "viewBox": [
+        486,
+        809.5,
+        486,
+        809.5
+      ],
+      "description": "拱門裡有一道斜開的門片，門把與門前台階都清楚可見。門扉象徵可以試探的入口；跨出一步，與立刻承諾走完整條路，是不同的事。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-05",
+      "name": "界線",
+      "number": 5,
+      "assetURL": "/assets/oracle-art-v2-02-d686023b0e96.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "兩層山脊有清楚的輪廓，也保留山谷的通道。原創解讀把這些邊緣當作範圍的比喻：能接近彼此，也能知道哪裡需要停下。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-06",
+      "name": "微光",
+      "number": 6,
+      "assetURL": "/assets/oracle-art-v2-02-d686023b0e96.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "小燭焰被兩圈光暈包住，火光照出的是近處，並沒有照亮整張牌。微光的原創重點是找到眼前可用的支持，讓下一步有落腳處。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-07",
+      "name": "回聲",
+      "number": 7,
+      "assetURL": "/assets/oracle-art-v2-02-d686023b0e96.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "一滴水位在層層橢圓漣漪上方，圓心與擴散方向都能被看見。回聲讓重複有了形狀：既觀察同一反應，也回到最初發生的事件。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-08",
+      "name": "同行",
+      "number": 8,
+      "assetURL": "/assets/oracle-art-v2-02-d686023b0e96.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "兩株不同顏色的枝葉各有莖幹，向中間伸展，卻沒有合成同一株。這是原創牌義的關係比喻：可以相互靠近，也保有各自的立足點。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-09",
+      "name": "新月",
+      "number": 9,
+      "assetURL": "/assets/oracle-art-v2-03-058fc1f2c91a.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "暗色圓面與周圍光點，把尚未成形的部分留在中央。空白容納可能，也提醒你先辨認自己的意圖，再決定要投入什麼。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-10",
+      "name": "星河",
+      "number": 10,
+      "assetURL": "/assets/oracle-art-v2-03-058fc1f2c91a.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "燭火照亮近處，五顆相連的星點延伸出遠方的脈絡。局部線索與整體方向需要一起觀看，連結也需要實際證據。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-11",
+      "name": "晨露",
+      "number": 11,
+      "assetURL": "/assets/oracle-art-v2-03-058fc1f2c91a.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "青綠莖葉、伸展的根與三滴露水，把注意力落在細小而清楚的感受。滋養可以很輕，也需要靠近才能辨認。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-12",
+      "name": "霧林",
+      "number": 12,
+      "assetURL": "/assets/oracle-art-v2-03-058fc1f2c91a.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "莖葉與根仍然存在，三道半透明橫霧遮住部分視線。看不清楚不等於沒有依據，耐心也需要具體的觀察方式。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-13",
+      "name": "落葉",
+      "number": 13,
+      "assetURL": "/assets/oracle-art-v2-04-fb62d82e2923.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "仍然站立的植物與根，旁邊有兩片落下的褐葉。放下一部分不會抹去曾經的投入，取捨能讓留下的事物得到照顧。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-14",
+      "name": "萌芽",
+      "number": 14,
+      "assetURL": "/assets/oracle-art-v2-04-fb62d82e2923.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "地線上伸出一株帶著兩片葉的嫩芽。成長需要適合的條件與持續照顧，小小的進展也值得被看見。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-15",
+      "name": "山徑",
+      "number": 15,
+      "assetURL": "/assets/oracle-art-v2-04-fb62d82e2923.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "層疊山峰旁有圓形天體，金色道路沿著地勢彎行。前進需要讀懂環境，調整步幅與休息也屬於路程的一部分。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-16",
+      "name": "靜湖",
+      "number": 16,
+      "assetURL": "/assets/oracle-art-v2-04-fb62d82e2923.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "重疊水波與三道水平映光，呈現表面變化與清楚輪廓的共存。沉澱讓觀察更細緻，也讓不同層次的感受被辨認。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-17",
+      "name": "晚風",
+      "number": 17,
+      "assetURL": "/assets/oracle-art-v2-05-b99fa0b0f5f4.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "層層橢圓波紋圍著水滴展開，三道金色風線穿過畫面。水與風的流動，讓鬆開、調整與重新呼吸成為這張牌的核心。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-18",
+      "name": "歸巢",
+      "number": 18,
+      "assetURL": "/assets/oracle-art-v2-05-b99fa0b0f5f4.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "開敞的拱門與一側門板留下可進可出的界線，枝條和右上方的簡筆飛鳥，讓歸屬連結到停留、補給與再次出發。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-19",
+      "name": "休憩",
+      "number": 19,
+      "assetURL": "/assets/oracle-art-v2-05-b99fa0b0f5f4.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "彎月、枝條與三顆小星留下疏朗的空間。畫面的留白把注意力帶向安靜、身體與節奏，提醒你為恢復保留位置。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-20",
+      "name": "初心",
+      "number": 20,
+      "assetURL": "/assets/oracle-art-v2-05-b99fa0b0f5f4.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "燭火上方懸著一顆金色五角星，讓眼前的光與較遠的方向彼此呼應。火焰指向日常投入，星光則引出價值與初衷。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-21",
+      "name": "餘溫",
+      "number": 21,
+      "assetURL": "/assets/oracle-art-v2-06-5d47c63fd9bb.jpg",
+      "viewBox": [
+        0,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "彎月下，兩枝帶葉的枝條各自舒展，小小的橙色暖光留在它們之間。下方弧線承接著這份微光，讓記憶連結到可以保存的溫柔。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-22",
+      "name": "遠岸",
+      "number": 22,
+      "assetURL": "/assets/oracle-art-v2-06-5d47c63fd9bb.jpg",
+      "viewBox": [
+        485.5,
+        0,
+        485.5,
+        809.5
+      ],
+      "description": "水波之上，遠方山岸以清楚的稜線展開。岸線提供方向，波浪讓距離有了可感受的層次，引出路程、資源與取捨的思考。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-23",
+      "name": "花期",
+      "number": 23,
+      "assetURL": "/assets/oracle-art-v2-06-5d47c63fd9bb.jpg",
+      "viewBox": [
+        0,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "圓潤的五瓣花開在葉片上方，根系留在下方。花朵讓成果被看見，根與葉呈現生長所需的支持，引出不同階段的照顧。",
+      "version": "moonlit-painted-v2"
+    },
+    {
+      "id": "moonlit-24",
+      "name": "守燈",
+      "number": 24,
+      "assetURL": "/assets/oracle-art-v2-06-5d47c63fd9bb.jpg",
+      "viewBox": [
+        485.5,
+        809.5,
+        485.5,
+        809.5
+      ],
+      "description": "燭火被矩形燈籠輪廓包圍，上有頂蓋，下有底座。外框與火焰讓持續的光連結到遮護、補充與日常照料。",
+      "version": "moonlit-painted-v2"
+    }
+  ],
+  "pages": {
+    "gallery": {
+      "url": "/oracle-art-gallery.html",
+      "sha256": "ac70a0c33d2a249c9b4e4b1be107a6dbe6af738905ed9e561629a01ca984c4d7",
+      "bytes": 50522
+    },
+    "moonlight": {
+      "url": "/oracle-art-moonlight.html",
+      "sha256": "77836926a25425a7170adfe6e60ed9817314ffcccec04c1fd584ea8c26e2279f",
+      "bytes": 49492
+    },
+    "archive": {
+      "url": "/oracle-art-archive.html",
+      "sha256": "bcbdecf63e59538cce57c050a61c4e1ac2ccab647ebaa04d748daa54a8d16527",
+      "bytes": 34082
+    }
+  },
+  "app": {
+    "sourceSHA256": "597686ecfcc987795391573542a8f7ecaf8bb8d4a41e191b179b0dfdc0232770",
+    "parts": [
+      {
+        "url": "/oracle-room.txt",
+        "sha256": "6917208ab5e11ec73be0c19ea6ceebe4227aefcc060456e227797d44188565ab",
+        "utf8Bytes": 390000,
+        "chars": 327154
+      },
+      {
+        "url": "/oracle-room-part-02.txt",
+        "sha256": "d54c6366560980b4f0912c78d90befb29d28e18ddfc1d245d1305a84e12696c1",
+        "utf8Bytes": 389999,
+        "chars": 209416
+      },
+      {
+        "url": "/oracle-room-part-03.txt",
+        "sha256": "7ded5e130f20a0d6ccba80ab23713bbe54a867abef8f3269a4340f7f0c8eb8e2",
+        "utf8Bytes": 390000,
+        "chars": 245675
+      },
+      {
+        "url": "/oracle-room-part-04.txt",
+        "sha256": "4fd348db09fcdb0962f5e9d7a42a4ae3b408848f0e0d6fb6a0c8f12ddf46340e",
+        "utf8Bytes": 121132,
+        "chars": 107107
+      }
+    ]
+  },
+  "legacyArtwork": {
+    "sourceCommit": "511095974c4958532f2e2f9c42a7dd6035df0380",
+    "all24OriginalSVGsPreservedExactly": true,
+    "variationSHA256": "5b6ed754ab4e509611c957f1f243b60490ee95caf5ef25fd4f82c8a82981c01a",
+    "artFunctionSHA256": "c0b7e6c862f548b9c2cdd3063a68ddbb2f3b8c43d2f25befd5eed2411d7ee00a",
+    "archiveSHA256": "bcbdecf63e59538cce57c050a61c4e1ac2ccab647ebaa04d748daa54a8d16527"
+  },
+  "privacy": {
+    "galleryReadsPrivateJournal": false,
+    "galleryWritesPrivateJournal": false
+  },
+  "format": {
+    "mimeType": "image/jpeg",
+    "quality": 88,
+    "originalPixelDimensionsRetained": true,
+    "totalAssetBytes": 6619679,
+    "originalPNGBytes": 31820595
+  }
+}

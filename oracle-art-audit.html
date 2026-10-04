@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17111f"><title>牌面藝術驗收｜神諭之間</title>
+<style>
+*{box-sizing:border-box}html{background:#17111f;color:#efe6d6;font-family:system-ui,sans-serif}body{margin:0;padding:24px}main{max-width:1000px;margin:auto}h1{font-family:serif;font-size:26px;letter-spacing:3px;margin:0 0 12px}p{color:#c4b5cf;line-height:1.7}a,button{color:#dfc78e}button{border:1px solid #716348;background:#292032;padding:10px 16px;border-radius:5px;cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55;padding:18px;background:#221a2b;border:1px solid #67533d;border-radius:6px;font-size:13px}#phase{display:inline-block;border:1px solid #67533d;padding:7px 12px;border-radius:30px;font-size:13px}#audit-stage{margin:20px 0;overflow:auto;border:1px solid #67533d;background:#211a2a}#audit-stage iframe{display:block;border:0;max-width:none}#full-output[hidden]{display:none}#full-button[hidden]{display:none}
+</style></head>
+<body><main><h1>牌面藝術驗收</h1><p>核對明亮主版、月光繪景與初版線畫三套牌面的公開檔案、裁切、真實畫面與原生操作。此頁不讀寫私人手札。</p>
+<div id="phase" role="status">尚未執行</div>
+<pre id="oracle-art-proof" aria-live="polite"></pre>
+<button id="full-button" type="button" hidden>顯示完整報告</button><pre id="full-output" hidden></pre>
+</main><div id="audit-stage" aria-label="實際畫廊驗收畫面"></div>
+<script id="oracle-art-full-report" type="application/json">{}</script>
+<script>
+(function(){
+"use strict";
+const CONFIG=Object.freeze({artManifestSHA:"0a676597ea3802b4c0e577185a73febd1997962592a4be5b041441e7d7e7a3b9",appHTMLSHA:"597686ecfcc987795391573542a8f7ecaf8bb8d4a41e191b179b0dfdc0232770",manifestURL:"/oracle-art-manifest.json",budgetMs:180000});
+const phaseNode=document.getElementById("phase"),proofNode=document.getElementById("oracle-art-proof"),fullNode=document.getElementById("oracle-art-full-report"),fullButton=document.getElementById("full-button"),fullOutput=document.getElementById("full-output");
+let finished=false,started=0,watchdog=null,activeFrame=null;
+const abortController=new AbortController();
+const checks=[],seenNew=new Set(),seenMoonlight=new Set(),seenLegacy=new Set(),assetByURL=new Map();
+const report={phase:"inactive",passed:false,checkCount:0,failedCheckCount:0,httpFiles:0,assetsDecoded:0,cardsMetadataVerified:0,newCardsViewed:0,moonlightCardsViewed:0,legacyCardsViewed:0,newDialogCases:0,moonlightDialogCases:0,legacyDialogCases:0,viewportCases:0,noScrollPassed:false,nativeHandlersExecuted:false,actualHTTPExecuted:false,actualRenderedDOMRead:false,privateStorageTouched:false,failureCode:"",failureDetails:"",seals:""};
+const internals={nativeActions:0,geometryCases:0,geometryFailures:0,sourceBytes:0,assetBytes:0,fallbackCases:0,appPartsVerified:0,manifest:null,viewports:[],privateStorageAccessPaths:[],elapsedMs:0};
+function status(text){phaseNode.textContent=text;}
+function check(id,passed,details,critical){
+ if(finished)throw new Error("AUDIT_ALREADY_FINISHED");
+ const row={id,passed:!!passed,details:details===undefined?null:details};checks.push(row);
+ if(!passed&&critical){const error=new Error(id);error.auditDetails=details;throw error;}
+ return !!passed;
+}
+function finish(error){
+ if(finished)return;finished=true;clearTimeout(watchdog);
+ report.checkCount=checks.length;report.failedCheckCount=checks.filter(x=>!x.passed).length;
+ report.newCardsViewed=seenNew.size;report.moonlightCardsViewed=seenMoonlight.size;report.legacyCardsViewed=seenLegacy.size;
+ report.noScrollPassed=internals.geometryCases>0&&internals.geometryFailures===0;
+ report.nativeHandlersExecuted=internals.nativeActions>0;
+ const coverage=report.assetsDecoded===12&&report.cardsMetadataVerified===48&&report.newCardsViewed===24&&report.moonlightCardsViewed===24&&report.legacyCardsViewed===24&&report.viewportCases===6&&report.newDialogCases===10&&report.moonlightDialogCases===10&&report.legacyDialogCases===10&&internals.fallbackCases===2;
+ report.passed=!error&&report.failedCheckCount===0&&coverage&&report.noScrollPassed&&report.nativeHandlersExecuted&&report.actualHTTPExecuted&&report.actualRenderedDOMRead&&!report.privateStorageTouched;
+ report.phase=report.passed?"passed":"failed";
+ const failed=checks.find(x=>!x.passed);
+ report.failureCode=report.passed?"":failed?failed.id:error?String(error.message||error):"COVERAGE_INCOMPLETE";
+ report.failureDetails=report.passed?"":JSON.stringify({error:error?String(error.message||error):null,firstFailure:failed||null,coverage:coverage,counts:{assets:report.assetsDecoded,metadata:report.cardsMetadataVerified,newCards:seenNew.size,moonlightCards:seenMoonlight.size,legacyCards:seenLegacy.size,newDialogs:report.newDialogCases,moonlightDialogs:report.moonlightDialogCases,legacyDialogs:report.legacyDialogCases,viewportCases:report.viewportCases,fallbackCases:internals.fallbackCases},geometryFailures:internals.geometryFailures});
+ internals.elapsedMs=Math.round(performance.now()-started);
+ fullNode.textContent=JSON.stringify({proof:report,config:CONFIG,execution:internals,checks});
+ proofNode.textContent=JSON.stringify(report,null,2);status(report.passed?"驗收通過":"驗收未通過");
+ fullButton.hidden=false;
+}
+fullButton.addEventListener("click",()=>{fullOutput.hidden=!fullOutput.hidden;fullButton.textContent=fullOutput.hidden?"顯示完整報告":"收起完整報告";if(!fullOutput.hidden)fullOutput.textContent=fullNode.textContent;});
+function delay(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+async function waitFor(test,label,timeout){
+ const until=performance.now()+(timeout||9000);
+ while(performance.now()<until){if(finished||abortController.signal.aborted)throw new Error("AUDIT_ABORTED");const value=test();if(value)return value;await delay(35);}
+ throw new Error("WAIT_"+label);
+}
+async function settle(win){await new Promise(resolve=>win.requestAnimationFrame(()=>win.requestAnimationFrame(resolve)));await delay(25);}
+function absolute(path){const url=new URL(path,location.origin+"/");if(url.origin!==location.origin)throw new Error("NON_FIRST_PARTY_URL");return url.href;}
+function digestHex(buffer){return crypto.subtle.digest("SHA-256",buffer).then(x=>Array.from(new Uint8Array(x),v=>v.toString(16).padStart(2,"0")).join(""));}
+async function sealedFetch(descriptor,label){
+ const url=absolute(descriptor.url),response=await fetch(url,{cache:"no-store",credentials:"omit",signal:abortController.signal});
+ report.httpFiles+=1;report.actualHTTPExecuted=true;
+ check(label+"_HTTP",response.ok,{status:response.status,url},true);
+ const bytes=await response.arrayBuffer(),sha=await digestHex(bytes),expectedBytes=descriptor.bytes===undefined?descriptor.utf8Bytes:descriptor.bytes;
+ check(label+"_BYTES",bytes.byteLength===expectedBytes,{expected:expectedBytes,actual:bytes.byteLength},true);
+ check(label+"_SHA",sha===descriptor.sha256,{expected:descriptor.sha256,actual:sha},true);
+ return bytes;
+}
+function visible(element,win){
+ if(!element||!element.isConnected)return false;
+ for(let node=element;node&&node.nodeType===1;node=node.parentElement){
+  const style=win.getComputedStyle(node);
+  if(style.display==="none"||style.visibility==="hidden"||Number(style.opacity)===0)return false;
+ }
+ const r=element.getBoundingClientRect();return r.width>0&&r.height>0;
+}
+function clippedByAncestor(element,rect,win){
+ for(let parent=element.parentElement;parent&&parent!==win.document.documentElement;parent=parent.parentElement){
+  const style=win.getComputedStyle(parent);
+  if(!/(hidden|clip|auto|scroll)/.test(style.overflowX+" "+style.overflowY))continue;
+  const p=parent.getBoundingClientRect();
+  if(/(hidden|clip|auto|scroll)/.test(style.overflowX)&&(rect.left<p.left-2||rect.right>p.right+2))return true;
+  if(/(hidden|clip|auto|scroll)/.test(style.overflowY)&&(rect.top<p.top-2||rect.bottom>p.bottom+2))return true;
+ }
+ return false;
+}
+function geometry(frame,label,scope){
+ const win=frame.contentWindow,doc=win.document,root=scope||doc.body,width=win.innerWidth,height=win.innerHeight,issues=[];
+ function inspect(element,kind){
+  if(!visible(element,win))return;
+  const rect=element.getBoundingClientRect();
+  if(rect.left<-2||rect.top<-2||rect.right>width+2||rect.bottom>height+2||clippedByAncestor(element,rect,win))issues.push({kind,id:element.id||element.dataset.cardId||element.tagName,text:(element.textContent||"").trim().slice(0,90),rect:{x:rect.x,y:rect.y,width:rect.width,height:rect.height}});
+ }
+ if(doc.documentElement.scrollWidth>width+2||doc.documentElement.scrollHeight>height+2||doc.body.scrollWidth>width+2||doc.body.scrollHeight>height+2)issues.push({kind:"document-scroll",html:[doc.documentElement.scrollWidth,doc.documentElement.scrollHeight],body:[doc.body.scrollWidth,doc.body.scrollHeight],viewport:[width,height]});
+ root.querySelectorAll("button,a,h1,h2,h3,p,svg[role='img'],#page-label").forEach(element=>inspect(element,"element"));
+ root.querySelectorAll("*").forEach(element=>{
+  if(!visible(element,win)||element.namespaceURI!=="http://www.w3.org/1999/xhtml"||/^(SCRIPT|STYLE|TEMPLATE)$/.test(element.tagName))return;
+  const style=win.getComputedStyle(element);
+  if(/(auto|scroll|hidden|clip)/.test(style.overflowX+" "+style.overflowY)&&((element.clientWidth>0&&element.scrollWidth>element.clientWidth+2)||(element.clientHeight>0&&element.scrollHeight>element.clientHeight+2)))issues.push({kind:"element-scroll-or-clipping",id:element.id||element.className,client:[element.clientWidth,element.clientHeight],scroll:[element.scrollWidth,element.scrollHeight]});
+ });
+ const walker=doc.createTreeWalker(root,win.NodeFilter.SHOW_TEXT);
+ let node;
+ while((node=walker.nextNode())){
+  if(!node.nodeValue.trim())continue;
+  const parent=node.parentElement;
+  if(!parent||parent.closest("script,style,template,svg")||!visible(parent,win))continue;
+  const range=doc.createRange();range.selectNodeContents(node);
+  for(const rect of range.getClientRects()){
+   if(rect.width<=0||rect.height<=0)continue;
+   if(rect.left<-2||rect.top<-2||rect.right>width+2||rect.bottom>height+2||clippedByAncestor(parent,rect,win)){issues.push({kind:"full-text",text:node.nodeValue.trim().slice(0,100),rect:{x:rect.x,y:rect.y,width:rect.width,height:rect.height}});break;}
+  }
+ }
+ internals.geometryCases+=1;if(issues.length)internals.geometryFailures+=1;
+ report.actualRenderedDOMRead=true;
+ check(label+"_NO_SCROLL",issues.length===0,{viewport:[width,height],issues:issues.slice(0,10)},true);
+ return true;
+}
+function svgIds(doc,label){
+ const ids=Array.from(doc.querySelectorAll("[id]"),el=>el.id);
+ check(label+"_UNIQUE_IDS",new Set(ids).size===ids.length,{total:ids.length,unique:new Set(ids).size},true);
+}
+function metaSVG(svg,card,label,expectedVersion){
+ check(label+"_ART_VERSION",svg.dataset.artVersion===expectedVersion&&card.version===expectedVersion,{expected:expectedVersion,actual:svg.dataset.artVersion,metadata:card.version},true);
+ check(label+"_OUTER_VIEWBOX",svg.getAttribute("viewBox")==="0 0 180 300",svg.getAttribute("viewBox"),true);
+ check(label+"_ID",svg.dataset.artCard===card.id,{expected:card.id,actual:svg.dataset.artCard},true);
+ const crop=svg.querySelector("svg[data-art-crop]"),image=svg.querySelector("image[data-art-source]");
+ check(label+"_CROP_PRESENT",!!crop&&!!image,null,true);
+ const actualBox=(crop.getAttribute("viewBox")||"").trim().split(/[ ,]+/).map(Number);
+ check(label+"_CROP",actualBox.length===4&&actualBox.every((v,i)=>v===card.viewBox[i]),{expected:card.viewBox,actual:actualBox},true);
+ const asset=assetByURL.get(absolute(card.assetURL));
+ check(label+"_ATLAS_VERSION",asset.version===expectedVersion,{expected:expectedVersion,actual:asset.version},true);
+ check(label+"_ATLAS_DIMENSIONS",Number(image.getAttribute("width"))===asset.width&&Number(image.getAttribute("height"))===asset.height,{expected:[asset.width,asset.height],actual:[image.getAttribute("width"),image.getAttribute("height")]},true);
+ check(label+"_FIRST_PARTY_SOURCE",absolute(image.dataset.artSource)===absolute(card.assetURL),{expected:absolute(card.assetURL),actual:image.dataset.artSource},true);
+ check(label+"_SOURCE_LOADED",svg.dataset.artReady==="loaded"&&absolute(image.getAttribute("href"))===absolute(card.assetURL),{state:svg.dataset.artReady,href:image.getAttribute("href")},true);
+ const aria=svg.getAttribute("aria-label")||"";
+ check(label+"_ACCESSIBLE_NAME",svg.getAttribute("role")==="img"&&aria.includes(card.name),{role:svg.getAttribute("role"),aria},true);
+}
+async function click(win,element){
+ check("NATIVE_CONTROL_"+internals.nativeActions,!!element&&!element.disabled,{id:element&&element.id},true);
+ internals.nativeActions+=1;element.click();await settle(win);
+}
+async function frameSource(source,width,height,label){
+ const parsed=new DOMParser().parseFromString(source,"text/html");
+ check(label+"_NO_REMOTE_SCRIPT",parsed.querySelectorAll("script[src]").length===0,null,true);
+ const scriptText=Array.from(parsed.querySelectorAll("script"),s=>s.textContent).join("\n");
+ const storagePaths=scriptText.match(/\b(?:localStorage|sessionStorage|indexedDB)\s*(?:\.|\[|\()/g)||[];
+ internals.privateStorageAccessPaths.push(...storagePaths);
+ check(label+"_NO_PRIVATE_STORAGE_CODE",storagePaths.length===0,storagePaths,true);
+ parsed.head.querySelectorAll("base").forEach(el=>el.remove());
+ const base=parsed.createElement("base");base.href=location.origin+"/";parsed.head.prepend(base);
+ const frame=document.createElement("iframe");frame.title=label;frame.setAttribute("sandbox","allow-scripts allow-same-origin");frame.style.width=width+"px";frame.style.height=height+"px";
+ document.getElementById("audit-stage").replaceChildren(frame);activeFrame=frame;
+ frame.srcdoc="<!doctype html>\n"+parsed.documentElement.outerHTML;
+ await waitFor(()=>frame.contentWindow&&frame.contentWindow.oracleArtArchive,label+"_API",15000);
+ await settle(frame.contentWindow);
+ check(label+"_FRAME_VIEWPORT",frame.contentWindow.innerWidth===width&&frame.contentWindow.innerHeight===height,{actual:[frame.contentWindow.innerWidth,frame.contentWindow.innerHeight],expected:[width,height]},true);
+ return frame;
+}
+async function readyArtwork(frame,scope,label){
+ await waitFor(()=>Array.from(scope.querySelectorAll("svg[data-art-card]")).every(svg=>svg.dataset.artReady==="loaded"),label+"_LOADED",15000);
+ await settle(frame.contentWindow);
+}
+function exactOriginalCards(actual,baseline,label){
+ check(label+"_ORIGINAL_METADATA_UNCHANGED",JSON.stringify(actual)===JSON.stringify(baseline),{count:actual.length},true);
+}
+async function galleryCase(source,kind,width,height,manifest,baseline){
+ const label=kind+"_"+width+"x"+height,frame=await frameSource(source,width,height,label),win=frame.contentWindow,doc=win.document,api=win.oracleArtArchive,newArt=kind!=="legacy",moonlight=kind==="moonlight",perPage=width<=700?4:6;
+ const editionCards=moonlight?manifest.moonlightCards:manifest.cards,expectedVersion=moonlight?manifest.moonlightVersion:manifest.version;
+ const ids=manifest.cards.map(c=>c.id),apiDescriptor=Object.getOwnPropertyDescriptor(win,"oracleArtArchive");
+ check(label+"_READONLY_API",Object.isFrozen(api)&&Object.isFrozen(api.cards)&&Object.isFrozen(api.deckIds)&&api.cards.every(Object.isFrozen)&&apiDescriptor.writable===false&&apiDescriptor.configurable===false,null,true);
+ check(label+"_DECK_IDS",JSON.stringify(api.deckIds)===JSON.stringify(ids),api.deckIds,true);
+ check(label+"_COUNT",api.snapshot().count===24&&api.cards.length===24&&api.snapshot().perPage===perPage,api.snapshot(),true);
+ if(baseline)exactOriginalCards(api.cards,baseline,label);
+ const originalCards=JSON.parse(JSON.stringify(api.cards));
+ if(newArt){
+  check(label+"_ARTWORK_API",!!win.oracleArtwork&&win.oracleArtwork.version===expectedVersion,{expected:expectedVersion,actual:win.oracleArtwork&&win.oracleArtwork.version},true);
+  const artwork=win.oracleArtwork;
+  check(label+"_ARTWORK_CARD_METADATA",artwork.cards.length===24&&artwork.cards.every((c,i)=>c.id===editionCards[i].id&&c.name===editionCards[i].name&&c.number===editionCards[i].number&&c.version===expectedVersion&&absolute(c.assetURL)===absolute(editionCards[i].assetURL)&&JSON.stringify(c.viewBox)===JSON.stringify(editionCards[i].viewBox)&&c.description===editionCards[i].description),{count:artwork.cards.length},true);
+ }
+ const localSeen=new Set(),pages=Math.ceil(24/perPage);
+ for(let page=0;page<pages;page++){
+  const pageLabel=label+"_PAGE_"+(page+1),snapshot=api.snapshot(),tiles=Array.from(doc.querySelectorAll("#gallery button.card-tile[data-card-id]"));
+  check(pageLabel+"_SNAPSHOT",snapshot.page===page+1&&snapshot.perPage===perPage&&snapshot.firstId===ids[page*perPage],snapshot,true);
+  check(pageLabel+"_TILE_COUNT",tiles.length===perPage,tiles.length,true);
+  check(pageLabel+"_PAGINATION_BOUNDS",doc.getElementById("previous").disabled===(page===0)&&doc.getElementById("next").disabled===(page===pages-1),{previous:doc.getElementById("previous").disabled,next:doc.getElementById("next").disabled},true);
+  if(newArt)await readyArtwork(frame,doc.getElementById("gallery"),pageLabel);
+  tiles.forEach((tile,offset)=>{
+   const i=page*perPage+offset,card=editionCards[i],svg=tile.querySelector(".art-frame>svg");
+   check(pageLabel+"_CARD_"+i,tile.dataset.cardId===card.id&&Number(tile.dataset.cardIndex)===i&&!!svg,{expected:card.id,actual:tile.dataset.cardId,index:tile.dataset.cardIndex},true);
+   const original=api.cards[i];
+   check(pageLabel+"_TEXT_"+i,tile.querySelector(".card-name").textContent===original.name&&tile.querySelector(".card-keywords").textContent===original.keywords,null,true);
+   if(newArt)metaSVG(svg,card,pageLabel+"_"+card.id,expectedVersion);
+   else check(pageLabel+"_ORIGINAL_SVG_"+i,svg.getAttribute("viewBox")==="0 0 180 300"&&svg.querySelectorAll("image").length===0,{imageCount:svg.querySelectorAll("image").length},true);
+   localSeen.add(card.id);(moonlight?seenMoonlight:newArt?seenNew:seenLegacy).add(card.id);
+  });
+  svgIds(doc,pageLabel);geometry(frame,pageLabel);
+  const openId=tiles[0].dataset.cardId,original=api.cards.find(c=>c.id===openId);
+  await click(win,tiles[0]);const dialog=doc.getElementById("card-dialog");
+  check(pageLabel+"_DIALOG_OPEN",dialog.open&&api.snapshot().dialogId===openId,api.snapshot(),true);
+  check(pageLabel+"_DIALOG_TEXT",doc.getElementById("dialog-name").textContent===original.name&&doc.getElementById("dialog-keywords").textContent===original.keywords&&doc.getElementById("dialog-message").textContent===original.message,null,true);
+  check(pageLabel+"_DIALOG_FIRST_BOUND",doc.getElementById("card-previous").disabled===(page===0)&&doc.getElementById("card-next").disabled===false,null,true);
+  if(newArt){await readyArtwork(frame,dialog,pageLabel+"_DIALOG");metaSVG(doc.querySelector("#dialog-art>svg"),editionCards.find(c=>c.id===openId),pageLabel+"_DIALOG_ART",expectedVersion);if(moonlight)report.moonlightDialogCases+=1;else report.newDialogCases+=1;}
+  else{check(pageLabel+"_DIALOG_ORIGINAL",doc.querySelector("#dialog-art>svg").querySelectorAll("image").length===0,null,true);report.legacyDialogCases+=1;}
+  svgIds(doc,pageLabel+"_DIALOG");geometry(frame,pageLabel+"_DIALOG",dialog);
+  if(page===pages-1){
+   while(api.snapshot().dialogId!==ids[23]){
+    await click(win,doc.getElementById("card-next"));
+    if(newArt)await readyArtwork(frame,dialog,pageLabel+"_LAST_DIALOG");
+   }
+   check(pageLabel+"_LAST_CARD_BOUND",doc.getElementById("card-next").disabled&&!doc.getElementById("card-previous").disabled&&api.snapshot().dialogId===ids[23],api.snapshot(),true);
+   const last=api.cards[23];
+   check(pageLabel+"_LAST_CARD_TEXT",doc.getElementById("dialog-name").textContent===last.name&&doc.getElementById("dialog-message").textContent===last.message,null,true);
+   if(newArt)metaSVG(doc.querySelector("#dialog-art>svg"),editionCards[23],pageLabel+"_LAST_CARD_ART",expectedVersion);
+   geometry(frame,pageLabel+"_LAST_CARD",dialog);
+   await click(win,doc.getElementById("card-previous"));
+   check(pageLabel+"_DIALOG_REVERSE_NATIVE",api.snapshot().dialogId===ids[22],api.snapshot(),true);
+   if(newArt)await readyArtwork(frame,dialog,pageLabel+"_PREVIOUS_DIALOG");
+  }
+  await click(win,doc.getElementById("dialog-close"));
+  await waitFor(()=>!dialog.open,pageLabel+"_CLOSED");
+  check(pageLabel+"_FOCUS_RESTORED",doc.activeElement&&doc.activeElement.dataset.cardId===openId,{activeId:doc.activeElement&&doc.activeElement.dataset.cardId,expected:openId},true);
+  if(newArt)await readyArtwork(frame,doc.getElementById("gallery"),pageLabel+"_RESTORED");
+  geometry(frame,pageLabel+"_CLOSED");
+  if(newArt&&width===375&&page===0){
+   const svg=doc.querySelector("#gallery .art-frame>svg[data-art-card]"),image=svg.querySelector("image[data-art-source]"),fallback=svg.querySelector("g[data-art-fallback]"),overlay=svg.querySelector("g[data-art-overlay]"),before=svg.getBoundingClientRect(),originalHref=image.getAttribute("href");
+   check(pageLabel+"_FALLBACK_MARKUP",!!fallback&&!!overlay,null,true);
+   image.setAttribute("href",location.origin+"/oracle-art-intentionally-missing-"+kind+"-audit-image.jpg?run=1");
+   await waitFor(()=>svg.dataset.artReady==="fallback",pageLabel+"_NATIVE_ERROR",15000);await settle(win);
+   const after=svg.getBoundingClientRect();
+   check(pageLabel+"_NATIVE_ERROR_FALLBACK",Number(win.getComputedStyle(fallback).opacity)===1&&Number(win.getComputedStyle(overlay).opacity)===0&&Math.abs(before.width-after.width)<0.1&&Math.abs(before.height-after.height)<0.1,{state:svg.dataset.artReady,before:[before.width,before.height],after:[after.width,after.height],fallbackOpacity:win.getComputedStyle(fallback).opacity,overlayOpacity:win.getComputedStyle(overlay).opacity},true);
+   geometry(frame,pageLabel+"_FALLBACK");
+   image.setAttribute("href",originalHref);
+   await waitFor(()=>svg.dataset.artReady==="loaded",pageLabel+"_NATIVE_IMAGE_RESTORE",15000);await settle(win);
+   check(pageLabel+"_NATIVE_RESTORE",Number(win.getComputedStyle(fallback).opacity)===0&&Number(win.getComputedStyle(overlay).opacity)===1,{state:svg.dataset.artReady},true);
+   geometry(frame,pageLabel+"_RESTORE");internals.fallbackCases+=1;
+  }
+  if(page<pages-1)await click(win,doc.getElementById("next"));
+ }
+ check(label+"_24_CARD_REACHABILITY",localSeen.size===24&&ids.every(id=>localSeen.has(id)),{count:localSeen.size},true);
+ for(let page=pages;page>1;page--)await click(win,doc.getElementById("previous"));
+ check(label+"_PAGINATION_REVERSE_NATIVE",api.snapshot().page===1&&doc.getElementById("previous").disabled&&!doc.getElementById("next").disabled,api.snapshot(),true);
+ if(newArt)await readyArtwork(frame,doc.getElementById("gallery"),label+"_BACK_FIRST");
+ geometry(frame,label+"_BACK_FIRST");
+ report.viewportCases+=1;internals.viewports.push({kind,width,height,perPage,pages,cardCount:localSeen.size,dialogCases:pages});
+ return originalCards;
+}
+async function run(){
+ started=performance.now();report.phase="running";status("核對公開封印與藝術資產");
+ const response=await fetch(absolute(CONFIG.manifestURL),{cache:"no-store",credentials:"omit",signal:abortController.signal});
+ report.httpFiles+=1;report.actualHTTPExecuted=true;
+ check("MANIFEST_HTTP",response.ok,{status:response.status},true);
+ const manifestBytes=await response.arrayBuffer(),manifestSHA=await digestHex(manifestBytes);
+ check("MANIFEST_SHA",manifestSHA===CONFIG.artManifestSHA,{expected:CONFIG.artManifestSHA,actual:manifestSHA},true);
+ const manifest=JSON.parse(new TextDecoder().decode(manifestBytes));internals.manifest={schemaVersion:manifest.schemaVersion,version:manifest.version,counts:manifest.counts};
+ report.seals=JSON.stringify({artManifestExpected:CONFIG.artManifestSHA,artManifestActual:manifestSHA,appHTMLExpected:CONFIG.appHTMLSHA,appHTMLActual:"",galleryExpected:manifest.pages.gallery.sha256,archiveExpected:manifest.pages.archive.sha256,moonlightExpected:manifest.pages.moonlight.sha256});
+ check("MANIFEST_CARD_COUNTS",manifest.counts.newCards===24&&manifest.counts.originalCards===24&&manifest.cards.length===24&&Array.isArray(manifest.moonlightCards)&&manifest.moonlightCards.length===24&&manifest.assets.length===12,manifest.counts,true);
+ check("MANIFEST_CARD_IDS",manifest.cards.every((c,i)=>c.id==="moonlit-"+String(i+1).padStart(2,"0")&&c.number===i+1)&&new Set(manifest.cards.map(c=>c.id)).size===24,null,true);
+ check("MANIFEST_MOONLIGHT_CARD_IDS",manifest.moonlightCards.every((c,i)=>c.id==="moonlit-"+String(i+1).padStart(2,"0")&&c.number===i+1&&c.name===manifest.cards[i].name)&&new Set(manifest.moonlightCards.map(c=>c.id)).size===24,null,true);
+ check("MANIFEST_EDITION_VERSIONS",typeof manifest.version==="string"&&manifest.version.length>0&&typeof manifest.moonlightVersion==="string"&&manifest.moonlightVersion.length>0&&manifest.version!==manifest.moonlightVersion,{primary:manifest.version,moonlight:manifest.moonlightVersion},true);
+ check("MANIFEST_ART_LOCATIONS_UNIQUE",new Set(manifest.cards.map(c=>absolute(c.assetURL)+"|"+JSON.stringify(c.viewBox))).size===24,null,true);
+ check("MANIFEST_MOONLIGHT_ART_LOCATIONS_UNIQUE",new Set(manifest.moonlightCards.map(c=>absolute(c.assetURL)+"|"+JSON.stringify(c.viewBox))).size===24,null,true);
+ check("MANIFEST_BOTH_ART_LOCATIONS_UNIQUE",new Set(manifest.cards.concat(manifest.moonlightCards).map(c=>absolute(c.assetURL)+"|"+JSON.stringify(c.viewBox))).size===48,null,true);
+ manifest.assets.forEach(a=>{const url=absolute(a.url);check("ATLAS_DESCRIPTOR_"+assetByURL.size,Number.isInteger(a.width)&&a.width>0&&Number.isInteger(a.height)&&a.height>0&&Number.isInteger(a.bytes)&&a.bytes>0&&/^[a-f0-9]{64}$/.test(a.sha256)&&(a.version===manifest.version||a.version===manifest.moonlightVersion),{url,width:a.width,height:a.height},true);assetByURL.set(url,a);});
+ check("MANIFEST_ATLAS_UNIQUE",assetByURL.size===12,null,true);
+ check("MANIFEST_ATLAS_EDITION_COUNTS",manifest.assets.filter(a=>a.version===manifest.version).length===6&&manifest.assets.filter(a=>a.version===manifest.moonlightVersion).length===6,null,true);
+ manifest.cards.concat(manifest.moonlightCards).forEach((card,index)=>{
+  const expectedVersion=index<24?manifest.version:manifest.moonlightVersion,asset=assetByURL.get(absolute(card.assetURL)),box=card.viewBox;
+  check("CARD_METADATA_"+expectedVersion+"_"+card.id,!!asset&&card.version===expectedVersion&&asset.version===expectedVersion&&typeof card.name==="string"&&card.name.length>0&&typeof card.description==="string"&&card.description.length>0&&Array.isArray(box)&&box.length===4&&box.every(Number.isFinite)&&box[0]>=0&&box[1]>=0&&box[2]>0&&box[3]>0&&box[0]+box[2]<=asset.width&&box[1]+box[3]<=asset.height,{id:card.id,viewBox:box,asset:card.assetURL},true);
+  report.cardsMetadataVerified+=1;
+ });
+ await Promise.all(manifest.assets.map(async(asset,i)=>{
+  const bytes=await sealedFetch(asset,"ATLAS_"+(i+1)),bitmap=await createImageBitmap(new Blob([bytes],{type:"image/jpeg"}));
+  check("ATLAS_"+(i+1)+"_DECODE",bitmap.width===asset.width&&bitmap.height===asset.height,{expected:[asset.width,asset.height],actual:[bitmap.width,bitmap.height]},true);
+  bitmap.close();report.assetsDecoded+=1;internals.assetBytes+=bytes.byteLength;
+ }));
+ check("APP_SOURCE_DESCRIPTOR",!!manifest.app&&manifest.app.sourceSHA256===CONFIG.appHTMLSHA&&Array.isArray(manifest.app.parts)&&manifest.app.parts.length>=3&&manifest.app.parts.length<=6,{sourceSHA:manifest.app&&manifest.app.sourceSHA256,parts:manifest.app&&manifest.app.parts&&manifest.app.parts.length},true);
+ const parts=await Promise.all(manifest.app.parts.map(async(part,i)=>{
+  const bytes=await sealedFetch(part,"APP_PART_"+(i+1)),text=new TextDecoder().decode(bytes);
+  check("APP_PART_"+(i+1)+"_CHARS",text.length===part.chars,{expected:part.chars,actual:text.length},true);internals.appPartsVerified+=1;return text;
+ }));
+ const appHTML=parts.join(""),appSHA=await digestHex(new TextEncoder().encode(appHTML));
+ check("APP_COMPOSED_HTML_SHA",appSHA===CONFIG.appHTMLSHA&&appSHA===manifest.app.sourceSHA256,{expected:CONFIG.appHTMLSHA,actual:appSHA},true);
+ const seals=JSON.parse(report.seals);seals.appHTMLActual=appSHA;report.seals=JSON.stringify(seals);
+ const [archiveBytes,galleryBytes,moonlightBytes]=await Promise.all([sealedFetch(manifest.pages.archive,"ARCHIVE"),sealedFetch(manifest.pages.gallery,"GALLERY"),sealedFetch(manifest.pages.moonlight,"MOONLIGHT")]);
+ internals.sourceBytes=archiveBytes.byteLength+galleryBytes.byteLength+moonlightBytes.byteLength;
+ const archiveSource=new TextDecoder().decode(archiveBytes),gallerySource=new TextDecoder().decode(galleryBytes),moonlightSource=new TextDecoder().decode(moonlightBytes);
+ status("實際瀏覽初版典藏：桌面與手機");
+ const baseline=await galleryCase(archiveSource,"legacy",1280,800,manifest,null);
+ await galleryCase(archiveSource,"legacy",375,812,manifest,baseline);
+ status("實際瀏覽明亮主版：裁切、操作與載入備援");
+ await galleryCase(gallerySource,"new",1280,800,manifest,baseline);
+ await galleryCase(gallerySource,"new",375,812,manifest,baseline);
+ status("實際瀏覽月光繪景：保留暗色版完整體驗");
+ await galleryCase(moonlightSource,"moonlight",1280,800,manifest,baseline);
+ await galleryCase(moonlightSource,"moonlight",375,812,manifest,baseline);
+ check("COMPLETE_COVERAGE",report.assetsDecoded===12&&report.cardsMetadataVerified===48&&seenNew.size===24&&seenMoonlight.size===24&&seenLegacy.size===24&&report.viewportCases===6&&report.newDialogCases===10&&report.moonlightDialogCases===10&&report.legacyDialogCases===10&&internals.fallbackCases===2,null,true);
+ check("PRIVATE_STORAGE_UNTOUCHED",internals.privateStorageAccessPaths.length===0&&!report.privateStorageTouched,null,true);
+ finish(null);
+}
+const query=new URLSearchParams(location.search);
+if(query.get("run")!=="1"){status("尚未執行：需要明示 run=1 與本版封印");proofNode.textContent=JSON.stringify(report,null,2);return;}
+if(query.get("seal")!==CONFIG.artManifestSHA||!/^[a-f0-9]{64}$/.test(CONFIG.artManifestSHA)||!/^[a-f0-9]{64}$/.test(CONFIG.appHTMLSHA)){report.phase="rejected";report.failureCode="EXPLICIT_VALID_SEAL_REQUIRED";status("未執行：封印不符");proofNode.textContent=JSON.stringify(report,null,2);return;}
+watchdog=setTimeout(()=>{abortController.abort();const error=new Error("ART_AUDIT_BUDGET_EXCEEDED");if(!finished)checks.push({id:error.message,passed:false,details:{budgetMs:CONFIG.budgetMs}});finish(error);},CONFIG.budgetMs);
+run().catch(error=>finish(error));
+})();
+</script></body></html>

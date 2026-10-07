@@ -1,31 +1,72 @@
-# 神諭之間
+# 神諭之間｜The Oracle Room
 
-https://brendonlee1006.github.io
+> 純神諭卡知識庫與 24 張原創神諭卡。主網站採暖白、柔紫與金色，使用明亮的「晴光花園」牌面；墨紫月夜與初版線畫完整保留。公開 JSON 可直接讀取，無須登入或執行抽牌。
 
-純神諭卡知識庫，文章沒有固定篇數上限；依可查證出處、作者、出版社與館藏紀錄整理。
+網站：https://brendonlee1006.github.io/oracle-room.html
+語言：繁體中文（zh-Hant）。文章沒有固定篇數上限，依可查證出處、作者、出版社與館藏紀錄整理。
 
-- 資料清單: /oracle-data-manifest.json
-- 知識全文: /oracle-knowledge-topics.json
-- 內附來源: /oracle-knowledge-sources.json
-- 完整來源索引: /oracle-source-index.json, /oracle-source-index-02.json, /oracle-source-index-03.json, /oracle-source-index-04.json, /oracle-source-index-05.json, /oracle-source-index-06.json, /oracle-source-index-07.json, /oracle-source-index-08.json, /oracle-source-index-09.json, /oracle-source-index-10.json, /oracle-source-index-11.json, /oracle-source-index-12.json, /oracle-source-index-13.json, /oracle-source-index-14.json, /oracle-source-index-15.json, /oracle-source-index-16.json, /oracle-source-index-17.json, /oracle-source-index-18.json, /oracle-source-index-19.json, /oracle-source-index-20.json, /oracle-source-index-21.json, /oracle-source-index-22.json, /oracle-source-index-23.json, /oracle-source-index-24.json, /oracle-source-index-25.json
-- 來源別名: /oracle-source-aliases.json
-- 搜尋輪次與來源分檔: 請讀資料清單的 files
+## 取用順序｜Read manifests first
 
-schemaVersion 1.0；文章、來源及搜尋轮次 ID 穩定。文章可用 /oracle-room.html?view=reader&topic=oracle-101，來源可用 /oracle-room.html?view=reader&source=R000830。
+1. 先選擇下面的文獻、原創解讀或美術資料清單，讀取其版本、欄位及限制。
+2. 以清單內的 `url` 定位公開檔案；相對 URL 以 https://brendonlee1006.github.io/ 為基準。歷史 `path` 欄位可能含 static/，不應代替公開 URL。
+3. 依清單的 `sha256` 核對原始回應位元組，再解析 JSON；不要先重排或格式化內容才核對。
+4. 按需求取用來源或三牌分片，不必下載全部資料。保留牌卡 ID、牌位順序與來源狀態。
+5. 回答知識問題時引用實際原始出處及取用範圍；本牌組原創解讀請明確歸屬於本網站。
 
-catalogued 是已整理書目；checked 是已核對指定頁面；candidate 是待核搜尋候選。請讀 accessScope、traceability 與 inspection 限制，圖書館書目不一定證明持有，全書存在不代表主張或占卜效果獲得驗證。
+A rendered app may initially expose only its loading screen to a text extractor. Use the public manifests and JSON below for knowledge, readings, and artwork; no card draw is required.
 
-公開資料不含私人提問、心得及手札；離線匿名 HTML 只含內附知識與來源，完整外部目錄需連線。
+## 文獻知識｜Source-backed knowledge
 
-欄位 independentCheckedSourceFamilies 沿用舊 schema；數值按 sourceFamily 或 canonicalURL 標籤分組，並不代表獨立提供者數或占卜效果研究。請另外核對 sourceProvider、實際館藏與 accessScope。
+- [文獻資料清單](https://brendonlee1006.github.io/oracle-data-manifest.json)：文章、來源、搜尋輪次分片與 SHA-256。
+- [134 篇知識全文](https://brendonlee1006.github.io/oracle-knowledge-topics.json)：依主題分類的知識文章。
+- [80 筆內附來源](https://brendonlee1006.github.io/oracle-knowledge-sources.json)：內附來源與取用限制。
+- [完整來源索引首片](https://brendonlee1006.github.io/oracle-source-index.json)：完整 25 片索引與其他來源分檔，請按資料清單的 files 讀取。
+- [來源別名](https://brendonlee1006.github.io/oracle-source-aliases.json)：既有來源 ID 的別名對應。
 
+現有資料記錄 17,393 筆來源：39 筆 checked、55 筆 catalogued、17,299 筆 candidate；另記錄既有 10,000 輪完成搜尋。這些是現存資料的範圍，不代表所有候選均已核對、全文已讀或全世界文獻已收齊。
 
-## 月光手札原創解讀資料庫
+- `checked`：已核對指定頁面；請讀 `accessScope`、`traceability`、`inspection` 的實際範圍與限制。
+- `catalogued`：已整理書目，不代表已重新核對全文。
+- `candidate`：待核搜尋候選，不應作確定史實的依據。
 
-- 全部三牌排列查閱頁: /oracle-relations.html
-- 解讀資料清單與 SHA-256: /oracle-reading-manifest.json
-- 24 張原創深度牌義及 120 組主題應用: /oracle-reading-profiles.json
-- 552 組逐條撰寫的有向兩牌關係: /oracle-reading-pairs.json
-- 12,144 組現況／阻礙／建議排列: 依 oracle-reading-manifest.json 的 triples 分檔讀取。
+圖書館書目不一定證明實際持有該書；出版或館藏存在不代表文中主張或占卜效果獲驗證。`independentCheckedSourceFamilies` 沿用舊 schema，按 sourceFamily 或 canonicalURL 標籤分組，不代表獨立提供者數或占卜效果研究；請另查 sourceProvider、館藏與取用範圍。
 
-三牌紀錄由原創牌義、有向牌間關係和牌位規則整合，並非 12,144 篇獨立手寫解讀、占驗或學術文獻。文獻知識庫與原創牌組解讀有各自的來源及編寫方式。公開紀錄只使用固定日常角度，不含私人提問、心得或手札。
+文章 ID 與來源 ID 穩定。人類閱讀例：
+- [神諭卡入門文章](https://brendonlee1006.github.io/oracle-room.html?view=reader&topic=oracle-101)
+- [來源紀錄例 R000830](https://brendonlee1006.github.io/oracle-room.html?view=reader&source=R000830)
+
+## 本牌組原創解讀｜Original reading corpus
+
+- [解讀資料清單](https://brendonlee1006.github.io/oracle-reading-manifest.json)：版本、方法、牌位、資料分片與 SHA-256。
+- [24 張深度牌義及 120 組主題應用](https://brendonlee1006.github.io/oracle-reading-profiles.json)
+- [552 組有向兩牌關係](https://brendonlee1006.github.io/oracle-reading-pairs.json)
+- [全部三牌排列查閱頁](https://brendonlee1006.github.io/oracle-relations.html)
+
+12,144 組三牌排列由原創牌義、逐條撰寫的有向兩牌關係與公開牌位規則整合，完整寫入資料檔。它們不是 12,144 篇獨立手寫解讀、占驗或學術文獻。
+
+三牌順序是「現況／阻礙／建議」，不可任意換序；關係包括「現況 → 阻礙」「阻礙 → 建議」「現況 → 建議」。按資料清單的 triples 分片讀取；公開三牌範例使用 general 角度與固定空白提問，不含私人內容。分鐘、天數或行動數量是可調整的原創實作建議。
+
+## 牌面與三版展示｜Artwork and editions
+
+- [牌面資料清單](https://brendonlee1006.github.io/oracle-art-manifest.json)：版本、牌卡 ID、圖像尺寸、分區、SHA-256 與初版保存說明。
+- [晴光花園](https://brendonlee1006.github.io/oracle-art-gallery.html)：hopeful-painted-v3，24 張明亮彩繪；目前主網站牌面。
+- [墨紫月夜](https://brendonlee1006.github.io/oracle-art-moonlight.html)：moonlit-painted-v2，24 張月夜彩繪，保留於展示區。
+- [初版典藏](https://brendonlee1006.github.io/oracle-art-archive.html)：24 張原始月光線畫，完整保留。
+
+新版彩繪由 AI 生圖製作。美術清單 `cards` 與 `moonlightCards` 用相同 ID 連結解讀資料；版本更換只改視覺，不改原創牌義。`assets` 是 12 張四格 JPEG，並非 12 張牌；`viewBox` 指定每張牌在對應大圖中的分區。牌名與細框由網站疊加，不能把整張四格圖當成單張牌。初版 SVG 的保存來源與封印見 `legacyArtwork`，展示入口是 `pages.archive`；沒有初版卡片明細陣列。
+
+三版共 72 張展示，仍是同一套 24 個牌義；ID 的 moonlit 前綴不代表當前視覺版本。`viewBox` 的小數應原值使用，不要四捨五入。兩版 `description` 沿用相同牌卡敘事，不是彩繪像素差異的證明；實際圖像由 `version`、`assetURL`、`viewBox` 決定。
+
+初版底色呼應圖像氣氛，未設定為判讀規則；神諭卡沒有跨牌組通用的底色規範。
+
+## 隱私與資料邊界｜Privacy and scope
+
+公開 JSON 不含私人提問、心得或手札。手札只保存在使用者的瀏覽器。公開美術展示不讀寫私人手札。離線匿名 HTML 只含內附知識與來源，完整外部目錄需連線。
+
+文獻知識、原創解讀與美術有各自的依據。網站內容用於自我對話與提示；不要將原創比喻、候選來源、時間建議或美術配色改寫成經驗證的預測。
+
+## 公開頁面索引｜Public navigation
+
+- [網站](https://brendonlee1006.github.io/oracle-room.html)
+- [公開頁面 Sitemap](https://brendonlee1006.github.io/sitemap.xml)
+- [爬取規則](https://brendonlee1006.github.io/robots.txt)
